@@ -9,6 +9,7 @@ import { setUtilsWeb3, setUtilsCurrentAddress } from "../../utils/api";
 import YoutubeEmbed from "../YoutubeEmbed/YoutubeEmbed";
 import Instructions from "../Insctructions/Instructions";
 import MainForm from "../MainForm/MainForm";
+import { idToNetwork, NetworkType } from "../../utils/network";
 
 import "./App.scss";
 
@@ -26,6 +27,7 @@ const web3Modal = new Web3Modal({ network: NETWORK_TYPE, cacheProvider: true, pr
 const App = () => {
     const [web3, setWeb3] = useState(new Web3(Web3.givenProvider));
     const [currentAddress, setCurrentAddress] = useState(undefined as string | undefined);
+    const [currentNetwork, setCurrentNetwork] = useState(undefined as NetworkType | undefined);
 
     const onDisconnect = async () => {
         // @ts-ignore
@@ -53,6 +55,7 @@ const App = () => {
             if (+chainId === NETWORK_TYPE_CODE) {
                 await onConnect();
             }
+            setCurrentNetwork(idToNetwork[+chainId]);
         });
     };
 
@@ -68,6 +71,8 @@ const App = () => {
         const address = accounts[0];
         setCurrentAddress(address);
         setUtilsCurrentAddress(address);
+        const chainId = await web3.eth.getChainId();
+        setCurrentNetwork(idToNetwork[chainId]);
     };
 
     useEffect(() => {
@@ -80,7 +85,7 @@ const App = () => {
             <div className="App__container">
                 <YoutubeEmbed embedId="qx3rxGSVBDM" />
                 <Instructions />
-                <MainForm />
+                {currentNetwork && <MainForm currentNetwork={currentNetwork} />}
             </div>
         </div>
     );

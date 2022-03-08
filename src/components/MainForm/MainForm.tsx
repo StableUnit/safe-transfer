@@ -1,25 +1,21 @@
 import React, { useCallback, useState } from "react";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { changeNetworkAtMetamask, networkNames, NetworkType } from "../../utils/network";
 
 import "./MainForm.scss";
 
-interface MainFormProps {}
+interface MainFormProps {
+    currentNetwork: NetworkType;
+}
 
-const networks = {
-    eth: "Ethereum",
-    polygon: "Polygon",
-    arbitrum: "Arbitrum",
-    optimism: "Optimism",
-};
+const MainForm = ({ currentNetwork }: MainFormProps) => {
+    const handleNetworkChange = useCallback((event) => {
+        changeNetworkAtMetamask(event.target.value);
+    }, []);
 
-const MainForm = ({}: MainFormProps) => {
-    const [currentNetwork, setCurrentNetwork] = useState("eth");
-    const handleNetworkChange = useCallback(
-        (event) => {
-            setCurrentNetwork(event.target.value);
-        },
-        [setCurrentNetwork]
-    );
+    if (!currentNetwork) {
+        return <div className="main-form">Please connect your wallet</div>;
+    }
 
     return (
         <div className="main-form">
@@ -32,7 +28,7 @@ const MainForm = ({}: MainFormProps) => {
                     label="Age"
                     onChange={handleNetworkChange}
                 >
-                    {Object.entries(networks).map(([networkId, networkName]) => (
+                    {Object.entries(networkNames).map(([networkId, networkName]) => (
                         <MenuItem key={networkId} value={networkId}>
                             {networkName}
                         </MenuItem>
