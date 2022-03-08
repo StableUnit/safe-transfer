@@ -1,12 +1,19 @@
 import Web3 from "web3";
 
-export type NetworkType = "eth" | "polygon" | "arbitrum" | "optimism";
+export type AlchemyNetworkType = "eth" | "polygon" | "arbitrum" | "optimism";
+export type MoralisNetworkType = "eth" | "polygon" | "bsc" | "fantom" | "avalanche";
+export type NetworkType = AlchemyNetworkType | MoralisNetworkType;
+
+export type Web3sType = Record<AlchemyNetworkType, Web3>;
 
 export const NETWORK: Record<NetworkType, NetworkType> = {
     eth: "eth",
     polygon: "polygon",
     arbitrum: "arbitrum",
     optimism: "optimism",
+    bsc: "bsc",
+    fantom: "fantom",
+    avalanche: "avalanche",
 };
 
 export const networkNames = {
@@ -14,6 +21,9 @@ export const networkNames = {
     [NETWORK.polygon]: "Polygon",
     [NETWORK.arbitrum]: "Arbitrum",
     [NETWORK.optimism]: "Optimism",
+    [NETWORK.bsc]: "Binance Smart Chain",
+    [NETWORK.fantom]: "Fantom",
+    [NETWORK.avalanche]: "Avalanche",
 };
 
 const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj).map((a) => a.reverse()));
@@ -21,8 +31,11 @@ const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj
 export const idToNetwork: Record<number, NetworkType> = {
     1: NETWORK.eth,
     10: NETWORK.optimism,
+    56: NETWORK.bsc,
     137: NETWORK.polygon,
+    250: NETWORK.fantom,
     42161: NETWORK.arbitrum,
+    43114: NETWORK.avalanche,
 };
 
 export const networkToId = inverse(idToNetwork);
@@ -44,6 +57,17 @@ const networkInfo = {
             decimals: 18,
         },
     },
+    [NETWORK.bsc]: {
+        chainName: "Binance Smart Chain Mainnet",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.bsc]),
+        rpcUrls: ["https://bsc-dataseed.binance.org/"],
+        blockExplorerUrls: ["https://bscscan.com"],
+        nativeCurrency: {
+            name: "BNB",
+            symbol: "BNB",
+            decimals: 18,
+        },
+    },
     [NETWORK.polygon]: {
         chainName: "Polygon Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.polygon]),
@@ -55,6 +79,17 @@ const networkInfo = {
             decimals: 18,
         },
     },
+    [NETWORK.fantom]: {
+        chainName: "Fantom Opera",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.fantom]),
+        rpcUrls: ["https://rpc.ftm.tools/"],
+        blockExplorerUrls: ["https://ftmscan.com"],
+        nativeCurrency: {
+            name: "FTM",
+            symbol: "FTM",
+            decimals: 18,
+        },
+    },
     [NETWORK.arbitrum]: {
         chainName: "Arbitrum One",
         chainId: Web3.utils.toHex(networkToId[NETWORK.arbitrum]),
@@ -63,6 +98,17 @@ const networkInfo = {
         nativeCurrency: {
             name: "ETH",
             symbol: "ETH",
+            decimals: 18,
+        },
+    },
+    [NETWORK.avalanche]: {
+        chainName: "Avalanche C-Chain",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.avalanche]),
+        rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
+        blockExplorerUrls: ["https://snowtrace.io"],
+        nativeCurrency: {
+            name: "AVAX",
+            symbol: "AVAX",
             decimals: 18,
         },
     },
