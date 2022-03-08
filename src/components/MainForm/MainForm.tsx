@@ -1,15 +1,17 @@
 import React, { ChangeEvent, useCallback, useState } from "react";
+import Web3 from "web3";
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import { changeNetworkAtMetamask, networkNames, NetworkType } from "../../utils/network";
+import { useMoralis } from "react-moralis";
+import { changeNetworkAtMetamask, idToNetwork, networkNames } from "../../utils/network";
 
 import "./MainForm.scss";
 import { isAddress } from "../../utils/wallet";
 
-interface MainFormProps {
-    currentNetwork?: NetworkType;
-}
+interface MainFormProps {}
 
-const MainForm = ({ currentNetwork }: MainFormProps) => {
+const MainForm = () => {
+    const { account, chainId: hexChainId } = useMoralis();
+    const chainId = Web3.utils.hexToNumber(hexChainId ?? "");
     const [toAddress, setToAddress] = useState<undefined | string>(undefined);
     const [value, setValue] = useState<undefined | number>(undefined);
 
@@ -17,7 +19,7 @@ const MainForm = ({ currentNetwork }: MainFormProps) => {
         changeNetworkAtMetamask(event.target.value);
     }, []);
 
-    if (!currentNetwork) {
+    if (!account) {
         return <div className="main-form">Please connect your wallet</div>;
     }
 
@@ -42,7 +44,7 @@ const MainForm = ({ currentNetwork }: MainFormProps) => {
                 <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={currentNetwork}
+                    value={idToNetwork[chainId]}
                     label="Age"
                     onChange={handleNetworkChange}
                 >

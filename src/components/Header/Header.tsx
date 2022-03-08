@@ -1,29 +1,39 @@
 import React from "react";
+import { useMoralis } from "react-moralis";
 
 import { getShortAddress } from "../../utils/wallet";
 import "./Header.scss";
 
 interface NavbarProps {
-    address?: string;
-    onConnect: () => void;
+    onMetamaskConnect: () => void;
+    onWalletConnect: () => void;
     onDisconnect: () => void;
 }
 
-const Header = ({ address, onConnect, onDisconnect }: NavbarProps) => (
-    <div className="header">
-        {address ? (
-            <div className="header__address-container">
-                <div className="header__address">{getShortAddress(address)}</div>
-                <div className="header__button" onClick={onDisconnect}>
-                    Disconnect
+const Header = ({ onWalletConnect, onMetamaskConnect, onDisconnect }: NavbarProps) => {
+    const { account } = useMoralis();
+
+    return (
+        <div className="header">
+            {account ? (
+                <div className="header__address-container">
+                    <div className="header__address">{getShortAddress(account)}</div>
+                    <div className="header__button" onClick={onDisconnect}>
+                        Disconnect
+                    </div>
                 </div>
-            </div>
-        ) : (
-            <div className="header__button" onClick={onConnect}>
-                Connect wallet
-            </div>
-        )}
-    </div>
-);
+            ) : (
+                <div className="header__buttons">
+                    <div className="header__button" onClick={onMetamaskConnect}>
+                        Sign in using Metamask
+                    </div>
+                    <div className="header__button" onClick={onWalletConnect}>
+                        Sign in using Wallet Connect
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
 
 export default Header;

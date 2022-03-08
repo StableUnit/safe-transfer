@@ -1,9 +1,8 @@
 .header {
     position: fixed;
-    top: 0;
+    top: 10px;
     width: 100%;
     box-sizing: border-box;
-    height: 72px;
     display: flex;
     align-items: center;
     justify-content: right;
@@ -21,7 +20,14 @@
         }
     }
 
+    &__buttons {
+        display: flex;
+        flex-direction: column;
+    }
+
     &__button {
+        cursor: pointer;
+        margin: 10px 0;
         background: #FFD1B5;
         font-weight: bold;
         font-size: 14px;

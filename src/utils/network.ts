@@ -1,16 +1,14 @@
 import Web3 from "web3";
 
-export type AlchemyNetworkType = "eth" | "polygon" | "arbitrum" | "optimism";
+// export type AlchemyNetworkType = "eth" | "polygon" | "arbitrum" | "optimism";
 export type MoralisNetworkType = "eth" | "polygon" | "bsc" | "fantom" | "avalanche";
-export type NetworkType = AlchemyNetworkType | MoralisNetworkType;
-
-export type Web3sType = Record<AlchemyNetworkType, Web3>;
+export type NetworkType = MoralisNetworkType; // AlchemyNetworkType | MoralisNetworkType;
 
 export const NETWORK: Record<NetworkType, NetworkType> = {
     eth: "eth",
     polygon: "polygon",
-    arbitrum: "arbitrum",
-    optimism: "optimism",
+    // arbitrum: "arbitrum",
+    // optimism: "optimism",
     bsc: "bsc",
     fantom: "fantom",
     avalanche: "avalanche",
@@ -19,8 +17,8 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",
     [NETWORK.polygon]: "Polygon",
-    [NETWORK.arbitrum]: "Arbitrum",
-    [NETWORK.optimism]: "Optimism",
+    // [NETWORK.arbitrum]: "Arbitrum",
+    // [NETWORK.optimism]: "Optimism",
     [NETWORK.bsc]: "Binance Smart Chain",
     [NETWORK.fantom]: "Fantom",
     [NETWORK.avalanche]: "Avalanche",
@@ -30,11 +28,11 @@ const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj
 
 export const idToNetwork: Record<number, NetworkType> = {
     1: NETWORK.eth,
-    10: NETWORK.optimism,
+    // 10: NETWORK.optimism,
     56: NETWORK.bsc,
     137: NETWORK.polygon,
     250: NETWORK.fantom,
-    42161: NETWORK.arbitrum,
+    // 42161: NETWORK.arbitrum,
     43114: NETWORK.avalanche,
 };
 
@@ -46,17 +44,17 @@ const networkInfo = {
         chainId: Web3.utils.toHex(networkToId[NETWORK.eth]),
         rpcUrls: ["https://rpc.ankr.com/eth"],
     },
-    [NETWORK.optimism]: {
-        chainName: "Optimism",
-        chainId: Web3.utils.toHex(networkToId[NETWORK.optimism]),
-        rpcUrls: ["https://mainnet.optimism.io/"],
-        blockExplorerUrls: ["https://optimistic.etherscan.io"],
-        nativeCurrency: {
-            name: "ETH",
-            symbol: "ETH",
-            decimals: 18,
-        },
-    },
+    // [NETWORK.optimism]: {
+    //     chainName: "Optimism",
+    //     chainId: Web3.utils.toHex(networkToId[NETWORK.optimism]),
+    //     rpcUrls: ["https://mainnet.optimism.io/"],
+    //     blockExplorerUrls: ["https://optimistic.etherscan.io"],
+    //     nativeCurrency: {
+    //         name: "ETH",
+    //         symbol: "ETH",
+    //         decimals: 18,
+    //     },
+    // },
     [NETWORK.bsc]: {
         chainName: "Binance Smart Chain Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.bsc]),
@@ -90,17 +88,17 @@ const networkInfo = {
             decimals: 18,
         },
     },
-    [NETWORK.arbitrum]: {
-        chainName: "Arbitrum One",
-        chainId: Web3.utils.toHex(networkToId[NETWORK.arbitrum]),
-        rpcUrls: ["https://arb1.arbitrum.io/rpc"],
-        blockExplorerUrls: ["https://arbiscan.io"],
-        nativeCurrency: {
-            name: "ETH",
-            symbol: "ETH",
-            decimals: 18,
-        },
-    },
+    // [NETWORK.arbitrum]: {
+    //     chainName: "Arbitrum One",
+    //     chainId: Web3.utils.toHex(networkToId[NETWORK.arbitrum]),
+    //     rpcUrls: ["https://arb1.arbitrum.io/rpc"],
+    //     blockExplorerUrls: ["https://arbiscan.io"],
+    //     nativeCurrency: {
+    //         name: "ETH",
+    //         symbol: "ETH",
+    //         decimals: 18,
+    //     },
+    // },
     [NETWORK.avalanche]: {
         chainName: "Avalanche C-Chain",
         chainId: Web3.utils.toHex(networkToId[NETWORK.avalanche]),

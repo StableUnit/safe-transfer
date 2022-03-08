@@ -1,30 +1,25 @@
 module.exports = {
-    arrowParens: 'always',
+    arrowParens: "always",
     printWidth: 120,
-    jsxBracketSameLine: false,
-    jsxSingleQuote: false,
-    endOfLine: 'auto',
     semi: true,
-    singleQuote: true,
     tabWidth: 4,
-    trailingComma: 'all',
     overrides: [
         {
-            files: ['*.js', '*.ts', '*.jsx', '*.tsx'],
+            files: ["*.js", "*.ts", "*.jsx", "*.tsx"],
             options: {
-                parser: 'typescript',
+                parser: "typescript",
             },
         },
         {
-            files: ['*.md'],
+            files: ["*.md"],
             options: {
-                parser: 'markdown',
+                parser: "markdown",
             },
         },
         {
-            files: ['*.json'],
+            files: ["*.json"],
             options: {
-                parser: 'json',
+                parser: "json",
             },
         },
     ],
