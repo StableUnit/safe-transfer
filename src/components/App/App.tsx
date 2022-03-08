@@ -85,7 +85,7 @@ const App = () => {
             <div className="App__container">
                 <YoutubeEmbed embedId="qx3rxGSVBDM" />
                 <Instructions />
-                {currentNetwork && <MainForm currentNetwork={currentNetwork} />}
+                <MainForm currentNetwork={currentNetwork} />
             </div>
         </div>
     );

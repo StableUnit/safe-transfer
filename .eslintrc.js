@@ -59,5 +59,6 @@ module.exports = {
         "import/prefer-default-export": "warn",
         "no-unused-vars": "off",
         "no-empty-pattern": "off",
+        "max-len": ["error", { code: 120 }],
     },
 };
