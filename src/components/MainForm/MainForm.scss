@@ -4,16 +4,9 @@
     align-items: center;
     justify-content: center;
 
-    & &__network-form {
-        width: 400px;
-        margin: 20px 0;
-    }
-
-    & &__address {
-        width: 400px;
-        margin: 20px 0;
-    }
-
+    & &__network-form,
+    & &__token-form,
+    & &__address,
     & &__value {
         width: 400px;
         margin: 20px 0;
@@ -22,5 +15,6 @@
     & &__button {
         width: 250px;
         height: 50px;
+        margin-bottom: 20px;
     }
 }
