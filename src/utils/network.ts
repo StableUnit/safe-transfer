@@ -1,11 +1,12 @@
 import Web3 from "web3";
 
 // export type AlchemyNetworkType = "eth" | "polygon" | "arbitrum" | "optimism";
-export type MoralisNetworkType = "eth" | "polygon" | "bsc" | "fantom" | "avalanche";
+export type MoralisNetworkType = "eth" | "rinkeby" | "polygon" | "bsc" | "fantom" | "avalanche";
 export type NetworkType = MoralisNetworkType; // AlchemyNetworkType | MoralisNetworkType;
 
 export const NETWORK: Record<NetworkType, NetworkType> = {
     eth: "eth",
+    rinkeby: "rinkeby",
     polygon: "polygon",
     // arbitrum: "arbitrum",
     // optimism: "optimism",
@@ -17,6 +18,7 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",
     [NETWORK.polygon]: "Polygon",
+    [NETWORK.rinkeby]: "Rinkeby",
     // [NETWORK.arbitrum]: "Arbitrum",
     // [NETWORK.optimism]: "Optimism",
     [NETWORK.bsc]: "Binance Smart Chain",
@@ -28,6 +30,7 @@ const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj
 
 export const idToNetwork: Record<number, NetworkType> = {
     1: NETWORK.eth,
+    4: NETWORK.rinkeby,
     // 10: NETWORK.optimism,
     56: NETWORK.bsc,
     137: NETWORK.polygon,
@@ -43,6 +46,12 @@ const networkInfo = {
         chainName: "Ethereum Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.eth]),
         rpcUrls: ["https://rpc.ankr.com/eth"],
+    },
+    [NETWORK.rinkeby]: {
+        chainName: "Rinkeby",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.rinkeby]),
+        blockExplorerUrls: ["https://rinkeby.etherscan.io"],
+        rpcUrls: ["https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
     },
     // [NETWORK.optimism]: {
     //     chainName: "Optimism",

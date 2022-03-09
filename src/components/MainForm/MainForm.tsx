@@ -1,14 +1,30 @@
-import React, { ChangeEvent, useCallback, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Web3 from "web3";
+import Moralis from "moralis";
 import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
-import { useMoralis } from "react-moralis";
-import { changeNetworkAtMetamask, idToNetwork, networkNames } from "../../utils/network";
+import { useMoralis, useMoralisWeb3Api } from "react-moralis";
+import BN from "bignumber.js";
+
+import { changeNetworkAtMetamask, idToNetwork, NETWORK, networkNames, networkToId } from "../../utils/network";
+import { isAddress } from "../../utils/wallet";
+import { beautifyTokenBalance, fromHRToBN, TOKENS } from "../../utils/tokens";
+import { APPROVE_ABI } from "../../contracts/abi";
 
 import "./MainForm.scss";
-import { isAddress } from "../../utils/wallet";
-import { TOKENS } from "../../utils/tokens";
+import { generateUrl } from "../../utils/urlGenerator";
 
 interface MainFormProps {}
+
+type BalanceType = {
+    // eslint-disable-next-line camelcase
+    token_address: string;
+    name: string;
+    symbol: string;
+    logo?: string | undefined;
+    thumbnail?: string | undefined;
+    decimals: string;
+    balance: string;
+};
 
 const MainForm = () => {
     const { account, chainId: hexChainId } = useMoralis();
@@ -16,7 +32,25 @@ const MainForm = () => {
     const networkName = idToNetwork[chainId];
     const [toAddress, setToAddress] = useState<undefined | string>(undefined);
     const [value, setValue] = useState<undefined | number>(undefined);
-    const [selectedToken, setSelectedToken] = useState<undefined | string>(undefined);
+    const [selectedToken, setSelectedToken] = useState<undefined | string>(undefined); // address
+    const [balances, setBalances] = useState<BalanceType[]>([]);
+    const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
+    const Web3Api = useMoralisWeb3Api();
+
+    const availableTokens = TOKENS.filter((token) => token.platforms[networkName] !== undefined);
+
+    const onMount = async () => {
+        if (hexChainId) {
+            const options = { chain: hexChainId };
+            // @ts-ignore
+            const result = await Web3Api.account.getTokenBalances(options);
+            setBalances(result.sort((a, b) => (a.symbol > b.symbol ? 1 : -1)));
+        }
+    };
+
+    useEffect(() => {
+        onMount();
+    }, [hexChainId]);
 
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);
@@ -38,12 +72,25 @@ const MainForm = () => {
         setValue(+event.target.value);
     };
 
-    const handleApprove = () => {
-        console.log(toAddress, value);
+    const handleApprove = async () => {
+        const selectedTokenInfo = balances.find((v) => v.token_address === selectedToken);
+        if (selectedTokenInfo && value && toAddress) {
+            setGenUrl(undefined);
+            const contractAddress = selectedTokenInfo.token_address;
+            const valueBN = fromHRToBN(value, +selectedTokenInfo.decimals).toString();
+            const options = {
+                contractAddress,
+                functionName: "approve",
+                abi: APPROVE_ABI,
+                params: { _spender: toAddress, _value: valueBN },
+            };
+            const result = await Moralis.executeFunction(options);
+            setGenUrl(generateUrl(options.contractAddress, toAddress, valueBN));
+            console.log(result);
+        }
     };
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0;
-    const availableTokens = TOKENS.filter((token) => token.platforms[networkName] !== undefined);
 
     return (
         <div className="main-form">
@@ -67,9 +114,9 @@ const MainForm = () => {
             <FormControl className="main-form__token-form">
                 <InputLabel id="token-form-label">Token</InputLabel>
                 <Select labelId="token-form-label" value={selectedToken} label="Token" onChange={handleTokenChange}>
-                    {availableTokens.map((token) => (
-                        <MenuItem key={token.id} value={token.platforms[networkName]}>
-                            {token.symbol.toUpperCase()}
+                    {balances.map((token) => (
+                        <MenuItem key={token.token_address} value={token.token_address}>
+                            {token.symbol} ({beautifyTokenBalance(token.balance, +token.decimals)})
                         </MenuItem>
                     ))}
                 </Select>
@@ -87,6 +134,12 @@ const MainForm = () => {
             <Button variant="contained" onClick={handleApprove} className="main-form__button" disabled={!isCorrectData}>
                 Approve
             </Button>
+            {genUrl && (
+                <div className="main-form__url">
+                    <div>New URL:</div>
+                    <div>{genUrl}</div>
+                </div>
+            )}
         </div>
     );
 };

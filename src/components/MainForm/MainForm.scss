@@ -12,9 +12,20 @@
         margin: 20px 0;
     }
 
+    & &__token-balance {
+        color: rgba(0,0,0,0.6);
+        padding-top: 5px;
+    }
+
     & &__button {
         width: 250px;
         height: 50px;
         margin-bottom: 20px;
+    }
+
+    &__url {
+        padding-top: 20px;
+        max-width: 800px;
+        word-break: break-all;
     }
 }

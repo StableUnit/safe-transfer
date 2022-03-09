@@ -1,3 +1,4 @@
+import BN from "bignumber.js";
 import { NETWORK, NetworkType } from "./network";
 
 export const TOKENS_COINGECKO = [
@@ -59,6 +60,14 @@ export const TOKENS_COINGECKO = [
             sora: "0x0200060000000000000000000000000000000000000000000000000000000000",
         },
         symbol: "dai",
+    },
+    {
+        id: "tDai",
+        name: "tDai",
+        platforms: {
+            rinkeby: "0x0911e3Bbf1ee834269b4187FbAFD95a07AA4aeDa",
+        },
+        symbol: "tDai",
     },
     {
         id: "bnb",
@@ -126,6 +135,7 @@ export const TOKENS_COINGECKO = [
 export const TOKENS = TOKENS_COINGECKO.map((tokenInfo) => {
     const newPlatforms = {
         [NETWORK.eth]: tokenInfo.platforms.ethereum,
+        [NETWORK.rinkeby]: tokenInfo.platforms.rinkeby,
         [NETWORK.polygon]: tokenInfo.platforms["polygon-pos"],
         [NETWORK.bsc]: tokenInfo.platforms["binance-smart-chain"],
         [NETWORK.fantom]: tokenInfo.platforms.fantom,
@@ -137,3 +147,14 @@ export const TOKENS = TOKENS_COINGECKO.map((tokenInfo) => {
         platforms: newPlatforms,
     };
 });
+
+export const beautifyTokenBalance = (balance: string, decimals: number, fraction = 5) => {
+    const exp = 10 ** fraction;
+
+    return (+balance.slice(0, -decimals + fraction) / exp).toLocaleString(undefined, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: fraction,
+    });
+};
+
+export const fromHRToBN = (n: number, decimals: number) => new BN(n).multipliedBy(new BN(10).pow(decimals));
