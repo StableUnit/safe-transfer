@@ -36,7 +36,7 @@ const ApproveForm = () => {
 
     const onMount = async () => {
         if (hexChainId) {
-            const options = { chain: hexChainId };
+            const options = { chain: hexChainId, address: account };
             // @ts-ignore
             const result = await Web3Api.account.getTokenBalances(options);
             setBalances(result.sort((a, b) => (a.symbol > b.symbol ? 1 : -1)));
@@ -45,7 +45,7 @@ const ApproveForm = () => {
 
     useEffect(() => {
         onMount();
-    }, [hexChainId]);
+    }, [hexChainId, account]);
 
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);

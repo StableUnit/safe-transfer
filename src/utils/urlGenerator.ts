@@ -19,5 +19,9 @@ export const generateUrl = ({ address, from, to, value, chain }: TokenInfoType) 
 };
 
 export const decodeToken = (token: string) => {
-    return jwt.verify(token, SECRET_KEY) as TokenInfoType;
+    try {
+        return jwt.verify(token, SECRET_KEY) as TokenInfoType;
+    } catch (e) {
+        return undefined;
+    }
 };

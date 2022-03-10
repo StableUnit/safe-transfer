@@ -4,11 +4,14 @@ import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import Web3 from "web3";
 import BN from "bignumber.js";
 
+import Moralis from "moralis";
 import { idToNetwork } from "../../utils/network";
 import { decodeToken } from "../../utils/urlGenerator";
 import { toHRNumberFloat } from "../../utils/tokens";
 
 import "./TransferForm.scss";
+import { APPROVE_ABI, TRANSFER_FROM_ABI } from "../../contracts/abi";
+import { addErrorNotification } from "../../utils/notifications";
 
 interface TransferFormProps {
     token: string;
@@ -28,25 +31,55 @@ type TokenMetadataType = {
     validated?: string | undefined;
 };
 
-const TransferForm = ({ token }: TransferFormProps) => {
+const TransferForm = React.memo(({ token }: TransferFormProps) => {
     const { account, chainId: hexChainId } = useMoralis();
     const Web3Api = useMoralisWeb3Api();
     const [tokenMetadata, setTokenMetadata] = useState<undefined | TokenMetadataType>(undefined);
+    const [isTransferFetching, setIsTransferFetching] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
     const chainId = Web3.utils.hexToNumber(hexChainId ?? "");
     const networkName = idToNetwork[chainId];
     const tokenData = decodeToken(token);
 
     useEffect(() => {
-        const options = { chain: hexChainId, addresses: [tokenData.address] };
-        // @ts-ignore
-        Web3Api.token.getTokenMetadata(options).then((res) => {
-            setTokenMetadata(res?.[0]);
-        });
-    }, []);
+        if (tokenData) {
+            const options = { chain: hexChainId, addresses: [tokenData.address] };
+            // @ts-ignore
+            Web3Api.token.getTokenMetadata(options).then((res) => {
+                setTokenMetadata(res?.[0]);
+            });
+        }
+    }, [token, account]);
 
-    const handleTransfer = () => {
-        console.log(1);
+    const handleTransfer = async () => {
+        setIsTransferFetching(true);
+
+        try {
+            if (tokenData) {
+                const options = {
+                    contractAddress: tokenData.address,
+                    functionName: "transferFrom",
+                    abi: TRANSFER_FROM_ABI,
+                    params: { _from: tokenData.from, _to: tokenData.to, _value: tokenData.value },
+                };
+                await Moralis.executeFunction(options);
+                setIsSuccess(true);
+                setIsTransferFetching(false);
+            }
+        } catch (e) {
+            // @ts-ignore
+            addErrorNotification("TransferFrom Error", e.error.message);
+            setIsTransferFetching(false);
+        }
     };
+
+    if (isSuccess) {
+        return <div className="transfer-form">Thanks for using our safe-transfer app!</div>;
+    }
+
+    if (!tokenData) {
+        return <div className="transfer-form">Invalid token</div>;
+    }
 
     if (!account) {
         return <div className="transfer-form">Please connect your wallet</div>;
@@ -60,10 +93,18 @@ const TransferForm = ({ token }: TransferFormProps) => {
         return <div className="transfer-form">Please change network to {tokenData.chain}</div>;
     }
 
+    const hasAllData =
+        tokenData.chain &&
+        tokenData.from &&
+        tokenData.to &&
+        tokenData.address &&
+        tokenData.value?.length > 0 &&
+        tokenData.value !== "0";
+
     return (
         <div className="transfer-form">
             <div className="transfer-form__title">You are able to receive:</div>
-            {tokenMetadata && (
+            {tokenMetadata && tokenData && (
                 <>
                     <List className="transfer-form__info" component="nav" aria-label="mailbox folders">
                         <ListItem button divider>
@@ -86,13 +127,18 @@ const TransferForm = ({ token }: TransferFormProps) => {
                             />
                         </ListItem>
                     </List>
-                    <Button variant="contained" onClick={handleTransfer} className="transfer-form__button">
+                    <Button
+                        variant="contained"
+                        onClick={handleTransfer}
+                        className="transfer-form__button"
+                        disabled={!hasAllData || isTransferFetching}
+                    >
                         Receive
                     </Button>
                 </>
             )}
         </div>
     );
-};
+});
 
 export default TransferForm;
