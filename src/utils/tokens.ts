@@ -158,3 +158,6 @@ export const beautifyTokenBalance = (balance: string, decimals: number, fraction
 };
 
 export const fromHRToBN = (n: number, decimals: number) => new BN(n).multipliedBy(new BN(10).pow(decimals));
+
+export const toHRNumber = (bn: BN, decimal = 0) => bn.div(new BN(10).pow(new BN(decimal))).toNumber();
+export const toHRNumberFloat = (bn: BN, decimal = 0) => toHRNumber(bn.multipliedBy(1000), decimal) / 1000;
