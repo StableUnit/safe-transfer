@@ -12,6 +12,8 @@ import { toHRNumberFloat } from "../../utils/tokens";
 import "./TransferForm.scss";
 import { APPROVE_ABI, TRANSFER_FROM_ABI } from "../../contracts/abi";
 import { addErrorNotification } from "../../utils/notifications";
+import { BackButton } from "./supportComponents/BackButton";
+import { BackButtonContainer } from "./supportComponents/BackButtonContainer";
 
 interface TransferFormProps {
     token: string;
@@ -75,23 +77,23 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
     };
 
     if (isSuccess) {
-        return <div className="transfer-form">Thanks for using our safe-transfer app!</div>;
+        return <BackButtonContainer>Thanks for using our safe-transfer app!</BackButtonContainer>;
     }
 
     if (!tokenData) {
-        return <div className="transfer-form">Invalid token</div>;
+        return <BackButtonContainer>Invalid token</BackButtonContainer>;
     }
 
     if (!account) {
-        return <div className="transfer-form">Please connect your wallet</div>;
+        return <BackButtonContainer>Please connect your wallet</BackButtonContainer>;
     }
 
     if (tokenData.to.toLowerCase() !== account.toLowerCase()) {
-        return <div className="transfer-form">Please change account to {tokenData.to}</div>;
+        return <BackButtonContainer>Please change account to {tokenData.to}</BackButtonContainer>;
     }
 
     if (tokenData.chain !== networkName) {
-        return <div className="transfer-form">Please change network to {tokenData.chain}</div>;
+        return <BackButtonContainer>Please change network to {tokenData.chain}</BackButtonContainer>;
     }
 
     const hasAllData =
@@ -103,7 +105,7 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
         tokenData.value !== "0";
 
     return (
-        <div className="transfer-form">
+        <BackButtonContainer>
             <div className="transfer-form__title">You are able to receive:</div>
             {tokenMetadata && tokenData && (
                 <>
@@ -138,7 +140,7 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
                     </Button>
                 </>
             )}
-        </div>
+        </BackButtonContainer>
     );
 });
 
