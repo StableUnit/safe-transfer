@@ -67,8 +67,9 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
                 setIsTransferFetching(false);
             }
         } catch (e) {
+            console.error(e);
             // @ts-ignore
-            addErrorNotification("TransferFrom Error", e.error.message);
+            addErrorNotification("TransferFrom Error", e?.error?.message);
             setIsTransferFetching(false);
         }
     };
