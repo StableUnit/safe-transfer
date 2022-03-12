@@ -1,5 +1,8 @@
 .App {
-    margin: 70px 0;
+    padding-top: 120px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    position: relative;
 
     &__container {
         width: 100%;

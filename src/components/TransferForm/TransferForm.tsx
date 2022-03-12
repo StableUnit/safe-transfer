@@ -5,13 +5,13 @@ import Web3 from "web3";
 import BN from "bignumber.js";
 
 import Moralis from "moralis";
-import { idToNetwork } from "../../utils/network";
+import { getTrxHashLink, idToNetwork } from "../../utils/network";
 import { decodeToken } from "../../utils/urlGenerator";
 import { toHRNumberFloat } from "../../utils/tokens";
 
 import "./TransferForm.scss";
 import { APPROVE_ABI, TRANSFER_FROM_ABI } from "../../contracts/abi";
-import { addErrorNotification } from "../../utils/notifications";
+import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
 import { BackButton } from "./supportComponents/BackButton";
 import { BackButtonContainer } from "./supportComponents/BackButtonContainer";
 
@@ -39,6 +39,7 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
     const [tokenMetadata, setTokenMetadata] = useState<undefined | TokenMetadataType>(undefined);
     const [isTransferFetching, setIsTransferFetching] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [trxHash, setTrxHash] = useState("");
     const chainId = Web3.utils.hexToNumber(hexChainId ?? "");
     const networkName = idToNetwork[chainId];
     const tokenData = decodeToken(token);
@@ -64,7 +65,11 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
                     abi: TRANSFER_FROM_ABI,
                     params: { _from: tokenData.from, _to: tokenData.to, _value: tokenData.value },
                 };
-                await Moralis.executeFunction(options);
+                const transaction = await Moralis.executeFunction(options);
+                setTrxHash(transaction.hash);
+                // @ts-ignore
+                await transaction.wait();
+                addSuccessNotification("Success", "Transfer from transaction completed");
                 setIsSuccess(true);
                 setIsTransferFetching(false);
             }
@@ -77,7 +82,19 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
     };
 
     if (isSuccess) {
-        return <BackButtonContainer>Thanks for using our safe-transfer app!</BackButtonContainer>;
+        return (
+            <BackButtonContainer>
+                <div>Thanks for using our safe-transfer app!</div>
+                {trxHash && (
+                    <div className="transfer-form__hash">
+                        Your transaction hash:{" "}
+                        <a href={getTrxHashLink(trxHash, networkName)} target="_blank" rel="noreferrer">
+                            {trxHash}
+                        </a>
+                    </div>
+                )}
+            </BackButtonContainer>
+        );
     }
 
     if (!tokenData) {
@@ -136,8 +153,16 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
                         className="transfer-form__button"
                         disabled={!hasAllData || isTransferFetching}
                     >
-                        Receive
+                        {isTransferFetching ? "Loading..." : "Receive"}
                     </Button>
+                    {trxHash && (
+                        <div className="transfer-form__hash">
+                            Your transaction hash:{" "}
+                            <a href={getTrxHashLink(trxHash, networkName)} target="_blank" rel="noreferrer">
+                                {trxHash}
+                            </a>
+                        </div>
+                    )}
                 </>
             )}
         </BackButtonContainer>

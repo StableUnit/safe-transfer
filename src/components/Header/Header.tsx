@@ -15,6 +15,11 @@ const Header = ({ onWalletConnect, onMetamaskConnect, onDisconnect }: NavbarProp
 
     return (
         <div className="header">
+            <div className="header__logo">
+                <a href="https://stableunit.org/" target="_blank" rel="noreferrer">
+                    <img src="https://stableunit.org/assets/img/logo.svg" />
+                </a>
+            </div>
             {account ? (
                 <div className="header__address-container">
                     <div className="header__address">{getShortAddress(account)}</div>

@@ -8,6 +8,7 @@ import ApproveForm from "../ApproveForm/ApproveForm";
 import TransferForm from "../TransferForm/TransferForm";
 
 import "./App.scss";
+import { Footer } from "../Footer/Footer";
 
 const DEFAULT_CHAIN_ID = 1;
 
@@ -38,7 +39,7 @@ const App = () => {
 
     useEffect(() => {
         if (!isWeb3Enabled && isAuthenticated) {
-            enableWeb3({ provider: "walletconnect", chainId: DEFAULT_CHAIN_ID });
+            enableWeb3({ chainId: DEFAULT_CHAIN_ID });
         }
     }, [isWeb3Enabled, isAuthenticated, enableWeb3]);
 
@@ -54,6 +55,7 @@ const App = () => {
                 <Instructions />
                 {token ? <TransferForm token={token} /> : <ApproveForm />}
             </div>
+            <Footer />
         </div>
     );
 };
