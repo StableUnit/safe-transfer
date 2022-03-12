@@ -1,16 +1,27 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Web3 from "web3";
 import Moralis from "moralis";
-import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import {
+    Button,
+    FormControl,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+    TextField,
+} from "@mui/material";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
-import { changeNetworkAtMetamask, idToNetwork, networkNames } from "../../utils/network";
+import { changeNetworkAtMetamask, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
 import { isAddress } from "../../utils/wallet";
 import { beautifyTokenBalance, fromHRToBN } from "../../utils/tokens";
 import { APPROVE_ABI } from "../../contracts/abi";
 import { generateUrl } from "../../utils/urlGenerator";
 
 import "./ApproveForm.scss";
+import { addSuccessNotification } from "../../utils/notifications";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -30,6 +41,9 @@ const ApproveForm = () => {
     const [toAddress, setToAddress] = useState<undefined | string>(undefined);
     const [value, setValue] = useState<undefined | number>(undefined);
     const [selectedToken, setSelectedToken] = useState<undefined | string>(undefined); // address
+    const [isApproveLoading, setIsApproveLoading] = useState(false);
+    const [trxHash, setTrxHash] = useState("");
+    const [trxLink, setTrxLink] = useState("");
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
     const Web3Api = useMoralisWeb3Api();
@@ -67,10 +81,20 @@ const ApproveForm = () => {
         setValue(+event.target.value);
     };
 
+    const handleCopyGenUrl = () => {
+        if (genUrl) {
+            navigator.clipboard.writeText(genUrl);
+            addSuccessNotification("Copied", undefined, true);
+        }
+    };
+
     const handleApprove = async () => {
         const selectedTokenInfo = balances.find((v) => v.token_address === selectedToken);
         if (selectedTokenInfo && value && toAddress) {
             setGenUrl(undefined);
+            setTrxHash("");
+            setTrxLink("");
+            setIsApproveLoading(true);
             const contractAddress = selectedTokenInfo.token_address;
             const valueBN = fromHRToBN(value, +selectedTokenInfo.decimals).toString();
             const options = {
@@ -79,7 +103,13 @@ const ApproveForm = () => {
                 abi: APPROVE_ABI,
                 params: { _spender: toAddress, _value: valueBN },
             };
-            await Moralis.executeFunction(options);
+            const transaction = await Moralis.executeFunction(options);
+            setTrxHash(transaction.hash);
+            setTrxLink(getTrxHashLink(transaction.hash, networkName));
+            // @ts-ignore
+            await transaction.wait();
+            addSuccessNotification("Success", "Approve transaction completed");
+            setIsApproveLoading(false);
             setGenUrl(
                 generateUrl({
                     address: options.contractAddress,
@@ -109,12 +139,12 @@ const ApproveForm = () => {
             <TextField
                 id="address"
                 className="approve-form__address"
-                label="Address"
+                label="Recipient address"
                 variant="outlined"
                 onChange={handleAddressChange}
             />
             <FormControl className="approve-form__token-form">
-                <InputLabel id="token-form-label">Token</InputLabel>
+                <InputLabel id="token-form-label">Token to spend</InputLabel>
                 <Select labelId="token-form-label" value={selectedToken} label="Token" onChange={handleTokenChange}>
                     {balances.map((token) => (
                         <MenuItem key={token.token_address} value={token.token_address}>
@@ -126,7 +156,7 @@ const ApproveForm = () => {
             <TextField
                 id="value"
                 className="approve-form__value"
-                label="Value"
+                label="Amount"
                 type="number"
                 onChange={handleValueChange}
                 InputLabelProps={{
@@ -137,14 +167,27 @@ const ApproveForm = () => {
                 variant="contained"
                 onClick={handleApprove}
                 className="approve-form__button"
-                disabled={!isCorrectData}
+                disabled={!isCorrectData || isApproveLoading}
             >
-                Approve
+                {isApproveLoading ? "Loading..." : "Approve"}
             </Button>
+            {trxHash && (
+                <div className="approve-form__hash">
+                    Your transaction hash:{" "}
+                    <a href={trxLink} target="_blank" rel="noreferrer">
+                        {trxHash}
+                    </a>
+                </div>
+            )}
             {genUrl && (
                 <div className="approve-form__url">
                     <div>New URL:</div>
-                    <div>{genUrl}</div>
+                    <div>
+                        {genUrl}
+                        <IconButton aria-label="copy" onClick={handleCopyGenUrl}>
+                            <ContentCopyIcon />
+                        </IconButton>
+                    </div>
                 </div>
             )}
         </div>

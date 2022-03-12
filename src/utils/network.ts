@@ -45,6 +45,7 @@ const networkInfo = {
     [NETWORK.eth]: {
         chainName: "Ethereum Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.eth]),
+        blockExplorerUrls: ["https://etherscan.io"],
         rpcUrls: ["https://rpc.ankr.com/eth"],
     },
     [NETWORK.rinkeby]: {
@@ -142,3 +143,6 @@ export const changeNetworkAtMetamask = async (networkName: number) => {
         }
     }
 };
+
+export const getTrxHashLink = (hash: string, chain: NetworkType) =>
+    `${networkInfo[chain].blockExplorerUrls}/tx/${hash}`;
