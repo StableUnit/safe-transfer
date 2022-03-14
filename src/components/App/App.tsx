@@ -50,7 +50,7 @@ const App = () => {
                 onDisconnect={onDisconnect}
             />
             <div className="App__container">
-                <YoutubeEmbed embedId="qx3rxGSVBDM" />
+                <YoutubeEmbed embedId="irkIfWLcc1o" />
                 <Instructions />
                 {token ? <TransferForm token={token} /> : <ApproveForm />}
             </div>
