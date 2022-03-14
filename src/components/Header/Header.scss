@@ -11,12 +11,19 @@
     left: 0;
     background: rgb(32, 32, 33);
     mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), transparent 100%);
-
     transition: mask-position 200ms, -webkit-mask-position 200ms;
+
+    @media screen and (max-width: 600px) {
+        padding: 0 0 10px 0;
+    }
 
     &__logo {
         position: absolute;
         left: 40px;
+
+        @media screen and (max-width: 600px) {
+            left: 24px;
+        }
     }
 
     &__address {

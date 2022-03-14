@@ -28,13 +28,12 @@ const App = () => {
     const onWalletConnect = async () => {
         authenticate({
             provider: "walletconnect",
-            chainId: DEFAULT_CHAIN_ID,
-            signingMessage: "Welcome!",
         });
     };
 
     const onMetamaskConnect = () => {
-        authenticate();
+        // authenticate();
+        enableWeb3();
     };
 
     useEffect(() => {

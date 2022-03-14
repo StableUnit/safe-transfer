@@ -11,6 +11,10 @@
     & &__value {
         width: 400px;
         margin: 20px 0;
+
+        @media screen and (max-width: 600px) {
+            width: 340px;
+        }
     }
 
     & &__token-balance {
