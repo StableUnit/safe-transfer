@@ -10,7 +10,7 @@ import TransferForm from "../TransferForm/TransferForm";
 import "./App.scss";
 import { Footer } from "../Footer/Footer";
 
-const DEFAULT_CHAIN_ID = 1;
+const DEFAULT_CHAIN_ID = 137;
 
 const App = () => {
     const { logout, authenticate, isWeb3Enabled, isAuthenticated, enableWeb3 } = useMoralis();
@@ -33,7 +33,7 @@ const App = () => {
 
     const onMetamaskConnect = () => {
         // authenticate();
-        enableWeb3();
+        enableWeb3({ chainId: DEFAULT_CHAIN_ID });
     };
 
     useEffect(() => {
