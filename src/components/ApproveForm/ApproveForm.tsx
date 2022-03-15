@@ -136,13 +136,6 @@ const ApproveForm = () => {
                     ))}
                 </Select>
             </FormControl>
-            <TextField
-                id="address"
-                className="approve-form__address"
-                label="Recipient address"
-                variant="outlined"
-                onChange={handleAddressChange}
-            />
             <FormControl className="approve-form__token-form">
                 <InputLabel id="token-form-label">Token to spend</InputLabel>
                 <Select labelId="token-form-label" value={selectedToken} label="Token" onChange={handleTokenChange}>
@@ -153,6 +146,13 @@ const ApproveForm = () => {
                     ))}
                 </Select>
             </FormControl>
+            <TextField
+                id="address"
+                className="approve-form__address"
+                label="Recipient address"
+                variant="outlined"
+                onChange={handleAddressChange}
+            />
             <TextField
                 id="value"
                 className="approve-form__value"
