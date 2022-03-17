@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, List, ListItem, ListItemText } from "@mui/material";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import Web3 from "web3";
-import BN from "bignumber.js";
+import BN from "bn.js";
 
 import Moralis from "moralis";
 import { getTrxHashLink, idToNetwork } from "../../utils/network";
@@ -10,9 +10,8 @@ import { decodeToken } from "../../utils/urlGenerator";
 import { toHRNumberFloat } from "../../utils/tokens";
 
 import "./TransferForm.scss";
-import { APPROVE_ABI, TRANSFER_FROM_ABI } from "../../contracts/abi";
+import { TRANSFER_FROM_ABI } from "../../contracts/abi";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
-import { BackButton } from "./supportComponents/BackButton";
 import { BackButtonContainer } from "./supportComponents/BackButtonContainer";
 
 interface TransferFormProps {

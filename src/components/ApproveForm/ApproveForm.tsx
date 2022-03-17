@@ -122,7 +122,7 @@ const ApproveForm = () => {
         }
     };
 
-    const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0;
+    const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
 
     return (
         <div className="approve-form">
