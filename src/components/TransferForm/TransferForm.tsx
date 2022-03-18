@@ -44,7 +44,7 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
     const tokenData = decodeToken(token);
 
     useEffect(() => {
-        if (tokenData) {
+        if (tokenData && hexChainId) {
             const options = { chain: hexChainId, addresses: [tokenData.address] };
             // @ts-ignore
             Web3Api.token.getTokenMetadata(options).then((res) => {
@@ -120,10 +120,14 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
         tokenData.value?.length > 0 &&
         tokenData.value !== "0";
 
+    const value = tokenMetadata
+        ? `${toHRNumberFloat(new BN(tokenData.value), +tokenMetadata.decimals)} ${tokenMetadata.symbol}`
+        : tokenData.value;
+
     return (
         <BackButtonContainer>
             <div className="transfer-form__title">You are able to receive:</div>
-            {tokenMetadata && tokenData && (
+            {tokenData && (
                 <>
                     <List className="transfer-form__info" component="nav" aria-label="mailbox folders">
                         <ListItem button divider>
@@ -139,11 +143,7 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
                             <ListItemText primary={`Token address: ${tokenData.address}`} />
                         </ListItem>
                         <ListItem button>
-                            <ListItemText
-                                primary={`Value: ${toHRNumberFloat(new BN(tokenData.value), +tokenMetadata.decimals)} ${
-                                    tokenMetadata.symbol
-                                }`}
-                            />
+                            <ListItemText primary={`Value: ${value}`} />
                         </ListItem>
                     </List>
                     <Button
