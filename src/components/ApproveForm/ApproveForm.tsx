@@ -183,7 +183,7 @@ const ApproveForm = () => {
                 <div className="approve-form__url">
                     <div>New URL:</div>
                     <div>
-                        {genUrl}
+                        <span id="generated-url">{genUrl}</span>
                         <IconButton aria-label="copy" onClick={handleCopyGenUrl}>
                             <ContentCopyIcon />
                         </IconButton>

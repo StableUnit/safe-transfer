@@ -16,5 +16,17 @@
         "noEmit": true,
         "jsx": "react-jsx"
     },
-    "include": ["src"]
+    "ts-node": {
+        "compilerOptions": {
+            "target": "es2015",
+            "module": "commonjs",
+            "moduleResolution": "node",
+            "lib": ["es2017", "dom"],
+            "typeRoots": ["./node_modules/@types", "./types"],
+            "declaration": true,
+            "esModuleInterop": true,
+            "outDir": "dist"
+        }
+    },
+    "include": ["src", "test/*.ts"]
 }
