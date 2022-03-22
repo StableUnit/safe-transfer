@@ -83,7 +83,7 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
     if (isSuccess) {
         return (
             <BackButtonContainer>
-                <div>Thanks for using our safe-transfer app!</div>
+                <div id="thanks">Thanks for using our safe-transfer app!</div>
                 {trxHash && (
                     <div className="transfer-form__hash">
                         Your transaction hash:{" "}
@@ -131,19 +131,19 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
                 <>
                     <List className="transfer-form__info" component="nav" aria-label="mailbox folders">
                         <ListItem button divider>
-                            <ListItemText primary={`Network: ${networkName}`} />
+                            <ListItemText id="network" primary={`Network: ${networkName}`} />
                         </ListItem>
                         <ListItem button divider>
-                            <ListItemText primary={`From: ${tokenData.from}`} />
+                            <ListItemText id="from" primary={`From: ${tokenData.from}`} />
                         </ListItem>
                         <ListItem button divider>
-                            <ListItemText primary={`To: ${tokenData.to}`} />
+                            <ListItemText id="to" primary={`To: ${tokenData.to}`} />
                         </ListItem>
                         <ListItem button divider>
-                            <ListItemText primary={`Token address: ${tokenData.address}`} />
+                            <ListItemText id="tokenAddress" primary={`Token address: ${tokenData.address}`} />
                         </ListItem>
                         <ListItem button>
-                            <ListItemText primary={`Value: ${value}`} />
+                            <ListItemText id="value" primary={`Value: ${value}`} />
                         </ListItem>
                     </List>
                     <Button

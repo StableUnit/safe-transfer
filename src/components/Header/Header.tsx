@@ -23,16 +23,16 @@ const Header = ({ onWalletConnect, onMetamaskConnect, onDisconnect }: NavbarProp
             {account ? (
                 <div className="header__address-container">
                     <div className="header__address">{getShortAddress(account)}</div>
-                    <div className="header__button" onClick={onDisconnect}>
+                    <div className="header__button" onClick={onDisconnect} id="disconnect-button">
                         Disconnect
                     </div>
                 </div>
             ) : (
                 <div className="header__buttons">
-                    <div className="header__button" onClick={onMetamaskConnect}>
+                    <div className="header__button" onClick={onMetamaskConnect} id="connect-button-metamask">
                         Sign in using Metamask
                     </div>
-                    <div className="header__button" onClick={onWalletConnect}>
+                    <div className="header__button" onClick={onWalletConnect} id="connect-button-wallet-connect">
                         Sign in using Wallet Connect
                     </div>
                 </div>
