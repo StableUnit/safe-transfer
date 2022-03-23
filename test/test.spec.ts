@@ -73,8 +73,8 @@ describe("dappeteer", () => {
         await clickElement(testPage, ".approve-form__button");
 
         await metamask.confirmTransaction();
-        await delay(2000);
-        await metamask.page.click(".btn-primary");
+        await delay(3000);
+        await clickElement(metamask.page, ".btn-primary");
         await testPage.bringToFront();
         await testPage.waitForSelector("#generated-url");
         generatedUrl = await getText(testPage, "#generated-url");
