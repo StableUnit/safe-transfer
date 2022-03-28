@@ -1,27 +1,22 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Web3 from "web3";
 import Moralis from "moralis";
-import {
-    Button,
-    FormControl,
-    IconButton,
-    InputLabel,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
-    TextField,
-} from "@mui/material";
+import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import cn from "classnames";
 
 import { changeNetworkAtMetamask, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
 import { isAddress } from "../../utils/wallet";
 import { beautifyTokenBalance, fromHRToBN } from "../../utils/tokens";
 import { APPROVE_ABI } from "../../contracts/abi";
-import { generateUrl } from "../../utils/urlGenerator";
+import { generateUrl, getShortHash, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
+import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
+import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
+import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
+import Button from "../../ui-kit/components/Button/Button";
+import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
 
 import "./ApproveForm.scss";
-import { addSuccessNotification } from "../../utils/notifications";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -34,7 +29,12 @@ type BalanceType = {
     balance: string;
 };
 
-const ApproveForm = () => {
+interface ApproveFormProps {
+    onMetamaskConnect?: () => void;
+    onWalletConnect?: () => void;
+}
+
+const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) => {
     const { account, chainId: hexChainId } = useMoralis();
     const chainId = Web3.utils.hexToNumber(hexChainId ?? "");
     const networkName = idToNetwork[chainId];
@@ -44,6 +44,8 @@ const ApproveForm = () => {
     const [isApproveLoading, setIsApproveLoading] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [trxLink, setTrxLink] = useState("");
+    const [restoreHash, setRestoreHash] = useState<undefined | string>(undefined);
+    const [isRestoreLoading, setIsRestoreLoading] = useState(false);
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
     const Web3Api = useMoralisWeb3Api();
@@ -65,10 +67,6 @@ const ApproveForm = () => {
         changeNetworkAtMetamask(event.target.value);
     }, []);
 
-    if (!account) {
-        return <div className="approve-form">Please connect your wallet</div>;
-    }
-
     const handleAddressChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setToAddress(event.target.value);
     };
@@ -81,115 +79,257 @@ const ApproveForm = () => {
         setValue(+event.target.value);
     };
 
-    const handleCopyGenUrl = () => {
-        if (genUrl) {
-            navigator.clipboard.writeText(genUrl);
-            addSuccessNotification("Copied", undefined, true);
-        }
+    const handleRestoreHashChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setRestoreHash(event.target.value);
     };
 
-    const handleApprove = async () => {
-        const selectedTokenInfo = balances.find((v) => v.token_address === selectedToken);
-        if (selectedTokenInfo && value && toAddress) {
-            setGenUrl(undefined);
-            setTrxHash("");
-            setTrxLink("");
-            setIsApproveLoading(true);
-            const contractAddress = selectedTokenInfo.token_address;
-            const valueBN = fromHRToBN(value, +selectedTokenInfo.decimals).toString();
+    const handleRestore = async () => {
+        try {
             const options = {
-                contractAddress,
-                functionName: "approve",
-                abi: APPROVE_ABI,
-                params: { _spender: toAddress, _value: valueBN },
+                chain: networkName,
+                transaction_hash: restoreHash ?? "",
             };
-            const transaction = await Moralis.executeFunction(options);
-            setTrxHash(transaction.hash);
-            setTrxLink(getTrxHashLink(transaction.hash, networkName));
-            // @ts-ignore
-            await transaction.wait();
-            addSuccessNotification("Success", "Approve transaction completed");
-            setIsApproveLoading(false);
+            setIsRestoreLoading(true);
+            const transaction = await Web3Api.native.getTransaction(options);
+            if (!transaction) {
+                addErrorNotification("Error", "Can't get transaction");
+                setIsRestoreLoading(false);
+                return;
+            }
+            const valueBN = Web3.utils.hexToNumberString(transaction.logs[0].data);
+            const to = `0x${transaction.logs[0].topic2?.slice(-40)}`;
             setGenUrl(
                 generateUrl({
-                    address: options.contractAddress,
-                    from: account,
-                    to: toAddress,
+                    address: transaction.to_address,
+                    from: transaction.from_address,
+                    to,
                     value: valueBN,
                     chain: networkName,
                 })
             );
+            setIsRestoreLoading(false);
+        } catch (e) {
+            setIsRestoreLoading(false);
+            console.error(e);
+            addErrorNotification("Error", "Restore transaction failed");
+        }
+    };
+
+    const onSuccessApprove = (selectedTokenInfo: BalanceType) => {
+        const valueBN = fromHRToBN(value ?? 0, +selectedTokenInfo.decimals).toString();
+
+        addSuccessNotification("Success", "Approve transaction completed");
+        setIsApproveLoading(false);
+        setGenUrl(
+            generateUrl({
+                address: selectedTokenInfo?.token_address,
+                from: account ?? "",
+                to: toAddress ?? "",
+                value: valueBN,
+                chain: networkName,
+            })
+        );
+    };
+
+    const handleApprove = async () => {
+        const selectedTokenInfo = balances.find((v) => v.token_address === selectedToken);
+        if (selectedTokenInfo && value && toAddress && account) {
+            try {
+                setGenUrl(undefined);
+                setTrxHash("");
+                setTrxLink("");
+                setIsApproveLoading(true);
+                const contractAddress = selectedTokenInfo.token_address;
+                const valueBN = fromHRToBN(value, +selectedTokenInfo.decimals).toString();
+                const options = {
+                    contractAddress,
+                    functionName: "approve",
+                    abi: APPROVE_ABI,
+                    params: { _spender: toAddress, _value: valueBN },
+                };
+                const transaction = await Moralis.executeFunction(options);
+                setTrxHash(transaction.hash);
+                setTrxLink(getTrxHashLink(transaction.hash, networkName));
+                // @ts-ignore
+                await transaction.wait();
+                onSuccessApprove(selectedTokenInfo);
+            } catch (e) {
+                // @ts-ignore
+                const replacementHash = e?.replacement?.hash;
+                if (replacementHash) {
+                    setTrxHash(replacementHash);
+                    setTrxLink(getTrxHashLink(replacementHash, networkName));
+                    onSuccessApprove(selectedTokenInfo);
+                } else {
+                    console.error(e);
+                    addErrorNotification("Error", "Approve transaction failed");
+                    setIsApproveLoading(false);
+                }
+            }
         }
     };
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
+    const currentToken = balances.find((v) => v.token_address === selectedToken);
+    const currentTokenBalance = currentToken ? beautifyTokenBalance(currentToken.balance, +currentToken.decimals) : 0;
+
+    const handleMaxClick = () => {
+        setValue(+currentTokenBalance);
+    };
 
     return (
-        <div className="approve-form">
-            <FormControl className="approve-form__network-form">
-                <InputLabel id="network-form-label">Network</InputLabel>
-                <Select labelId="network-form-label" value={networkName} label="Network" onChange={handleNetworkChange}>
-                    {Object.entries(networkNames).map(([id, name]) => (
-                        <MenuItem key={id} value={id}>
-                            {name}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-            <FormControl className="approve-form__token-form">
-                <InputLabel id="token-form-label">Token to spend</InputLabel>
-                <Select labelId="token-form-label" value={selectedToken} label="Token" onChange={handleTokenChange}>
-                    {balances.map((token) => (
-                        <MenuItem key={token.token_address} value={token.token_address}>
-                            {token.symbol} ({beautifyTokenBalance(token.balance, +token.decimals)})
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-            <TextField
-                id="address"
-                className="approve-form__address"
-                label="Recipient address"
-                variant="outlined"
-                onChange={handleAddressChange}
-            />
-            <TextField
-                id="value"
-                className="approve-form__value"
-                label="Amount"
-                type="number"
-                onChange={handleValueChange}
-                InputLabelProps={{
-                    shrink: true,
-                }}
-            />
-            <Button
-                variant="contained"
-                onClick={handleApprove}
-                className="approve-form__button"
-                disabled={!isCorrectData || isApproveLoading}
-            >
-                {isApproveLoading ? "Loading..." : "Approve"}
-            </Button>
+        <div className="approve-form__container">
+            <div className={cn("approve-form", { "approve-form--disabled": !account })}>
+                <div className="approve-form__title">Send</div>
+
+                <div className="approve-form__content">
+                    <div className="approve-form__label">Network</div>
+                    <FormControl className="approve-form__network-form">
+                        <Select
+                            value={networkName || "placeholder-value"}
+                            onChange={handleNetworkChange}
+                            inputProps={{ "aria-label": "Without label" }}
+                            IconComponent={ArrowDownIcon}
+                            MenuProps={{ classes: { paper: "approve-form__paper", list: "approve-form__list" } }}
+                        >
+                            <MenuItem disabled value="placeholder-value">
+                                <NetworkImage />
+                                Select network
+                            </MenuItem>
+                            {Object.entries(networkNames).map(([id, name]) => (
+                                <MenuItem key={id} value={id}>
+                                    <NetworkImage network={id} />
+                                    {name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
+                    <div className="approve-form__label">Recipient address</div>
+                    <TextField
+                        id="address"
+                        className="approve-form__address"
+                        placeholder="Paste address here ..."
+                        variant="outlined"
+                        onChange={handleAddressChange}
+                    />
+
+                    <div className="approve-form__content__line">
+                        <div className="approve-form__label">Balance: {currentTokenBalance}</div>
+                        <div className="approve-form__max-button" onClick={handleMaxClick}>
+                            MAX
+                        </div>
+                    </div>
+
+                    <div className="approve-form__content__line">
+                        <FormControl className="approve-form__token-form">
+                            <Select
+                                value={selectedToken || "placeholder-value"}
+                                onChange={handleTokenChange}
+                                inputProps={{ "aria-label": "Without label" }}
+                                IconComponent={ArrowDownIcon}
+                                MenuProps={{
+                                    classes: {
+                                        root: "approve-form__token-dropdown",
+                                        paper: "approve-form__paper",
+                                        list: "approve-form__list",
+                                    },
+                                }}
+                            >
+                                <MenuItem disabled value="placeholder-value">
+                                    Select token
+                                </MenuItem>
+                                {balances.map((token) => (
+                                    <MenuItem key={token.token_address} value={token.token_address}>
+                                        <div>{token.symbol}</div>
+                                        <div className="approve-form__token-form__balance">
+                                            {beautifyTokenBalance(token.balance, +token.decimals)}
+                                        </div>
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+                        <TextField
+                            id="value"
+                            className="approve-form__value"
+                            placeholder="0.00"
+                            type="number"
+                            onChange={handleValueChange}
+                            value={value}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </div>
+                </div>
+
+                {account ? (
+                    <Button
+                        onClick={handleApprove}
+                        className="approve-form__button"
+                        disabled={!isCorrectData || isApproveLoading}
+                    >
+                        {isApproveLoading ? "Loading..." : "Approve"}
+                    </Button>
+                ) : (
+                    <>
+                        <Button onClick={onWalletConnect} className="approve-form__button__wc">
+                            CONNECT WALLET
+                        </Button>
+                        <Button onClick={onMetamaskConnect} className="approve-form__button__metamask">
+                            CONNECT WALLET
+                        </Button>
+                    </>
+                )}
+            </div>
             {trxHash && (
                 <div className="approve-form__hash">
-                    Your transaction hash:{" "}
-                    <a href={trxLink} target="_blank" rel="noreferrer">
-                        {trxHash}
-                    </a>
+                    <div className="approve-form__hash__text">
+                        <div>Hash:&nbsp;&nbsp;</div>
+                        <div id="generated-url">
+                            <a href={trxLink} target="_blank" rel="noreferrer">
+                                {getShortHash(trxHash)}
+                            </a>
+                        </div>
+                    </div>
+                    <IconButton aria-label="copy" onClick={handleCopyUrl(trxHash)}>
+                        <ContentCopyIcon />
+                    </IconButton>
                 </div>
             )}
             {genUrl && (
                 <div className="approve-form__url">
-                    <div>New URL:</div>
-                    <div>
-                        <span id="generated-url">{genUrl}</span>
-                        <IconButton aria-label="copy" onClick={handleCopyGenUrl}>
-                            <ContentCopyIcon />
-                        </IconButton>
+                    <div className="approve-form__url__text">
+                        <div>Link to receive:&nbsp;&nbsp;</div>
+                        <a href={genUrl} target="_blank" rel="noreferrer">
+                            {getShortUrl(genUrl)}
+                        </a>
                     </div>
+                    <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
+                        <ContentCopyIcon />
+                    </IconButton>
                 </div>
             )}
+            <div className="approve-form">
+                <div className="approve-form__restore">
+                    <div>Restore link by Approve transaction hash</div>
+                    <TextField
+                        id="address"
+                        className="approve-form__restore__input"
+                        placeholder="Paste transaction hash here ..."
+                        variant="outlined"
+                        onChange={handleRestoreHashChange}
+                    />
+                    <Button
+                        onClick={handleRestore}
+                        className="approve-form__button"
+                        disabled={isRestoreLoading || !account}
+                    >
+                        {isRestoreLoading ? "Loading..." : "Restore"}
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 };

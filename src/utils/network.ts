@@ -146,3 +146,6 @@ export const changeNetworkAtMetamask = async (networkName: number) => {
 
 export const getTrxHashLink = (hash: string, chain: NetworkType) =>
     `${networkInfo[chain].blockExplorerUrls}/tx/${hash}`;
+
+export const getAddressLink = (address: string, chain: NetworkType) =>
+    `${networkInfo[chain].blockExplorerUrls}/token/${address}`;

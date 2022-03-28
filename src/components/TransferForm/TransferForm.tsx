@@ -1,21 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Button, List, ListItem, ListItemText } from "@mui/material";
+import { IconButton, List, ListItem, ListItemText } from "@mui/material";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import Web3 from "web3";
 import BN from "bn.js";
-
 import Moralis from "moralis";
-import { getTrxHashLink, idToNetwork } from "../../utils/network";
-import { decodeToken } from "../../utils/urlGenerator";
-import { toHRNumberFloat } from "../../utils/tokens";
 
-import "./TransferForm.scss";
+import cn from "classnames";
+import { getAddressLink, getTrxHashLink, idToNetwork, networkNames, networkToId } from "../../utils/network";
+import { decodeToken, getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
+import { toHRNumberFloat } from "../../utils/tokens";
 import { TRANSFER_FROM_ABI } from "../../contracts/abi";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
-import { BackButtonContainer } from "./supportComponents/BackButtonContainer";
+import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
+import { ReactComponent as MetamaskIcon } from "../../ui-kit/images/metamask.svg";
+import Button from "../../ui-kit/components/Button/Button";
+
+import "./TransferForm.scss";
+import { InfoCell } from "./supportComponents/InfoCell";
+import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
 
 interface TransferFormProps {
     token: string;
+    onMetamaskConnect?: () => void;
+    onWalletConnect?: () => void;
 }
 
 type TokenMetadataType = {
@@ -32,7 +39,12 @@ type TokenMetadataType = {
     validated?: string | undefined;
 };
 
-const TransferForm = React.memo(({ token }: TransferFormProps) => {
+const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: TokenInfoType) =>
+    tokenMetadata
+        ? `${toHRNumberFloat(new BN(tokenData.value), +tokenMetadata.decimals)} ${tokenMetadata.symbol}`
+        : tokenData.value;
+
+const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: TransferFormProps) => {
     const { account, chainId: hexChainId } = useMoralis();
     const Web3Api = useMoralisWeb3Api();
     const [tokenMetadata, setTokenMetadata] = useState<undefined | TokenMetadataType>(undefined);
@@ -44,11 +56,15 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
     const tokenData = decodeToken(token);
 
     useEffect(() => {
-        if (tokenData && hexChainId) {
-            const options = { chain: hexChainId, addresses: [tokenData.address] };
+        if (tokenData) {
+            const options = {
+                chain: Web3.utils.numberToHex(networkToId[tokenData.chain]),
+                addresses: [tokenData.address],
+            };
             // @ts-ignore
             Web3Api.token.getTokenMetadata(options).then((res) => {
                 setTokenMetadata(res?.[0]);
+                document.title = `Receive ${getValue(res?.[0], tokenData)}`;
             });
         }
     }, [token, account]);
@@ -73,43 +89,31 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
                 setIsTransferFetching(false);
             }
         } catch (e) {
-            console.error(e);
             // @ts-ignore
             addErrorNotification("TransferFrom Error", e?.error?.message);
             setIsTransferFetching(false);
         }
     };
 
-    if (isSuccess) {
-        return (
-            <BackButtonContainer>
-                <div id="thanks">Thanks for using our safe-transfer app!</div>
-                {trxHash && (
-                    <div className="transfer-form__hash">
-                        Your transaction hash:{" "}
-                        <a href={getTrxHashLink(trxHash, networkName)} target="_blank" rel="noreferrer">
-                            {trxHash}
-                        </a>
-                    </div>
-                )}
-            </BackButtonContainer>
-        );
-    }
+    const handleAddToMetamask = async () => {
+        if (tokenData?.address) {
+            await window.ethereum.request({
+                method: "wallet_watchAsset",
+                params: {
+                    type: "ERC20",
+                    options: {
+                        address: tokenData.address,
+                        symbol: tokenMetadata?.symbol,
+                        decimals: tokenMetadata?.decimals,
+                        image: tokenMetadata?.logo,
+                    },
+                },
+            });
+        }
+    };
 
     if (!tokenData) {
-        return <BackButtonContainer>Invalid token</BackButtonContainer>;
-    }
-
-    if (!account) {
-        return <BackButtonContainer>Please connect your wallet</BackButtonContainer>;
-    }
-
-    if (tokenData.to.toLowerCase() !== account.toLowerCase()) {
-        return <BackButtonContainer>Please change account to {tokenData.to}</BackButtonContainer>;
-    }
-
-    if (tokenData.chain !== networkName) {
-        return <BackButtonContainer>Please change network to {tokenData.chain}</BackButtonContainer>;
+        return <div className="transfer-form">Invalid token</div>;
     }
 
     const hasAllData =
@@ -120,51 +124,108 @@ const TransferForm = React.memo(({ token }: TransferFormProps) => {
         tokenData.value?.length > 0 &&
         tokenData.value !== "0";
 
-    const value = tokenMetadata
-        ? `${toHRNumberFloat(new BN(tokenData.value), +tokenMetadata.decimals)} ${tokenMetadata.symbol}`
-        : tokenData.value;
+    const isDisabledContent =
+        !account || tokenData.to.toLowerCase() !== account.toLowerCase() || tokenData.chain !== networkName;
+
+    const renderButton = () => {
+        if (isSuccess) {
+            return null;
+        }
+        if (!account) {
+            return (
+                <>
+                    <Button onClick={onWalletConnect} className="transfer-form__button__wc">
+                        CONNECT WALLET
+                    </Button>
+                    <Button onClick={onMetamaskConnect} className="transfer-form__button__metamask">
+                        CONNECT WALLET
+                    </Button>
+                </>
+            );
+        }
+
+        return (
+            <Button
+                onClick={handleTransfer}
+                className="transfer-form__button"
+                disabled={!hasAllData || isTransferFetching || isDisabledContent}
+            >
+                {isTransferFetching ? "Loading..." : "Receive"}
+            </Button>
+        );
+    };
 
     return (
-        <BackButtonContainer>
-            <div className="transfer-form__title">You are able to receive:</div>
-            {tokenData && (
-                <>
-                    <List className="transfer-form__info" component="nav" aria-label="mailbox folders">
-                        <ListItem button divider>
-                            <ListItemText id="network" primary={`Network: ${networkName}`} />
-                        </ListItem>
-                        <ListItem button divider>
-                            <ListItemText id="from" primary={`From: ${tokenData.from}`} />
-                        </ListItem>
-                        <ListItem button divider>
-                            <ListItemText id="to" primary={`To: ${tokenData.to}`} />
-                        </ListItem>
-                        <ListItem button divider>
-                            <ListItemText id="tokenAddress" primary={`Token address: ${tokenData.address}`} />
-                        </ListItem>
-                        <ListItem button>
-                            <ListItemText id="value" primary={`Value: ${value}`} />
-                        </ListItem>
-                    </List>
-                    <Button
-                        variant="contained"
-                        onClick={handleTransfer}
-                        className="transfer-form__button"
-                        disabled={!hasAllData || isTransferFetching}
-                    >
-                        {isTransferFetching ? "Loading..." : "Receive"}
-                    </Button>
-                    {trxHash && (
-                        <div className="transfer-form__hash">
-                            Your transaction hash:{" "}
+        <div className={cn("transfer-form", { "transfer-form--disabled": isDisabledContent })}>
+            <div className="transfer-form__content">
+                <div className="transfer-form__title">Receive</div>
+                {tokenData && (
+                    <>
+                        <InfoCell title="Network:">
+                            <NetworkImage network={tokenData.chain} width={24} height={24} />
+                            <div>&nbsp;&nbsp;{networkNames[tokenData.chain]}</div>
+                        </InfoCell>
+                        <div className="transfer-form__line">
+                            <InfoCell className="transfer-form__copy-container" title="From:">
+                                <div>{getShortHash(tokenData.from)}</div>
+                                <div onClick={handleCopyUrl(tokenData.from)}>
+                                    <ContentCopyIcon />
+                                </div>
+                            </InfoCell>
+                            <InfoCell className="transfer-form__copy-container" title="To:">
+                                <div>{getShortHash(tokenData.to)}</div>
+                                <div onClick={handleCopyUrl(tokenData.to)}>
+                                    <ContentCopyIcon />
+                                </div>
+                            </InfoCell>
+                        </div>
+                        <InfoCell className="transfer-form__token-address" title="Token address:">
+                            <a
+                                href={getAddressLink(tokenData.address, tokenData.chain)}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                <div>{getShortHash(tokenData.address)}</div>
+                            </a>
+                            <div className="transfer-form__token-address__buttons">
+                                <div className="transfer-form__metamask" onClick={handleAddToMetamask}>
+                                    <div>Add to&nbsp;</div>
+                                    <MetamaskIcon />
+                                </div>
+                                <div onClick={handleCopyUrl(tokenData.address)}>
+                                    <ContentCopyIcon />
+                                </div>
+                            </div>
+                        </InfoCell>
+                        <InfoCell title="Value:">{getValue(tokenMetadata, tokenData)}</InfoCell>
+                        {account && tokenData.to.toLowerCase() !== account?.toLowerCase() && (
+                            <div className="transfer-form__error">
+                                Please change account to {getShortHash(tokenData.to)}
+                            </div>
+                        )}
+                        {account && tokenData.chain !== networkName && (
+                            <div className="transfer-form__error">Please change network to {tokenData.chain}</div>
+                        )}
+                        {renderButton()}
+                    </>
+                )}
+            </div>
+            {trxHash && (
+                <div className="transfer-form__hash">
+                    <div className="transfer-form__hash__text">
+                        <div>Hash:&nbsp;&nbsp;</div>
+                        <div id="generated-url">
                             <a href={getTrxHashLink(trxHash, networkName)} target="_blank" rel="noreferrer">
-                                {trxHash}
+                                {getShortHash(trxHash)}
                             </a>
                         </div>
-                    )}
-                </>
+                    </div>
+                    <IconButton aria-label="copy" onClick={handleCopyUrl(trxHash)}>
+                        <ContentCopyIcon />
+                    </IconButton>
+                </div>
             )}
-        </BackButtonContainer>
+        </div>
     );
 });
 

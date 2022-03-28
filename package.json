@@ -13,6 +13,8 @@
         "@emotion/styled": "^11.8.1",
         "@mui/icons-material": "^5.5.0",
         "@mui/material": "^5.5.0",
+        "@storybook/react": "^6.4.19",
+        "@storybook/testing-library": "^0.0.9",
         "@walletconnect/web3-provider": "^1.7.4",
         "bn.js": "^5.2.0",
         "chai": "^4.3.6",
@@ -36,7 +38,9 @@
         "start": "TSC_COMPILE_ON_ERROR=true react-scripts start",
         "build": "TSC_COMPILE_ON_ERROR=true react-scripts build",
         "test": "mocha --require ts-node/register test/*.spec.ts --color --recursive --timeout 60000 --exit",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "storybook": "start-storybook -p 6006 -s public",
+        "build-storybook": "build-storybook -s public"
     },
     "eslintConfig": {
         "extends": [
@@ -44,6 +48,14 @@
             "react-app/jest"
         ],
         "overrides": [
+            {
+                "files": [
+                    "**/*.stories.*"
+                ],
+                "rules": {
+                    "import/no-anonymous-default-export": "off"
+                }
+            },
             {
                 "files": [
                     "**/*.stories.*"
@@ -67,6 +79,12 @@
         ]
     },
     "devDependencies": {
+        "@storybook/addon-actions": "^6.4.19",
+        "@storybook/addon-essentials": "^6.4.19",
+        "@storybook/addon-interactions": "^6.4.19",
+        "@storybook/addon-links": "^6.4.19",
+        "@storybook/node-logger": "^6.4.19",
+        "@storybook/preset-create-react-app": "^3.2.0",
         "@types/chai": "^4.3.0",
         "@types/jest": "^27.4.1",
         "@types/jsonwebtoken": "^8.5.8",
@@ -78,6 +96,7 @@
         "@types/web3": "^1.2.2",
         "@typescript-eslint/eslint-plugin": "^4.25.0",
         "@typescript-eslint/parser": "^4.25.0",
+        "babel-loader": "8.1.0",
         "eslint": "^7.27.0",
         "eslint-config-airbnb": "^18.2.1",
         "eslint-config-prettier": "^8.3.0",
@@ -88,6 +107,7 @@
         "eslint-plugin-react-hooks": "^4.2.0",
         "mocha": "^9.2.2",
         "prettier": "^2.3.0",
-        "ts-node": "^10.7.0"
+        "ts-node": "^10.7.0",
+        "webpack": "4.44.2"
     }
 }
