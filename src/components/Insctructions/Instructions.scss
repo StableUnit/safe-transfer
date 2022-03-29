@@ -1,5 +1,50 @@
+@import "../../ui-kit/styles/vars";
+
 .instructions {
-    padding: 30px;
-    max-width: 800px;
+    padding: 24px;
+    max-width: 400px;
     margin: 0 auto;
+
+    background: $dark-gray;
+    border-radius: 16px;
+    color: #FFFFFF;
+    position: relative;
+
+    &__title {
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 24px;
+    }
+
+    &__steps {
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 18px;
+        padding-left: 16px;
+        margin: 16px 0;
+    }
+
+    &__close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+
+        path {
+            fill: $gray1;
+        }
+    }
+
+    &__more {
+        font-weight: 700;
+        font-size: 12px;
+        line-height: 16px;
+        text-decoration-line: underline;
+        cursor: pointer;
+
+        background: linear-gradient(74.43deg, #DBB0FF -12.43%, #C2DCFF 24.51%, #B4FFE0 63.46%, #FEFBDA 82.01%, #FECBFF 110.47%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+    }
 }
