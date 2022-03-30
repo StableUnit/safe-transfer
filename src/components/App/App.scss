@@ -6,11 +6,13 @@
 
     &__container {
         width: 100%;
+        min-height: calc(100vh - 235px);
         color: #FFFFFF;
+        margin-bottom: 56px;
 
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
 
         &--padded {

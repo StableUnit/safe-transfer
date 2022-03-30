@@ -101,7 +101,7 @@
 
     & &__token-form,
     & &__value {
-        margin: 20px 0;
+        margin: 0 0 10px 0;
 
         & > div {
             color: $gray1;
@@ -114,7 +114,7 @@
 
     & &__token-form {
         .MuiSelect-select {
-            padding-right: 60px !important;
+            padding: 18px 60px 16px 16px !important;
         }
 
         &__balance {
@@ -140,12 +140,6 @@
         width: 320px;
         height: 58px;
         margin-bottom: 20px;
-    }
-
-    &__url {
-        padding-top: 20px;
-        max-width: 800px;
-        word-break: break-all;
     }
 
     &__paper {
@@ -195,5 +189,42 @@
                 }
             }
         }
+    }
+
+    &__hash,
+    &__url {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 18px;
+        margin: 0 25px;
+
+        a {
+            text-decoration-line: underline;
+            cursor: pointer;
+
+            background: linear-gradient(74.43deg, #DBB0FF -12.43%, #C2DCFF 24.51%, #B4FFE0 63.46%, #FEFBDA 82.01%, #FECBFF 110.47%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        &__text {
+            display: flex;
+        }
+    }
+
+    &__hash {
+        padding: 24px 8px 16px 16px;
+    }
+
+    &__url {
+        background: $dark-gray;
+        border-radius: 8px;
+        padding: 8px 8px 8px 16px;
     }
 }

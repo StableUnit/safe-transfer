@@ -3,15 +3,15 @@ import Web3 from "web3";
 import Moralis from "moralis";
 import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import cn from "classnames";
 
 import { changeNetworkAtMetamask, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
 import { isAddress } from "../../utils/wallet";
 import { beautifyTokenBalance, fromHRToBN } from "../../utils/tokens";
 import { APPROVE_ABI } from "../../contracts/abi";
-import { generateUrl } from "../../utils/urlGenerator";
+import { generateUrl, getShortHash, getShortUrl } from "../../utils/urlGenerator";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
+import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
 
 import "./ApproveForm.scss";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
@@ -78,9 +78,9 @@ const ApproveForm = ({ onMetamaskConnect }: ApproveFormProps) => {
         setValue(+event.target.value);
     };
 
-    const handleCopyGenUrl = () => {
-        if (genUrl) {
-            navigator.clipboard.writeText(genUrl);
+    const handleCopyUrl = (url: string) => () => {
+        if (url) {
+            navigator.clipboard.writeText(url);
             addSuccessNotification("Copied", undefined, true);
         }
     };
@@ -134,122 +134,132 @@ const ApproveForm = ({ onMetamaskConnect }: ApproveFormProps) => {
     };
 
     return (
-        <div className={cn("approve-form", { "approve-form--disabled": !account })}>
-            <div className="approve-form__title">Send</div>
+        <div className="approve-form__container">
+            <div className={cn("approve-form", { "approve-form--disabled": !account })}>
+                <div className="approve-form__title">Send</div>
 
-            <div className="approve-form__content">
-                <div className="approve-form__label">Network</div>
-                <FormControl className="approve-form__network-form">
-                    <Select
-                        value={networkName || "placeholder-value"}
-                        onChange={handleNetworkChange}
-                        inputProps={{ "aria-label": "Without label" }}
-                        IconComponent={ArrowDownIcon}
-                        MenuProps={{ classes: { paper: "approve-form__paper", list: "approve-form__list" } }}
-                    >
-                        <MenuItem disabled value="placeholder-value">
-                            <NetworkImage />
-                            Select network
-                        </MenuItem>
-                        {Object.entries(networkNames).map(([id, name]) => (
-                            <MenuItem key={id} value={id}>
-                                <NetworkImage network={id} />
-                                {name}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-
-                <div className="approve-form__label">Recipient address</div>
-                <TextField
-                    id="address"
-                    className="approve-form__address"
-                    placeholder="Paste address here ..."
-                    variant="outlined"
-                    onChange={handleAddressChange}
-                />
-
-                <div className="approve-form__content__line">
-                    <div className="approve-form__label">Balance: {currentTokenBalance}</div>
-                    <div className="approve-form__max-button" onClick={handleMaxClick}>
-                        MAX
-                    </div>
-                </div>
-
-                <div className="approve-form__content__line">
-                    <FormControl className="approve-form__token-form">
+                <div className="approve-form__content">
+                    <div className="approve-form__label">Network</div>
+                    <FormControl className="approve-form__network-form">
                         <Select
-                            value={selectedToken || "placeholder-value"}
-                            onChange={handleTokenChange}
+                            value={networkName || "placeholder-value"}
+                            onChange={handleNetworkChange}
                             inputProps={{ "aria-label": "Without label" }}
                             IconComponent={ArrowDownIcon}
-                            MenuProps={{
-                                classes: {
-                                    root: "approve-form__token-dropdown",
-                                    paper: "approve-form__paper",
-                                    list: "approve-form__list",
-                                },
-                            }}
+                            MenuProps={{ classes: { paper: "approve-form__paper", list: "approve-form__list" } }}
                         >
                             <MenuItem disabled value="placeholder-value">
-                                Token
+                                <NetworkImage />
+                                Select network
                             </MenuItem>
-                            {balances.map((token) => (
-                                <MenuItem key={token.token_address} value={token.token_address}>
-                                    <div>{token.symbol}</div>
-                                    <div className="approve-form__token-form__balance">
-                                        {beautifyTokenBalance(token.balance, +token.decimals)}
-                                    </div>
+                            {Object.entries(networkNames).map(([id, name]) => (
+                                <MenuItem key={id} value={id}>
+                                    <NetworkImage network={id} />
+                                    {name}
                                 </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
 
+                    <div className="approve-form__label">Recipient address</div>
                     <TextField
-                        id="value"
-                        className="approve-form__value"
-                        placeholder="0.00"
-                        type="number"
-                        onChange={handleValueChange}
-                        value={value}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
+                        id="address"
+                        className="approve-form__address"
+                        placeholder="Paste address here ..."
+                        variant="outlined"
+                        onChange={handleAddressChange}
                     />
+
+                    <div className="approve-form__content__line">
+                        <div className="approve-form__label">Balance: {currentTokenBalance}</div>
+                        <div className="approve-form__max-button" onClick={handleMaxClick}>
+                            MAX
+                        </div>
+                    </div>
+
+                    <div className="approve-form__content__line">
+                        <FormControl className="approve-form__token-form">
+                            <Select
+                                value={selectedToken || "placeholder-value"}
+                                onChange={handleTokenChange}
+                                inputProps={{ "aria-label": "Without label" }}
+                                IconComponent={ArrowDownIcon}
+                                MenuProps={{
+                                    classes: {
+                                        root: "approve-form__token-dropdown",
+                                        paper: "approve-form__paper",
+                                        list: "approve-form__list",
+                                    },
+                                }}
+                            >
+                                <MenuItem disabled value="placeholder-value">
+                                    Token
+                                </MenuItem>
+                                {balances.map((token) => (
+                                    <MenuItem key={token.token_address} value={token.token_address}>
+                                        <div>{token.symbol}</div>
+                                        <div className="approve-form__token-form__balance">
+                                            {beautifyTokenBalance(token.balance, +token.decimals)}
+                                        </div>
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+                        <TextField
+                            id="value"
+                            className="approve-form__value"
+                            placeholder="0.00"
+                            type="number"
+                            onChange={handleValueChange}
+                            value={value}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </div>
                 </div>
+
+                {account ? (
+                    <Button
+                        onClick={handleApprove}
+                        className="approve-form__button"
+                        disabled={!isCorrectData || isApproveLoading}
+                    >
+                        {isApproveLoading ? "Loading..." : "Approve"}
+                    </Button>
+                ) : (
+                    <Button onClick={onMetamaskConnect} className="approve-form__button">
+                        CONNECT WALLET
+                    </Button>
+                )}
             </div>
-
-            {account ? (
-                <Button
-                    onClick={handleApprove}
-                    className="approve-form__button"
-                    disabled={!isCorrectData || isApproveLoading}
-                >
-                    {isApproveLoading ? "Loading..." : "Approve"}
-                </Button>
-            ) : (
-                <Button onClick={onMetamaskConnect} className="approve-form__button">
-                    CONNECT WALLET
-                </Button>
-            )}
-
             {trxHash && (
                 <div className="approve-form__hash">
-                    Your transaction hash:{" "}
-                    <a href={trxLink} target="_blank" rel="noreferrer">
-                        {trxHash}
-                    </a>
+                    <div className="approve-form__hash__text">
+                        <div>Hash:&nbsp;&nbsp;</div>
+                        <div id="generated-url">
+                            <a href={trxLink} target="_blank" rel="noreferrer">
+                                {getShortHash(trxHash)}
+                            </a>
+                        </div>
+                    </div>
+                    <IconButton aria-label="copy" onClick={handleCopyUrl(trxHash)}>
+                        <ContentCopyIcon />
+                    </IconButton>
                 </div>
             )}
             {genUrl && (
                 <div className="approve-form__url">
-                    <div>New URL:</div>
-                    <div>
-                        <span id="generated-url">{genUrl}</span>
-                        <IconButton aria-label="copy" onClick={handleCopyGenUrl}>
-                            <ContentCopyIcon />
-                        </IconButton>
+                    <div className="approve-form__url__text">
+                        <div>Link to receive:&nbsp;&nbsp;</div>
+                        <a href={genUrl} target="_blank" rel="noreferrer">
+                            {getShortUrl(genUrl)}
+                        </a>
                     </div>
+                    <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
+                        <ContentCopyIcon />
+                    </IconButton>
                 </div>
             )}
         </div>
