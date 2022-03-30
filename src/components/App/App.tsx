@@ -57,7 +57,7 @@ const App = () => {
             />
             <div className="App__container">
                 {isInstructions && <Instructions onClose={handleOnCloseInstructions} />}
-                {token ? <TransferForm token={token} /> : <ApproveForm />}
+                {token ? <TransferForm token={token} /> : <ApproveForm onMetamaskConnect={onMetamaskConnect} />}
             </div>
             <Footer />
         </div>
