@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
+import cn from "classnames";
 
 import Header from "../Header/Header";
-import YoutubeEmbed from "../YoutubeEmbed/YoutubeEmbed";
 import Instructions from "../Insctructions/Instructions";
 import ApproveForm from "../ApproveForm/ApproveForm";
 import TransferForm from "../TransferForm/TransferForm";
@@ -15,6 +15,7 @@ const DEFAULT_CHAIN_ID = 137;
 const App = () => {
     const { logout, authenticate, isWeb3Enabled, isAuthenticated, enableWeb3 } = useMoralis();
     const [token, setToken] = useState<string | null>(null);
+    const [isInstructions, setIsInstructions] = useState(true);
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -42,15 +43,20 @@ const App = () => {
         }
     }, [isWeb3Enabled, isAuthenticated, enableWeb3]);
 
+    const handleOnCloseInstructions = () => {
+        setIsInstructions(false);
+    };
+
     return (
-        <div className="App">
+        <div className={cn("App", { "App--padded": !isInstructions })}>
             <Header
+                token={token}
                 onMetamaskConnect={onMetamaskConnect}
                 onWalletConnect={onWalletConnect}
                 onDisconnect={onDisconnect}
             />
             <div className="App__container">
-                <Instructions />
+                {isInstructions && <Instructions onClose={handleOnCloseInstructions} />}
                 {token ? <TransferForm token={token} /> : <ApproveForm />}
             </div>
             <Footer />

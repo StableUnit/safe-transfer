@@ -6,6 +6,15 @@
 
     &__container {
         width: 100%;
-        color: black;
+        color: #FFFFFF;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        &--padded {
+            padding-top: 160px;
+        }
     }
 }

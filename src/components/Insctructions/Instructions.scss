@@ -3,7 +3,9 @@
 .instructions {
     padding: 24px;
     max-width: 400px;
-    margin: 0 auto;
+    margin: 0 16px 24px 16px;
+    width: calc(100% - 32px);
+    box-sizing: border-box;
 
     background: $dark-gray;
     border-radius: 16px;
@@ -25,6 +27,7 @@
     }
 
     &__close {
+        cursor: pointer;
         position: absolute;
         top: 16px;
         right: 16px;
