@@ -18,6 +18,10 @@
         .approve-form__content {
             pointer-events: none;
             cursor: not-allowed;
+
+            .MuiInputBase-input {
+                color: $gray1;
+            }
         }
     }
 
@@ -41,16 +45,35 @@
     &__content {
         text-align: left;
         max-width: 352px;
+
+        .MuiInputBase-input {
+            color: white;
+            display: flex;
+            align-items: center;
+
+            img {
+                padding-right: 8px;
+            }
+        }
+
+        .MuiSelect-icon {
+            right: 17px;
+        }
+
+        &__line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     }
 
     &__label {
         color: $gray1;
+        padding-left: 16px;
     }
 
     & &__network-form,
-    & &__token-form,
-    & &__address,
-    & &__value {
+    & &__address {
         width: 352px;
         margin: 20px 0;
         border: 1px solid #313131;
@@ -76,6 +99,38 @@
         }
     }
 
+    & &__token-form,
+    & &__value {
+        margin: 20px 0;
+
+        & > div {
+            color: $gray1;
+        }
+
+        fieldset {
+            display: none;
+        }
+    }
+
+    & &__token-form {
+        .MuiSelect-select {
+            padding-right: 60px !important;
+        }
+
+        &__balance {
+            display: none;
+        }
+    }
+
+    & &__value {
+        max-width: 160px;
+        input {
+            font-weight: 500;
+            font-size: 24px;
+            line-height: 32px;
+        }
+    }
+
     & &__token-balance {
         color: rgba(0,0,0,0.6);
         padding-top: 5px;
@@ -91,5 +146,54 @@
         padding-top: 20px;
         max-width: 800px;
         word-break: break-all;
+    }
+
+    &__paper {
+        background-color: #313131 !important;
+        border-radius: 8px !important;
+        color: #FFFFFF !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        line-height: 18px !important;
+    }
+
+    &__list {
+        li {
+            padding-bottom: 12px;
+        }
+        img {
+            padding-right: 8px;
+        }
+    }
+
+    &__max-button {
+        font-weight: 700;
+        font-size: 12px;
+        line-height: 16px;
+        background: #313131;
+        border-radius: 40px;
+        padding: 4px 7px;
+        cursor: pointer;
+    }
+
+    &__token-dropdown {
+        .approve-form__list {
+            max-height: 340px;
+
+            &::-webkit-scrollbar {
+                width: 2px;
+                background-color: #545454;
+            }
+
+            li {
+                display: flex;
+                justify-content: space-between;
+
+                div:first-child {
+                    min-width: 100px;
+                    padding-right: 10px;
+                }
+            }
+        }
     }
 }
