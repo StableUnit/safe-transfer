@@ -19,9 +19,6 @@ const Instructions = ({ onClose }: InstructionsProps) => (
             <li>Get link to share with recipient</li>
             <li>Recipient accepts money</li>
         </ol>
-        <a href="https://youtu.be/Z8UjMCWpplM" target="_blank" rel="noreferrer" className="instructions__more">
-            LEARN MORE
-        </a>
     </div>
 );
 

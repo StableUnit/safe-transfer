@@ -9,6 +9,7 @@ import TransferForm from "../TransferForm/TransferForm";
 
 import "./App.scss";
 import { Footer } from "../Footer/Footer";
+import YoutubeEmbed from "../YoutubeEmbed/YoutubeEmbed";
 
 const DEFAULT_CHAIN_ID = 137;
 
@@ -56,6 +57,7 @@ const App = () => {
                 onDisconnect={onDisconnect}
             />
             <div className="App__container">
+                <YoutubeEmbed embedId="Z8UjMCWpplM" />
                 {isInstructions && <Instructions onClose={handleOnCloseInstructions} />}
                 {token ? (
                     <TransferForm
