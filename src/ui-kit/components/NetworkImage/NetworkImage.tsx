@@ -3,6 +3,8 @@ import DefaultImage from "../../images/default.png";
 import EthImage from "../../images/eth.png";
 import PolygonImage from "../../images/polygon.png";
 import FantomImage from "../../images/fantom.png";
+import BscImage from "../../images/bsc.png";
+import AvalancheImage from "../../images/avalanche.png";
 
 export type NetworkType = "eth" | "rinkeby" | "polygon" | "bsc" | "fantom" | "avalanche" | string;
 
@@ -22,6 +24,10 @@ const getNetworkImage = (network?: NetworkType) => {
             return PolygonImage;
         case "fantom":
             return FantomImage;
+        case "bsc":
+            return BscImage;
+        case "avalanche":
+            return AvalancheImage;
         default:
             return DefaultImage;
     }
