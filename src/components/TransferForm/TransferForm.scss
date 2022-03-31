@@ -8,6 +8,12 @@
     width: 100%;
     max-width: 400px;
 
+    &--disabled {
+        .info-cell__content {
+            opacity: 0.5;
+        }
+    }
+
     &__content {
         background: $black;
         background-clip: padding-box;
@@ -80,10 +86,27 @@
         cursor: pointer;
     }
 
-    &__button {
+    &__button__wc,
+    &__button__metamask {
         width: 100%;
-        height: 50px;
+        height: 58px;
         margin: 32px auto 0 auto;
+    }
+
+    &__button__wc {
+        display: none;
+    }
+    &__button__metamask {
+        display: block;
+    }
+
+    @media screen and (max-width: 600px) {
+        &__button__wc {
+            display: block;
+        }
+        &__button__metamask {
+            display: none;
+        }
     }
 
     &__hash {
@@ -114,5 +137,14 @@
         &__text {
             display: flex;
         }
+    }
+
+    &__error {
+        font-weight: 700;
+        font-size: 12px;
+        line-height: 16px;
+        color: #FC7557;
+        text-align: center;
+        padding-bottom: 8px;
     }
 }

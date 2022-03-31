@@ -57,7 +57,15 @@ const App = () => {
             />
             <div className="App__container">
                 {isInstructions && <Instructions onClose={handleOnCloseInstructions} />}
-                {token ? <TransferForm token={token} /> : <ApproveForm onMetamaskConnect={onMetamaskConnect} />}
+                {token ? (
+                    <TransferForm
+                        onWalletConnect={onWalletConnect}
+                        onMetamaskConnect={onMetamaskConnect}
+                        token={token}
+                    />
+                ) : (
+                    <ApproveForm onMetamaskConnect={onMetamaskConnect} onWalletConnect={onWalletConnect} />
+                )}
             </div>
             <Footer />
         </div>

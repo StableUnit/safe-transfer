@@ -31,9 +31,10 @@ type BalanceType = {
 
 interface ApproveFormProps {
     onMetamaskConnect?: () => void;
+    onWalletConnect?: () => void;
 }
 
-const ApproveForm = ({ onMetamaskConnect }: ApproveFormProps) => {
+const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) => {
     const { account, chainId: hexChainId } = useMoralis();
     const chainId = Web3.utils.hexToNumber(hexChainId ?? "");
     const networkName = idToNetwork[chainId];
@@ -219,9 +220,14 @@ const ApproveForm = ({ onMetamaskConnect }: ApproveFormProps) => {
                         {isApproveLoading ? "Loading..." : "Approve"}
                     </Button>
                 ) : (
-                    <Button onClick={onMetamaskConnect} className="approve-form__button">
-                        CONNECT WALLET
-                    </Button>
+                    <>
+                        <Button onClick={onWalletConnect} className="approve-form__button__wc">
+                            CONNECT WALLET
+                        </Button>
+                        <Button onClick={onMetamaskConnect} className="approve-form__button__metamask">
+                            CONNECT WALLET
+                        </Button>
+                    </>
                 )}
             </div>
             {trxHash && (
