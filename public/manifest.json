@@ -1,6 +1,6 @@
 {
-    "short_name": "React App",
-    "name": "Create React App Sample",
+    "short_name": "ERC-20 Safe Transfer",
+    "name": "ERC-20 Safe Transfer",
     "icons": [
         {
             "src": "favicon.ico",
