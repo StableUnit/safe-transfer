@@ -1,0 +1,27 @@
+@import "../../../ui-kit/styles/vars";
+
+.info-cell {
+  width: 100%;
+  border-bottom: 1px solid $dark-gray;
+  height: 59px;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+
+  &__title {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    color: $gray1;
+    padding-bottom: 5px;
+  }
+
+  &__content {
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+    color: white;
+
+    display: flex;
+    align-items: center;
+  }
+}

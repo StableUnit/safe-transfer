@@ -9,15 +9,14 @@ import { changeNetworkAtMetamask, getTrxHashLink, idToNetwork, networkNames } fr
 import { isAddress } from "../../utils/wallet";
 import { beautifyTokenBalance, fromHRToBN } from "../../utils/tokens";
 import { APPROVE_ABI } from "../../contracts/abi";
-import { generateUrl, getShortHash, getShortUrl } from "../../utils/urlGenerator";
+import { generateUrl, getShortHash, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
-
-import "./ApproveForm.scss";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
-
 import Button from "../../ui-kit/components/Button/Button";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
+
+import "./ApproveForm.scss";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -74,15 +73,7 @@ const ApproveForm = ({ onMetamaskConnect }: ApproveFormProps) => {
     };
 
     const handleValueChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        console.log(value, +event.target.value);
         setValue(+event.target.value);
-    };
-
-    const handleCopyUrl = (url: string) => () => {
-        if (url) {
-            navigator.clipboard.writeText(url);
-            addSuccessNotification("Copied", undefined, true);
-        }
     };
 
     const handleApprove = async () => {
@@ -129,7 +120,6 @@ const ApproveForm = ({ onMetamaskConnect }: ApproveFormProps) => {
     const currentTokenBalance = currentToken ? beautifyTokenBalance(currentToken.balance, +currentToken.decimals) : 0;
 
     const handleMaxClick = () => {
-        console.log("handleMaxClick", currentTokenBalance, value);
         setValue(+currentTokenBalance);
     };
 
