@@ -7,7 +7,7 @@ import Moralis from "moralis";
 
 import cn from "classnames";
 import { getTrxHashLink, idToNetwork, networkNames, networkToId } from "../../utils/network";
-import { decodeToken, getShortHash, handleCopyUrl } from "../../utils/urlGenerator";
+import { decodeToken, getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
 import { toHRNumberFloat } from "../../utils/tokens";
 import { TRANSFER_FROM_ABI } from "../../contracts/abi";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
@@ -39,6 +39,11 @@ type TokenMetadataType = {
     validated?: string | undefined;
 };
 
+const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: TokenInfoType) =>
+    tokenMetadata
+        ? `${toHRNumberFloat(new BN(tokenData.value), +tokenMetadata.decimals)} ${tokenMetadata.symbol}`
+        : tokenData.value;
+
 const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: TransferFormProps) => {
     const { account, chainId: hexChainId } = useMoralis();
     const Web3Api = useMoralisWeb3Api();
@@ -59,6 +64,7 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
             // @ts-ignore
             Web3Api.token.getTokenMetadata(options).then((res) => {
                 setTokenMetadata(res?.[0]);
+                document.title = `Receive ${getValue(res?.[0], tokenData)}`;
             });
         }
     }, [token, account]);
@@ -117,10 +123,6 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
         tokenData.address &&
         tokenData.value?.length > 0 &&
         tokenData.value !== "0";
-
-    const value = tokenMetadata
-        ? `${toHRNumberFloat(new BN(tokenData.value), +tokenMetadata.decimals)} ${tokenMetadata.symbol}`
-        : tokenData.value;
 
     const isDisabledContent =
         !account || tokenData.to.toLowerCase() !== account.toLowerCase() || tokenData.chain !== networkName;
@@ -189,7 +191,7 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
                                 </div>
                             </div>
                         </InfoCell>
-                        <InfoCell title="Value:">{value}</InfoCell>
+                        <InfoCell title="Value:">{getValue(tokenMetadata, tokenData)}</InfoCell>
                         {account && tokenData.to.toLowerCase() !== account?.toLowerCase() && (
                             <div className="transfer-form__error">
                                 Please change account to {getShortHash(tokenData.to)}
