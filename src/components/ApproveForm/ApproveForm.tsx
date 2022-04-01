@@ -199,7 +199,7 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                                 }}
                             >
                                 <MenuItem disabled value="placeholder-value">
-                                    Token
+                                    Select token
                                 </MenuItem>
                                 {balances.map((token) => (
                                     <MenuItem key={token.token_address} value={token.token_address}>

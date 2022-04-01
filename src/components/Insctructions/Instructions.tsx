@@ -16,8 +16,8 @@ const Instructions = ({ onClose }: InstructionsProps) => (
         <div className="instructions__title">Stop sending tokens to wrong address or blockchain</div>
         <ol className="instructions__steps">
             <li>Approve token instead of sending directly</li>
-            <li>Get link to share with recipient</li>
-            <li>Recipient accepts money</li>
+            <li>Send link to the recipient</li>
+            <li>Recipient accepts money if address is correct</li>
         </ol>
     </div>
 );
