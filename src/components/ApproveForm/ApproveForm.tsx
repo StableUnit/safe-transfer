@@ -44,6 +44,8 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
     const [isApproveLoading, setIsApproveLoading] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [trxLink, setTrxLink] = useState("");
+    const [restoreHash, setRestoreHash] = useState<undefined | string>(undefined);
+    const [isRestoreLoading, setIsRestoreLoading] = useState(false);
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
     const Web3Api = useMoralisWeb3Api();
@@ -75,6 +77,38 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
 
     const handleValueChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setValue(+event.target.value);
+    };
+
+    const handleRestoreHashChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setRestoreHash(event.target.value);
+    };
+
+    const handleRestore = async () => {
+        try {
+            const options = {
+                chain: networkName,
+                transaction_hash: restoreHash ?? "",
+            };
+            setIsRestoreLoading(true);
+            const transaction = await Web3Api.native.getTransaction(options);
+            const inputData = Web3.utils.hexToAscii(transaction.input);
+            setIsRestoreLoading(false);
+            const valueBN = Web3.utils.hexToNumberString(transaction.logs[0].data);
+            const to = `0x${transaction.logs[0].topic2?.slice(-40)}`;
+            setGenUrl(
+                generateUrl({
+                    address: transaction.to_address,
+                    from: transaction.from_address,
+                    to,
+                    value: valueBN,
+                    chain: networkName,
+                })
+            );
+        } catch (e) {
+            setIsRestoreLoading(false);
+            console.error(e);
+            addErrorNotification("Error", "Restore transaction failed");
+        }
     };
 
     const onSuccessApprove = (selectedTokenInfo: BalanceType) => {
@@ -273,6 +307,21 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                     </IconButton>
                 </div>
             )}
+            <div className="approve-form">
+                <div className="approve-form__restore">
+                    <div>Restore link by Approve transaction hash</div>
+                    <TextField
+                        id="address"
+                        className="approve-form__restore__input"
+                        placeholder="Paste transaction hash here ..."
+                        variant="outlined"
+                        onChange={handleRestoreHashChange}
+                    />
+                    <Button onClick={handleRestore} className="approve-form__button" disabled={isRestoreLoading}>
+                        {isRestoreLoading ? "Loading..." : "Restore"}
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 };
