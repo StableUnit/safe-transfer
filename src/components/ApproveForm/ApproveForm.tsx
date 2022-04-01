@@ -91,7 +91,10 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
             };
             setIsRestoreLoading(true);
             const transaction = await Web3Api.native.getTransaction(options);
-            const inputData = Web3.utils.hexToAscii(transaction.input);
+            if (!transaction) {
+                addErrorNotification("Error", "Can't get transaction");
+                return;
+            }
             setIsRestoreLoading(false);
             const valueBN = Web3.utils.hexToNumberString(transaction.logs[0].data);
             const to = `0x${transaction.logs[0].topic2?.slice(-40)}`;
