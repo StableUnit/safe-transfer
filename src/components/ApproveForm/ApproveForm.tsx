@@ -93,9 +93,9 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
             const transaction = await Web3Api.native.getTransaction(options);
             if (!transaction) {
                 addErrorNotification("Error", "Can't get transaction");
+                setIsRestoreLoading(false);
                 return;
             }
-            setIsRestoreLoading(false);
             const valueBN = Web3.utils.hexToNumberString(transaction.logs[0].data);
             const to = `0x${transaction.logs[0].topic2?.slice(-40)}`;
             setGenUrl(
@@ -107,6 +107,7 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                     chain: networkName,
                 })
             );
+            setIsRestoreLoading(false);
         } catch (e) {
             setIsRestoreLoading(false);
             console.error(e);
@@ -320,7 +321,11 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                         variant="outlined"
                         onChange={handleRestoreHashChange}
                     />
-                    <Button onClick={handleRestore} className="approve-form__button" disabled={isRestoreLoading}>
+                    <Button
+                        onClick={handleRestore}
+                        className="approve-form__button"
+                        disabled={isRestoreLoading || !account}
+                    >
                         {isRestoreLoading ? "Loading..." : "Restore"}
                     </Button>
                 </div>
