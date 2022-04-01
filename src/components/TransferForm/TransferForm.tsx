@@ -6,7 +6,7 @@ import BN from "bn.js";
 import Moralis from "moralis";
 
 import cn from "classnames";
-import { getTrxHashLink, idToNetwork, networkNames, networkToId } from "../../utils/network";
+import { getAddressLink, getTrxHashLink, idToNetwork, networkNames, networkToId } from "../../utils/network";
 import { decodeToken, getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
 import { toHRNumberFloat } from "../../utils/tokens";
 import { TRANSFER_FROM_ABI } from "../../contracts/abi";
@@ -180,7 +180,13 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
                             </InfoCell>
                         </div>
                         <InfoCell className="transfer-form__token-address" title="Token address:">
-                            <div>{getShortHash(tokenData.address)}</div>
+                            <a
+                                href={getAddressLink(tokenData.address, tokenData.chain)}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                <div>{getShortHash(tokenData.address)}</div>
+                            </a>
                             <div className="transfer-form__token-address__buttons">
                                 <div className="transfer-form__metamask" onClick={handleAddToMetamask}>
                                     <div>Add to&nbsp;</div>

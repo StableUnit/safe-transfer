@@ -58,6 +58,9 @@
     }
 
     &__token-address {
+        a {
+            color: white;
+        }
         &__buttons {
             display: flex;
             justify-content: center;
