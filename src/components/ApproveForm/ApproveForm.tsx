@@ -77,6 +77,22 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
         setValue(+event.target.value);
     };
 
+    const onSuccessApprove = (selectedTokenInfo: BalanceType) => {
+        const valueBN = fromHRToBN(value ?? 0, +selectedTokenInfo.decimals).toString();
+
+        addSuccessNotification("Success", "Approve transaction completed");
+        setIsApproveLoading(false);
+        setGenUrl(
+            generateUrl({
+                address: selectedTokenInfo?.token_address,
+                from: account ?? "",
+                to: toAddress ?? "",
+                value: valueBN,
+                chain: networkName,
+            })
+        );
+    };
+
     const handleApprove = async () => {
         const selectedTokenInfo = balances.find((v) => v.token_address === selectedToken);
         if (selectedTokenInfo && value && toAddress && account) {
@@ -98,20 +114,19 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                 setTrxLink(getTrxHashLink(transaction.hash, networkName));
                 // @ts-ignore
                 await transaction.wait();
-                addSuccessNotification("Success", "Approve transaction completed");
-                setIsApproveLoading(false);
-                setGenUrl(
-                    generateUrl({
-                        address: options.contractAddress,
-                        from: account,
-                        to: toAddress,
-                        value: valueBN,
-                        chain: networkName,
-                    })
-                );
+                onSuccessApprove(selectedTokenInfo);
             } catch (e) {
-                addErrorNotification("Error", "Approve transaction failed");
-                setIsApproveLoading(false);
+                // @ts-ignore
+                const replacementHash = e?.replacement?.hash;
+                if (replacementHash) {
+                    setTrxHash(replacementHash);
+                    setTrxLink(getTrxHashLink(replacementHash, networkName));
+                    onSuccessApprove(selectedTokenInfo);
+                } else {
+                    console.error(e);
+                    addErrorNotification("Error", "Approve transaction failed");
+                    setIsApproveLoading(false);
+                }
             }
         }
     };
