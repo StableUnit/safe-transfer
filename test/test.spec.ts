@@ -1,6 +1,7 @@
 import * as assert from "assert";
 import puppeteer from "puppeteer";
 import * as dappeteer from "@chainsafe/dappeteer";
+import { getShortHash } from "../src/utils/urlGenerator";
 
 const RECOMMENDED_METAMASK_VERSION = "v10.1.1";
 
@@ -34,8 +35,6 @@ async function clickElement(page: puppeteer.Page, selector: string): Promise<voi
 const getText = async (page: puppeteer.Page, selector: string): Promise<string> => {
     return (await (await (await page.$(selector))?.getProperty("textContent"))?.jsonValue()) ?? "";
 };
-
-const removeStartText = (text: string, start: string) => text.toLowerCase().split(start.toLowerCase())[1];
 
 const simpleClick = async (page: puppeteer.Page, selector: string) => {
     await page.waitForSelector(selector);
@@ -92,25 +91,25 @@ describe("dappeteer", () => {
 
         await transferPage.waitForSelector("#from");
 
-        const from = removeStartText(await getText(transferPage, "#from"), "from: ");
-        assert.strictEqual(from.toLowerCase(), test1Address.toLowerCase());
+        const from = await getText(transferPage, "#from");
+        assert.strictEqual(from.toLowerCase(), getShortHash(test1Address).toLowerCase());
 
-        const to = removeStartText(await getText(transferPage, "#to"), "to: ");
-        assert.strictEqual(to.toLowerCase(), test2Address.toLowerCase());
+        const to = await getText(transferPage, "#to");
+        assert.strictEqual(to.toLowerCase(), getShortHash(test2Address).toLowerCase());
 
-        const tokenAddress = removeStartText(await getText(transferPage, "#tokenAddress"), "token address: ");
-        assert.strictEqual(tokenAddress.toLowerCase(), DaiAddress.toLowerCase());
+        const tokenAddress = await getText(transferPage, "#tokenAddress");
+        assert.strictEqual(tokenAddress.toLowerCase(), getShortHash(DaiAddress).toLowerCase());
 
         await delay(3000);
-        const value = removeStartText(await getText(transferPage, "#value"), "value: ");
+        const value = await getText(transferPage, "#value");
         assert.strictEqual(value.toLowerCase(), `${DaiValue} tdai`);
 
         await clickElement(transferPage, ".transfer-form__button");
         await metamask.confirmTransaction();
         await transferPage.bringToFront();
 
-        await transferPage.waitForSelector("#thanks");
-        const thanksText = await getText(transferPage, "#thanks");
+        await transferPage.waitForSelector(".rnc__notification-title");
+        const thanksText = await getText(transferPage, ".rnc__notification-title");
         assert.ok(thanksText.length > 0);
     });
 

@@ -134,10 +134,14 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
         if (!account) {
             return (
                 <>
-                    <Button onClick={onWalletConnect} className="transfer-form__button__wc">
+                    <Button id="connect-button-wc" onClick={onWalletConnect} className="transfer-form__button__wc">
                         CONNECT WALLET
                     </Button>
-                    <Button onClick={onMetamaskConnect} className="transfer-form__button__metamask">
+                    <Button
+                        id="connect-button-metamask"
+                        onClick={onMetamaskConnect}
+                        className="transfer-form__button__metamask"
+                    >
                         CONNECT WALLET
                     </Button>
                 </>
@@ -167,13 +171,13 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
                         </InfoCell>
                         <div className="transfer-form__line">
                             <InfoCell className="transfer-form__copy-container" title="From:">
-                                <div>{getShortHash(tokenData.from)}</div>
+                                <div id="from">{getShortHash(tokenData.from)}</div>
                                 <div onClick={handleCopyUrl(tokenData.from)}>
                                     <ContentCopyIcon />
                                 </div>
                             </InfoCell>
                             <InfoCell className="transfer-form__copy-container" title="To:">
-                                <div>{getShortHash(tokenData.to)}</div>
+                                <div id="to">{getShortHash(tokenData.to)}</div>
                                 <div onClick={handleCopyUrl(tokenData.to)}>
                                     <ContentCopyIcon />
                                 </div>
@@ -185,7 +189,7 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
                                 target="_blank"
                                 rel="noreferrer"
                             >
-                                <div>{getShortHash(tokenData.address)}</div>
+                                <div id="tokenAddress">{getShortHash(tokenData.address)}</div>
                             </a>
                             <div className="transfer-form__token-address__buttons">
                                 <div className="transfer-form__metamask" onClick={handleAddToMetamask}>
@@ -197,7 +201,9 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
                                 </div>
                             </div>
                         </InfoCell>
-                        <InfoCell title="Value:">{getValue(tokenMetadata, tokenData)}</InfoCell>
+                        <InfoCell title="Value:">
+                            <div id="value">{getValue(tokenMetadata, tokenData)}</div>
+                        </InfoCell>
                         {account && tokenData.to.toLowerCase() !== account?.toLowerCase() && (
                             <div className="transfer-form__error">
                                 Please change account to {getShortHash(tokenData.to)}

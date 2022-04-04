@@ -274,10 +274,14 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                     </Button>
                 ) : (
                     <>
-                        <Button onClick={onWalletConnect} className="approve-form__button__wc">
+                        <Button id="#connect-button-wc" onClick={onWalletConnect} className="approve-form__button__wc">
                             CONNECT WALLET
                         </Button>
-                        <Button onClick={onMetamaskConnect} className="approve-form__button__metamask">
+                        <Button
+                            id="#connect-button-metamask"
+                            onClick={onMetamaskConnect}
+                            className="approve-form__button__metamask"
+                        >
                             CONNECT WALLET
                         </Button>
                     </>
