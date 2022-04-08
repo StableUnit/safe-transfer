@@ -9,6 +9,7 @@ import { changeNetworkAtMetamask, getTrxHashLink, idToNetwork, networkNames } fr
 import { isAddress } from "../../utils/wallet";
 import { beautifyTokenBalance, fromHRToBN } from "../../utils/tokens";
 import { APPROVE_ABI } from "../../contracts/abi";
+import ERC20_ABI from "../../contracts/ERC20.json";
 import { generateUrl, getShortHash, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
@@ -141,17 +142,17 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                 setIsApproveLoading(true);
                 const contractAddress = selectedTokenInfo.token_address;
                 const valueBN = fromHRToBN(value, +selectedTokenInfo.decimals).toString();
-                const options = {
-                    contractAddress,
-                    functionName: "approve",
-                    abi: APPROVE_ABI,
-                    params: { _spender: toAddress, _value: valueBN },
-                };
-                const transaction = await Moralis.executeFunction(options);
-                setTrxHash(transaction.hash);
-                setTrxLink(getTrxHashLink(transaction.hash, networkName));
-                // @ts-ignore
-                await transaction.wait();
+
+                const web3 = new Web3(Moralis.provider as any);
+                const tokenContract = new web3.eth.Contract(ERC20_ABI as any, contractAddress);
+                const gasPrice = await web3.eth.getGasPrice();
+                await tokenContract.methods
+                    .approve(toAddress, valueBN)
+                    .send({ from: account, gasPrice: networkName === "polygon" ? +gasPrice * 2 : gasPrice })
+                    .on("transactionHash", (hash: string) => {
+                        setTrxHash(hash);
+                        setTrxLink(getTrxHashLink(hash, networkName));
+                    });
                 onSuccessApprove(selectedTokenInfo);
             } catch (e) {
                 // @ts-ignore
