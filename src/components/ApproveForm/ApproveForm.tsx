@@ -8,7 +8,7 @@ import cn from "classnames";
 import { changeNetworkAtMetamask, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
 import { isAddress } from "../../utils/wallet";
 import { beautifyTokenBalance, fromHRToBN } from "../../utils/tokens";
-import { APPROVE_ABI } from "../../contracts/abi";
+import ERC20_ABI from "../../contracts/ERC20.json";
 import { generateUrl, getShortHash, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
@@ -35,7 +35,7 @@ interface ApproveFormProps {
 }
 
 const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) => {
-    const { account, chainId: hexChainId } = useMoralis();
+    const { account, chainId: hexChainId, web3 } = useMoralis();
     const chainId = Web3.utils.hexToNumber(hexChainId ?? "");
     const networkName = idToNetwork[chainId];
     const [toAddress, setToAddress] = useState<undefined | string>(undefined);
@@ -134,34 +134,35 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
     const handleApprove = async () => {
         const selectedTokenInfo = balances.find((v) => v.token_address === selectedToken);
         if (selectedTokenInfo && value && toAddress && account) {
+            setGenUrl(undefined);
+            setTrxHash("");
+            setTrxLink("");
+            setIsApproveLoading(true);
+            const contractAddress = selectedTokenInfo.token_address;
+            const valueBN = fromHRToBN(value, +selectedTokenInfo.decimals).toString();
+
+            const ethers = Moralis.web3Library;
+            // @ts-ignore
+            const tokenContract = new ethers.Contract(contractAddress, ERC20_ABI, web3.getSigner());
+
+            const gasPrice = await web3?.getGasPrice();
+            const trx = await tokenContract.approve(toAddress, valueBN, {
+                gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice,
+            });
             try {
-                setGenUrl(undefined);
-                setTrxHash("");
-                setTrxLink("");
-                setIsApproveLoading(true);
-                const contractAddress = selectedTokenInfo.token_address;
-                const valueBN = fromHRToBN(value, +selectedTokenInfo.decimals).toString();
-                const options = {
-                    contractAddress,
-                    functionName: "approve",
-                    abi: APPROVE_ABI,
-                    params: { _spender: toAddress, _value: valueBN },
-                };
-                const transaction = await Moralis.executeFunction(options);
-                setTrxHash(transaction.hash);
-                setTrxLink(getTrxHashLink(transaction.hash, networkName));
-                // @ts-ignore
-                await transaction.wait();
+                setTrxHash(trx.hash);
+                setTrxLink(getTrxHashLink(trx.hash, networkName));
+                await trx.wait();
                 onSuccessApprove(selectedTokenInfo);
-            } catch (e) {
+            } catch (error) {
                 // @ts-ignore
-                const replacementHash = e?.replacement?.hash;
-                if (replacementHash) {
-                    setTrxHash(replacementHash);
-                    setTrxLink(getTrxHashLink(replacementHash, networkName));
+                const replacedHash = error?.replacement?.hash;
+                if (replacedHash) {
+                    setTrxHash(replacedHash);
+                    setTrxLink(getTrxHashLink(replacedHash, networkName));
                     onSuccessApprove(selectedTokenInfo);
                 } else {
-                    console.error(e);
+                    console.error(error);
                     addErrorNotification("Error", "Approve transaction failed");
                     setIsApproveLoading(false);
                 }
