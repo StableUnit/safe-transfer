@@ -26,6 +26,7 @@ import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage"
 
 import "./ApproveForm.scss";
 import { customWeb3s } from "../App/App";
+import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -253,7 +254,7 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                     <div className="approve-form__content__line">
                         <FormControl className="approve-form__token-form">
                             <Select
-                                value={selectedToken || "placeholder-value"}
+                                value={selectedToken || "placeholder-value" || "custom-value"}
                                 onChange={handleTokenChange}
                                 inputProps={{ "aria-label": "Without label" }}
                                 IconComponent={ArrowDownIcon}
@@ -276,6 +277,7 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                                         </div>
                                     </MenuItem>
                                 ))}
+                                <CustomTokenMenuItem networkName={networkName} />
                             </Select>
                         </FormControl>
 

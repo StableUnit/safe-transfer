@@ -1,5 +1,22 @@
 import BN from "bn.js";
 import { CustomNetworkType } from "./network";
+import { customWeb3s } from "../components/App/App";
+import CONTRACT_ERC20 from "../contracts/ERC20.json";
+
+export type TokenMetadataType = {
+    address: string;
+    name: string;
+    symbol: string;
+    decimals: string;
+    balance?: string;
+    logo?: string | undefined;
+    // eslint-disable-next-line camelcase
+    logo_hash?: string | undefined;
+    thumbnail?: string | undefined;
+    // eslint-disable-next-line camelcase
+    block_number?: string | undefined;
+    validated?: string | undefined;
+};
 
 interface TokenInfo {
     id: string;
@@ -38,11 +55,6 @@ export const CUSTOM_TOKENS: Record<CustomNetworkType, TokenInfo[]> = {
             symbol: "WANNA",
             address: "0x7faa64faf54750a2e3ee621166635feaf406ab22",
         },
-        {
-            id: "Trisolaris",
-            symbol: "TRI",
-            address: "0xfa94348467f64d5a457f75f8bc40495d33c65abb",
-        },
     ],
 };
 
@@ -59,3 +71,16 @@ export const fromHRToBN = (n: number, decimals: number) => new BN(10).pow(new BN
 
 export const toHRNumber = (bn: BN, decimal = 0) => bn.div(new BN(10).pow(new BN(decimal))).toNumber();
 export const toHRNumberFloat = (bn: BN, decimal = 0) => toHRNumber(bn.muln(1000), decimal) / 1000;
+
+export const getCustomTokenMetadata = async (chain: CustomNetworkType, address: string, account?: string) => {
+    const tokenContract = new customWeb3s[chain].eth.Contract(CONTRACT_ERC20 as any, address);
+    const balance = account ? await tokenContract.methods.balanceOf(account).call() : undefined;
+
+    return {
+        address,
+        balance,
+        name: await tokenContract.methods.name().call(),
+        symbol: await tokenContract.methods.symbol().call(),
+        decimals: await tokenContract.methods.decimals().call(),
+    };
+};

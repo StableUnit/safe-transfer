@@ -16,7 +16,7 @@ import {
     networkToId,
 } from "../../utils/network";
 import { decodeToken, getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
-import { toHRNumberFloat } from "../../utils/tokens";
+import { getCustomTokenMetadata, toHRNumberFloat, TokenMetadataType } from "../../utils/tokens";
 import { TRANSFER_FROM_ABI } from "../../contracts/abi";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
@@ -24,30 +24,14 @@ import { ReactComponent as MetamaskIcon } from "../../ui-kit/images/metamask.svg
 import Button from "../../ui-kit/components/Button/Button";
 
 import "./TransferForm.scss";
-import { InfoCell } from "./supportComponents/InfoCell";
+import { InfoCell } from "../InfoCell/InfoCell";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
-import { customWeb3s } from "../App/App";
-import CONTRACT_ERC20 from "../../contracts/ERC20.json";
 
 interface TransferFormProps {
     token: string;
     onMetamaskConnect?: () => void;
     onWalletConnect?: () => void;
 }
-
-type TokenMetadataType = {
-    address: string;
-    name: string;
-    symbol: string;
-    decimals: string;
-    logo?: string | undefined;
-    // eslint-disable-next-line camelcase
-    logo_hash?: string | undefined;
-    thumbnail?: string | undefined;
-    // eslint-disable-next-line camelcase
-    block_number?: string | undefined;
-    validated?: string | undefined;
-};
 
 const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: TokenInfoType) =>
     tokenMetadata
@@ -68,16 +52,10 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
     const updateTokenMetadata = async () => {
         if (tokenData) {
             if (isCustomNetwork(tokenData.chain)) {
-                const tokenContract = new customWeb3s[tokenData.chain as CustomNetworkType].eth.Contract(
-                    CONTRACT_ERC20 as any,
+                const newTokenMetadata = await getCustomTokenMetadata(
+                    tokenData.chain as CustomNetworkType,
                     tokenData.address
                 );
-                const newTokenMetadata = {
-                    address: tokenData.address,
-                    name: await tokenContract.methods.name().call(),
-                    symbol: await tokenContract.methods.symbol().call(),
-                    decimals: await tokenContract.methods.decimals().call(),
-                };
                 setTokenMetadata(newTokenMetadata);
                 document.title = `Receive ${getValue(newTokenMetadata, tokenData)}`;
             } else {
