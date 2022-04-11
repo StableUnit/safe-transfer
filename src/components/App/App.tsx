@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import cn from "classnames";
+import Web3 from "web3";
 
 import Header from "../Header/Header";
 import Instructions from "../Insctructions/Instructions";
@@ -10,8 +11,15 @@ import TransferForm from "../TransferForm/TransferForm";
 import "./App.scss";
 import { Footer } from "../Footer/Footer";
 import YoutubeEmbed from "../YoutubeEmbed/YoutubeEmbed";
+import { CustomNetworkType } from "../../utils/network";
 
 const DEFAULT_CHAIN_ID = 137;
+
+// const auroraWeb3 = new Web3(new Web3.providers.HttpProvider("https://testnet.aurora.dev"));
+const auroraWeb3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.aurora.dev"));
+export const customWeb3s: Record<CustomNetworkType, Web3> = {
+    aurora: auroraWeb3,
+};
 
 const App = () => {
     const { logout, authenticate, isWeb3Enabled, isAuthenticated, enableWeb3 } = useMoralis();

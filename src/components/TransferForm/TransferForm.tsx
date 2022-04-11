@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { IconButton, List, ListItem, ListItemText } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import Web3 from "web3";
 import BN from "bn.js";
 import Moralis from "moralis";
 
 import cn from "classnames";
-import { getAddressLink, getTrxHashLink, idToNetwork, networkNames, networkToId } from "../../utils/network";
+import {
+    CustomNetworkType,
+    getAddressLink,
+    getTrxHashLink,
+    idToNetwork,
+    isCustomNetwork,
+    networkNames,
+    networkToId,
+} from "../../utils/network";
 import { decodeToken, getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
 import { toHRNumberFloat } from "../../utils/tokens";
 import { TRANSFER_FROM_ABI } from "../../contracts/abi";
@@ -18,6 +26,8 @@ import Button from "../../ui-kit/components/Button/Button";
 import "./TransferForm.scss";
 import { InfoCell } from "./supportComponents/InfoCell";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
+import { customWeb3s } from "../App/App";
+import CONTRACT_ERC20 from "../../contracts/ERC20.json";
 
 interface TransferFormProps {
     token: string;
@@ -55,18 +65,36 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
     const networkName = idToNetwork[chainId];
     const tokenData = decodeToken(token);
 
-    useEffect(() => {
+    const updateTokenMetadata = async () => {
         if (tokenData) {
-            const options = {
-                chain: Web3.utils.numberToHex(networkToId[tokenData.chain]),
-                addresses: [tokenData.address],
-            };
-            // @ts-ignore
-            Web3Api.token.getTokenMetadata(options).then((res) => {
+            if (isCustomNetwork(tokenData.chain)) {
+                const tokenContract = new customWeb3s[tokenData.chain as CustomNetworkType].eth.Contract(
+                    CONTRACT_ERC20 as any,
+                    tokenData.address
+                );
+                const newTokenMetadata = {
+                    address: tokenData.address,
+                    name: await tokenContract.methods.name().call(),
+                    symbol: await tokenContract.methods.symbol().call(),
+                    decimals: await tokenContract.methods.decimals().call(),
+                };
+                setTokenMetadata(newTokenMetadata);
+                document.title = `Receive ${getValue(newTokenMetadata, tokenData)}`;
+            } else {
+                const options = {
+                    chain: Web3.utils.numberToHex(networkToId[tokenData.chain]),
+                    addresses: [tokenData.address],
+                };
+                // @ts-ignore
+                const res = await Web3Api.token.getTokenMetadata(options);
                 setTokenMetadata(res?.[0]);
                 document.title = `Receive ${getValue(res?.[0], tokenData)}`;
-            });
+            }
         }
+    };
+
+    useEffect(() => {
+        updateTokenMetadata();
     }, [token, account]);
 
     const handleTransfer = async () => {
