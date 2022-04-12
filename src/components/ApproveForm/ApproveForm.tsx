@@ -1,13 +1,27 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from "react";
 import Web3 from "web3";
 import Moralis from "moralis";
 import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import cn from "classnames";
 
-import { changeNetworkAtMetamask, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
+import BN from "bn.js";
+import {
+    changeNetworkAtMetamask,
+    CustomNetworkType,
+    getTrxHashLink,
+    idToNetwork,
+    isCustomNetwork,
+    networkNames,
+} from "../../utils/network";
 import { isAddress } from "../../utils/wallet";
-import { beautifyTokenBalance, fromHRToBN } from "../../utils/tokens";
+import {
+    beautifyTokenBalance,
+    CUSTOM_TOKENS,
+    fromHRToBN,
+    getCustomTokenMetadata,
+    toHRNumberFloat,
+} from "../../utils/tokens";
 import ERC20_ABI from "../../contracts/ERC20.json";
 import { generateUrl, getShortHash, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
@@ -17,6 +31,11 @@ import Button from "../../ui-kit/components/Button/Button";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
 
 import "./ApproveForm.scss";
+import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
+import { StateContext } from "../../reducer/constants";
+import { sortByBalance, sortBySymbol } from "../../utils/array";
+import { customWeb3s } from "../App/App";
+import { getTokens } from "../../utils/storage";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -35,6 +54,7 @@ interface ApproveFormProps {
 }
 
 const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) => {
+    const state = useContext(StateContext);
     const { account, chainId: hexChainId, web3 } = useMoralis();
     const chainId = Web3.utils.hexToNumber(hexChainId ?? "");
     const networkName = idToNetwork[chainId];
@@ -51,13 +71,61 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
     const Web3Api = useMoralisWeb3Api();
 
     const onMount = async () => {
-        if (hexChainId) {
-            const options = { chain: hexChainId, address: account };
-            // @ts-ignore
-            const result = await Web3Api.account.getTokenBalances(options);
-            setBalances(result.sort((a, b) => (a.symbol > b.symbol ? 1 : -1)));
+        if (hexChainId && account) {
+            if (!isCustomNetwork(networkName)) {
+                const options = { chain: hexChainId, address: account };
+                // @ts-ignore
+                const result = await Web3Api.account.getTokenBalances(options);
+                setBalances(sortBySymbol(result));
+            } else {
+                setBalances([]);
+                const tokens = [
+                    ...CUSTOM_TOKENS[networkName as CustomNetworkType],
+                    ...getTokens().map((token) => ({
+                        address: token.address,
+                        id: token.name,
+                        symbol: token.symbol,
+                    })),
+                ];
+                for (const token of tokens) {
+                    const tokenContract = new customWeb3s[networkName as CustomNetworkType].eth.Contract(
+                        ERC20_ABI as any,
+                        token.address
+                    );
+                    const decimals = await tokenContract.methods.decimals().call();
+                    const balance = await tokenContract.methods.balanceOf(account).call();
+
+                    const newTokenBalance = {
+                        token_address: token.address,
+                        name: token.id,
+                        symbol: token.symbol,
+                        decimals,
+                        balance,
+                    } as BalanceType;
+                    setBalances((oldBalances) => sortByBalance([...oldBalances, newTokenBalance]));
+                }
+            }
         }
     };
+
+    useEffect(() => {
+        if (state.newCustomToken) {
+            const newTokenBalance = {
+                token_address: state.newCustomToken.address,
+                name: state.newCustomToken.name,
+                symbol: state.newCustomToken.symbol,
+                decimals: state.newCustomToken.decimals,
+                balance: state.newCustomToken.balance,
+            } as BalanceType;
+            setBalances((oldBalances) => {
+                const hasToken = !!oldBalances.find(
+                    (oldBalance) => oldBalance.token_address === newTokenBalance.token_address
+                );
+
+                return hasToken ? oldBalances : sortByBalance([...oldBalances, newTokenBalance]);
+            });
+        }
+    }, [state.newCustomToken]);
 
     useEffect(() => {
         onMount();
@@ -85,23 +153,19 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
 
     const handleRestore = async () => {
         try {
-            const options = {
-                chain: networkName,
-                transaction_hash: restoreHash ?? "",
-            };
             setIsRestoreLoading(true);
-            const transaction = await Web3Api.native.getTransaction(options);
+            const transaction = await web3?.getTransactionReceipt(restoreHash ?? "");
             if (!transaction) {
                 addErrorNotification("Error", "Can't get transaction");
                 setIsRestoreLoading(false);
                 return;
             }
             const valueBN = Web3.utils.hexToNumberString(transaction.logs[0].data);
-            const to = `0x${transaction.logs[0].topic2?.slice(-40)}`;
+            const to = `0x${transaction.logs[0].topics[2]?.slice(-40)}`;
             setGenUrl(
                 generateUrl({
-                    address: transaction.to_address,
-                    from: transaction.from_address,
+                    address: transaction.to,
+                    from: transaction.from,
                     to,
                     value: valueBN,
                     chain: networkName,
@@ -146,10 +210,10 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
             const tokenContract = new ethers.Contract(contractAddress, ERC20_ABI, web3.getSigner());
 
             const gasPrice = await web3?.getGasPrice();
-            const trx = await tokenContract.approve(toAddress, valueBN, {
-                gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice,
-            });
             try {
+                const trx = await tokenContract.approve(toAddress, valueBN, {
+                    gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice,
+                });
                 setTrxHash(trx.hash);
                 setTrxLink(getTrxHashLink(trx.hash, networkName));
                 await trx.wait();
@@ -172,7 +236,9 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
     const currentToken = balances.find((v) => v.token_address === selectedToken);
-    const currentTokenBalance = currentToken ? beautifyTokenBalance(currentToken.balance, +currentToken.decimals) : 0;
+    const currentTokenBalance = currentToken
+        ? toHRNumberFloat(new BN(currentToken.balance), +currentToken.decimals)
+        : 0;
 
     const handleMaxClick = () => {
         setValue(+currentTokenBalance);
@@ -225,7 +291,7 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                     <div className="approve-form__content__line">
                         <FormControl className="approve-form__token-form">
                             <Select
-                                value={selectedToken || "placeholder-value"}
+                                value={selectedToken || "placeholder-value" || "custom-value"}
                                 onChange={handleTokenChange}
                                 inputProps={{ "aria-label": "Without label" }}
                                 IconComponent={ArrowDownIcon}
@@ -248,6 +314,7 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                                         </div>
                                     </MenuItem>
                                 ))}
+                                <CustomTokenMenuItem networkName={networkName} />
                             </Select>
                         </FormControl>
 

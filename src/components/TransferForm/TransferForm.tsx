@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { IconButton, List, ListItem, ListItemText } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import Web3 from "web3";
 import BN from "bn.js";
 import Moralis from "moralis";
 
 import cn from "classnames";
-import { getAddressLink, getTrxHashLink, idToNetwork, networkNames, networkToId } from "../../utils/network";
+import {
+    CustomNetworkType,
+    getAddressLink,
+    getTrxHashLink,
+    idToNetwork,
+    isCustomNetwork,
+    networkNames,
+    networkToId,
+} from "../../utils/network";
 import { decodeToken, getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
-import { toHRNumberFloat } from "../../utils/tokens";
+import { getCustomTokenMetadata, toHRNumberFloat, TokenMetadataType } from "../../utils/tokens";
 import { TRANSFER_FROM_ABI } from "../../contracts/abi";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
@@ -16,7 +24,7 @@ import { ReactComponent as MetamaskIcon } from "../../ui-kit/images/metamask.svg
 import Button from "../../ui-kit/components/Button/Button";
 
 import "./TransferForm.scss";
-import { InfoCell } from "./supportComponents/InfoCell";
+import { InfoCell } from "../InfoCell/InfoCell";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
 
 interface TransferFormProps {
@@ -24,20 +32,6 @@ interface TransferFormProps {
     onMetamaskConnect?: () => void;
     onWalletConnect?: () => void;
 }
-
-type TokenMetadataType = {
-    address: string;
-    name: string;
-    symbol: string;
-    decimals: string;
-    logo?: string | undefined;
-    // eslint-disable-next-line camelcase
-    logo_hash?: string | undefined;
-    thumbnail?: string | undefined;
-    // eslint-disable-next-line camelcase
-    block_number?: string | undefined;
-    validated?: string | undefined;
-};
 
 const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: TokenInfoType) =>
     tokenMetadata
@@ -55,18 +49,30 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
     const networkName = idToNetwork[chainId];
     const tokenData = decodeToken(token);
 
-    useEffect(() => {
+    const updateTokenMetadata = async () => {
         if (tokenData) {
-            const options = {
-                chain: Web3.utils.numberToHex(networkToId[tokenData.chain]),
-                addresses: [tokenData.address],
-            };
-            // @ts-ignore
-            Web3Api.token.getTokenMetadata(options).then((res) => {
+            if (isCustomNetwork(tokenData.chain)) {
+                const newTokenMetadata = await getCustomTokenMetadata(
+                    tokenData.chain as CustomNetworkType,
+                    tokenData.address
+                );
+                setTokenMetadata(newTokenMetadata);
+                document.title = `Receive ${getValue(newTokenMetadata, tokenData)}`;
+            } else {
+                const options = {
+                    chain: Web3.utils.numberToHex(networkToId[tokenData.chain]),
+                    addresses: [tokenData.address],
+                };
+                // @ts-ignore
+                const res = await Web3Api.token.getTokenMetadata(options);
                 setTokenMetadata(res?.[0]);
                 document.title = `Receive ${getValue(res?.[0], tokenData)}`;
-            });
+            }
         }
+    };
+
+    useEffect(() => {
+        updateTokenMetadata();
     }, [token, account]);
 
     const handleTransfer = async () => {

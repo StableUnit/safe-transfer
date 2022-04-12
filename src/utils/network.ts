@@ -1,13 +1,18 @@
 import Web3 from "web3";
+import Moralis from "moralis";
 
 // export type AlchemyNetworkType = "eth" | "polygon" | "arbitrum" | "optimism";
+export type CustomNetworkType = "aurora";
 export type MoralisNetworkType = "eth" | "rinkeby" | "polygon" | "bsc" | "fantom" | "avalanche";
-export type NetworkType = MoralisNetworkType; // AlchemyNetworkType | MoralisNetworkType;
+export type NetworkType = MoralisNetworkType | CustomNetworkType;
+
+export const isCustomNetwork = (network: NetworkType) => network === "aurora";
 
 export const NETWORK: Record<NetworkType, NetworkType> = {
     eth: "eth",
     rinkeby: "rinkeby",
     polygon: "polygon",
+    aurora: "aurora",
     // arbitrum: "arbitrum",
     // optimism: "optimism",
     bsc: "bsc",
@@ -19,6 +24,7 @@ export const networkNames = {
     [NETWORK.eth]: "Ethereum",
     [NETWORK.polygon]: "Polygon",
     [NETWORK.rinkeby]: "Rinkeby",
+    [NETWORK.aurora]: "Aurora",
     // [NETWORK.arbitrum]: "Arbitrum",
     // [NETWORK.optimism]: "Optimism",
     [NETWORK.bsc]: "Binance Smart Chain",
@@ -37,6 +43,8 @@ export const idToNetwork: Record<number, NetworkType> = {
     250: NETWORK.fantom,
     // 42161: NETWORK.arbitrum,
     43114: NETWORK.avalanche,
+    1313161554: NETWORK.aurora,
+    // 1313161555: NETWORK.aurora, // testnet
 };
 
 export const networkToId = inverse(idToNetwork);
@@ -117,6 +125,17 @@ const networkInfo = {
         nativeCurrency: {
             name: "AVAX",
             symbol: "AVAX",
+            decimals: 18,
+        },
+    },
+    [NETWORK.aurora]: {
+        chainName: "Aurora Mainnet",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.aurora]),
+        rpcUrls: ["https://mainnet.aurora.dev"],
+        blockExplorerUrls: ["https://aurorascan.dev"],
+        nativeCurrency: {
+            name: "ETH",
+            symbol: "ETH",
             decimals: 18,
         },
     },

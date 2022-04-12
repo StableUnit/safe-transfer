@@ -1,0 +1,51 @@
+.custom-token-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 450px;
+  background: #313131;
+  border-radius: 20px;
+  padding: 24px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  &__title {
+    font-size: 24px;
+    text-align: center;
+    padding-bottom: 12px;
+  }
+
+  &__label {
+    padding: 12px 0;
+    color: #7A7A7A;
+  }
+
+  &__address {
+    margin-bottom: 12px !important;
+  }
+
+  input {
+    color: #7A7A7A;
+  }
+
+  &__info {
+    display: flex;
+    justify-content: space-between;
+
+    .info-cell {
+      width: auto;
+    }
+  }
+
+  &__error {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    color: #FC7557;
+    text-align: center;
+    padding-bottom: 8px;
+  }
+}
