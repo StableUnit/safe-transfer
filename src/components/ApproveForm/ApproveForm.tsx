@@ -78,6 +78,7 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                 const result = await Web3Api.account.getTokenBalances(options);
                 setBalances(sortBySymbol(result));
             } else {
+                setBalances([]);
                 const tokens = [
                     ...CUSTOM_TOKENS[networkName as CustomNetworkType],
                     ...getTokens().map((token) => ({

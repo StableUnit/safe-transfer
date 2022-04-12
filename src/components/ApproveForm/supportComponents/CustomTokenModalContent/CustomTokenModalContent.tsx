@@ -97,7 +97,7 @@ const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModa
                     </InfoCell>
                 </div>
 
-                {hasTokenAdded && <div className="custom-token-modal__error">This address is already added</div>}
+                {hasTokenAdded && <div className="custom-token-modal__error">This address has already been added</div>}
 
                 <Button onClick={handleAddToken} disabled={!tokenMetadata || hasTokenAdded}>
                     Add token

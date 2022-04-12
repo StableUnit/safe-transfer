@@ -67,7 +67,17 @@ export const beautifyTokenBalance = (balance: string, decimals: number, fraction
     });
 };
 
-export const fromHRToBN = (n: number, decimals: number) => new BN(10).pow(new BN(decimals)).muln(n);
+export const fromHRToBN = (n: number, decimals: number) => {
+    const MAX_SMALL_DECIMAL = 6;
+    if (decimals <= MAX_SMALL_DECIMAL) {
+        return new BN(10).pow(new BN(decimals)).muln(n);
+    }
+
+    const multiplierSmall = new BN(10).pow(new BN(MAX_SMALL_DECIMAL));
+    const multiplierMain = new BN(10).pow(new BN(decimals - MAX_SMALL_DECIMAL));
+
+    return multiplierSmall.muln(n).mul(multiplierMain);
+};
 
 export const toHRNumber = (bn: BN, decimal = 0) => bn.div(new BN(10).pow(new BN(decimal))).toNumber();
 export const toHRNumberFloat = (bn: BN, decimal = 0) => toHRNumber(bn.muln(1000), decimal) / 1000;
