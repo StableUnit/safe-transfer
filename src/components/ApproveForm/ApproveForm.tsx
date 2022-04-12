@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from "react";
 import Web3 from "web3";
 import Moralis from "moralis";
 import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
@@ -15,7 +15,13 @@ import {
     networkNames,
 } from "../../utils/network";
 import { isAddress } from "../../utils/wallet";
-import { beautifyTokenBalance, CUSTOM_TOKENS, fromHRToBN, toHRNumberFloat } from "../../utils/tokens";
+import {
+    beautifyTokenBalance,
+    CUSTOM_TOKENS,
+    fromHRToBN,
+    getCustomTokenMetadata,
+    toHRNumberFloat,
+} from "../../utils/tokens";
 import ERC20_ABI from "../../contracts/ERC20.json";
 import { generateUrl, getShortHash, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
@@ -25,8 +31,11 @@ import Button from "../../ui-kit/components/Button/Button";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
 
 import "./ApproveForm.scss";
-import { customWeb3s } from "../App/App";
 import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
+import { StateContext } from "../../reducer/constants";
+import { sortByBalance, sortBySymbol } from "../../utils/array";
+import { customWeb3s } from "../App/App";
+import { getTokens } from "../../utils/storage";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -45,6 +54,7 @@ interface ApproveFormProps {
 }
 
 const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) => {
+    const state = useContext(StateContext);
     const { account, chainId: hexChainId, web3 } = useMoralis();
     const chainId = Web3.utils.hexToNumber(hexChainId ?? "");
     const networkName = idToNetwork[chainId];
@@ -66,10 +76,16 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                 const options = { chain: hexChainId, address: account };
                 // @ts-ignore
                 const result = await Web3Api.account.getTokenBalances(options);
-                setBalances(result.sort((a, b) => (a.symbol > b.symbol ? 1 : -1)));
+                setBalances(sortBySymbol(result));
             } else {
-                const tokens = CUSTOM_TOKENS[networkName as CustomNetworkType];
-                const customTokenBalances = [] as BalanceType[];
+                const tokens = [
+                    ...CUSTOM_TOKENS[networkName as CustomNetworkType],
+                    ...getTokens().map((token) => ({
+                        address: token.address,
+                        id: token.name,
+                        symbol: token.symbol,
+                    })),
+                ];
                 for (const token of tokens) {
                     const tokenContract = new customWeb3s[networkName as CustomNetworkType].eth.Contract(
                         ERC20_ABI as any,
@@ -77,18 +93,38 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                     );
                     const decimals = await tokenContract.methods.decimals().call();
                     const balance = await tokenContract.methods.balanceOf(account).call();
-                    customTokenBalances.push({
+
+                    const newTokenBalance = {
                         token_address: token.address,
                         name: token.id,
                         symbol: token.symbol,
                         decimals,
                         balance,
-                    });
+                    } as BalanceType;
+                    setBalances((oldBalances) => sortByBalance([...oldBalances, newTokenBalance]));
                 }
-                setBalances(customTokenBalances.sort((a, b) => (new BN(a.balance).lt(new BN(b.balance)) ? 1 : -1)));
             }
         }
     };
+
+    useEffect(() => {
+        if (state.newCustomToken) {
+            const newTokenBalance = {
+                token_address: state.newCustomToken.address,
+                name: state.newCustomToken.name,
+                symbol: state.newCustomToken.symbol,
+                decimals: state.newCustomToken.decimals,
+                balance: state.newCustomToken.balance,
+            } as BalanceType;
+            setBalances((oldBalances) => {
+                const hasToken = !!oldBalances.find(
+                    (oldBalance) => oldBalance.token_address === newTokenBalance.token_address
+                );
+
+                return hasToken ? oldBalances : sortByBalance([...oldBalances, newTokenBalance]);
+            });
+        }
+    }, [state.newCustomToken]);
 
     useEffect(() => {
         onMount();

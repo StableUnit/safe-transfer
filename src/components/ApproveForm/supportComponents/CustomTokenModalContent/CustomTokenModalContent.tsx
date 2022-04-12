@@ -1,15 +1,23 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useContext, useState } from "react";
 import { TextField } from "@mui/material";
 import Web3 from "web3";
 import { useMoralis } from "react-moralis";
 
 import { InfoCell } from "../../../InfoCell/InfoCell";
-import { beautifyTokenBalance, getCustomTokenMetadata, TokenMetadataType } from "../../../../utils/tokens";
-import { addErrorNotification } from "../../../../utils/notifications";
+import {
+    beautifyTokenBalance,
+    CUSTOM_TOKENS,
+    getCustomTokenMetadata,
+    TokenMetadataType,
+} from "../../../../utils/tokens";
+import { addErrorNotification, addSuccessNotification } from "../../../../utils/notifications";
 
 import "./CustomTokenModalContent.scss";
 import { CustomNetworkType } from "../../../../utils/network";
 import Button from "../../../../ui-kit/components/Button/Button";
+import { addToken, getTokens } from "../../../../utils/storage";
+import { DispatchContext } from "../../../../reducer/constants";
+import { Actions } from "../../../../reducer";
 
 interface CustomTokenModalContentProps {
     networkName: CustomNetworkType;
@@ -19,6 +27,7 @@ interface CustomTokenModalContentProps {
 const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModalContentProps>(
     ({ networkName, onClose }, ref) => {
         const { account } = useMoralis();
+        const dispatch = useContext(DispatchContext);
         const [address, setAddress] = useState<undefined | string>(undefined);
         const [tokenMetadata, setTokenMetadata] = useState<TokenMetadataType | undefined>(undefined);
 
@@ -31,17 +40,28 @@ const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModa
                 return;
             }
 
+            setTokenMetadata(undefined);
             if (Web3.utils.isAddress(address)) {
                 setTokenMetadata(await getCustomTokenMetadata(networkName, address, account));
             } else {
-                addErrorNotification("Address is not correct");
+                addErrorNotification("Error", "Address is not correct");
             }
         };
 
         const handleAddToken = () => {
-            console.log("handleAddToken");
-            onClose();
+            if (tokenMetadata) {
+                addToken(tokenMetadata);
+                dispatch({ type: Actions.AddToken, payload: tokenMetadata });
+                addSuccessNotification("Success", "Token added");
+                onClose();
+            }
         };
+
+        const hasTokenAdded = !!(
+            address &&
+            (getTokens().find((customToken) => customToken.address === address) ||
+                CUSTOM_TOKENS[networkName].find((customToken) => customToken.address === address))
+        );
 
         return (
             <div className="custom-token-modal" ref={ref}>
@@ -77,7 +97,9 @@ const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModa
                     </InfoCell>
                 </div>
 
-                <Button onClick={handleAddToken} disabled={!tokenMetadata}>
+                {hasTokenAdded && <div className="custom-token-modal__error">This address is already added</div>}
+
+                <Button onClick={handleAddToken} disabled={!tokenMetadata || hasTokenAdded}>
                     Add token
                 </Button>
             </div>

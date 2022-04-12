@@ -39,4 +39,13 @@
       width: auto;
     }
   }
+
+  &__error {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    color: #FC7557;
+    text-align: center;
+    padding-bottom: 8px;
+  }
 }
