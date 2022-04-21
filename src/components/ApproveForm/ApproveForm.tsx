@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from "react";
 import Web3 from "web3";
-import Moralis from "moralis";
 import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import cn from "classnames";
@@ -19,7 +18,7 @@ import {
     beautifyTokenBalance,
     CUSTOM_TOKENS,
     fromHRToBN,
-    getCustomTokenMetadata,
+    getTokenContractFactory,
     toHRNumberFloat,
 } from "../../utils/tokens";
 import ERC20_ABI from "../../contracts/ERC20.json";
@@ -62,13 +61,24 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
     const [value, setValue] = useState<undefined | number>(undefined);
     const [selectedToken, setSelectedToken] = useState<undefined | string>(undefined); // address
     const [isApproveLoading, setIsApproveLoading] = useState(false);
+    const [isCancelApproveLoading, setIsCancelApproveLoading] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [trxLink, setTrxLink] = useState("");
     const [restoreHash, setRestoreHash] = useState<undefined | string>(undefined);
     const [isRestoreLoading, setIsRestoreLoading] = useState(false);
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
+    const [allowance, setAllowance] = useState<undefined | string>(undefined);
     const Web3Api = useMoralisWeb3Api();
+
+    const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
+    const currentToken = balances.find((v) => v.token_address === selectedToken);
+    const currentTokenBalance = currentToken
+        ? toHRNumberFloat(new BN(currentToken.balance), +currentToken.decimals)
+        : 0;
+    const hasAllowance = !!(allowance && allowance !== "0");
+
+    const getTokenContract = getTokenContractFactory(web3);
 
     const onMount = async () => {
         if (hexChainId && account) {
@@ -195,21 +205,40 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
         );
     };
 
+    const cancelApprove = async () => {
+        const tokenContract = getTokenContract(currentToken?.token_address ?? "");
+        const gasPrice = await web3?.getGasPrice();
+        try {
+            setIsCancelApproveLoading(true);
+            const trx = await tokenContract.approve(toAddress, "0", {
+                gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice,
+            });
+            await trx.wait();
+            setAllowance(undefined);
+        } catch (error) {
+            // @ts-ignore
+            const replacedHash = error?.replacement?.hash;
+            if (replacedHash) {
+                setAllowance(undefined);
+            } else {
+                console.error(error);
+                addErrorNotification("Error", "Cancel approve transaction failed");
+            }
+            setIsCancelApproveLoading(false);
+        }
+    };
+
     const handleApprove = async () => {
-        const selectedTokenInfo = balances.find((v) => v.token_address === selectedToken);
-        if (selectedTokenInfo && value && toAddress && account) {
+        if (currentToken && value && toAddress && account) {
             setGenUrl(undefined);
             setTrxHash("");
             setTrxLink("");
             setIsApproveLoading(true);
-            const contractAddress = selectedTokenInfo.token_address;
-            const valueBN = fromHRToBN(value, +selectedTokenInfo.decimals).toString();
 
-            const ethers = Moralis.web3Library;
-            // @ts-ignore
-            const tokenContract = new ethers.Contract(contractAddress, ERC20_ABI, web3.getSigner());
-
+            const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
+            const tokenContract = getTokenContract(currentToken.token_address);
             const gasPrice = await web3?.getGasPrice();
+
             try {
                 const trx = await tokenContract.approve(toAddress, valueBN, {
                     gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice,
@@ -217,14 +246,14 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                 setTrxHash(trx.hash);
                 setTrxLink(getTrxHashLink(trx.hash, networkName));
                 await trx.wait();
-                onSuccessApprove(selectedTokenInfo);
+                onSuccessApprove(currentToken);
             } catch (error) {
                 // @ts-ignore
                 const replacedHash = error?.replacement?.hash;
                 if (replacedHash) {
                     setTrxHash(replacedHash);
                     setTrxLink(getTrxHashLink(replacedHash, networkName));
-                    onSuccessApprove(selectedTokenInfo);
+                    onSuccessApprove(currentToken);
                 } else {
                     console.error(error);
                     addErrorNotification("Error", "Approve transaction failed");
@@ -234,15 +263,20 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
         }
     };
 
-    const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
-    const currentToken = balances.find((v) => v.token_address === selectedToken);
-    const currentTokenBalance = currentToken
-        ? toHRNumberFloat(new BN(currentToken.balance), +currentToken.decimals)
-        : 0;
-
     const handleMaxClick = () => {
         setValue(+currentTokenBalance);
     };
+
+    useEffect(() => {
+        if (isCorrectData && currentToken) {
+            const tokenContract = getTokenContract(currentToken.token_address);
+            tokenContract.functions.allowance(account, toAddress).then((allowanceFromContract) => {
+                setAllowance(allowanceFromContract.toString());
+            });
+        } else {
+            setAllowance(undefined);
+        }
+    }, [isCorrectData]);
 
     return (
         <div className="approve-form__container">
@@ -332,11 +366,31 @@ const ApproveForm = ({ onMetamaskConnect, onWalletConnect }: ApproveFormProps) =
                     </div>
                 </div>
 
+                {hasAllowance && currentToken && (
+                    <div className="approve-form__allowance">
+                        <div className="approve-form__allowance__text">
+                            <span>Allowance for selected address is </span>
+                            <span>
+                                {beautifyTokenBalance(allowance, +currentToken.decimals)} {currentToken.symbol}
+                            </span>
+                            <br />
+                            Please cancel this approve.
+                        </div>
+                        <Button
+                            onClick={cancelApprove}
+                            className="approve-form__button"
+                            disabled={isCancelApproveLoading}
+                        >
+                            {isCancelApproveLoading ? "Loading..." : "Cancel Approve"}
+                        </Button>
+                    </div>
+                )}
+
                 {account ? (
                     <Button
                         onClick={handleApprove}
                         className="approve-form__button"
-                        disabled={!isCorrectData || isApproveLoading}
+                        disabled={!isCorrectData || isApproveLoading || hasAllowance}
                     >
                         {isApproveLoading ? "Loading..." : "Approve"}
                     </Button>

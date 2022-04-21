@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import Web3 from "web3";
-import BN from "bn.js";
 import Moralis from "moralis";
 
 import cn from "classnames";
@@ -12,11 +11,19 @@ import {
     getTrxHashLink,
     idToNetwork,
     isCustomNetwork,
+    MoralisNetworkType,
     networkNames,
     networkToId,
 } from "../../utils/network";
 import { decodeToken, getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
-import { beautifyTokenBalance, getCustomTokenMetadata, toHRNumberFloat, TokenMetadataType } from "../../utils/tokens";
+import {
+    beautifyTokenBalance,
+    getCustomTokenAllowance,
+    getCustomTokenMetadata,
+    getTokenContractFactory,
+    toHRNumberFloat,
+    TokenMetadataType,
+} from "../../utils/tokens";
 import { TRANSFER_FROM_ABI } from "../../contracts/abi";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
@@ -39,15 +46,18 @@ const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: Token
         : tokenData.value;
 
 const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: TransferFormProps) => {
-    const { account, chainId: hexChainId } = useMoralis();
+    const { account, chainId: hexChainId, web3 } = useMoralis();
     const Web3Api = useMoralisWeb3Api();
     const [tokenMetadata, setTokenMetadata] = useState<undefined | TokenMetadataType>(undefined);
     const [isTransferFetching, setIsTransferFetching] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [trxHash, setTrxHash] = useState("");
+    const [allowance, setAllowance] = useState<undefined | string>(undefined);
     const chainId = Web3.utils.hexToNumber(hexChainId ?? "");
     const networkName = idToNetwork[chainId];
     const tokenData = decodeToken(token);
+
+    const getTokenContract = getTokenContractFactory(web3);
 
     const updateTokenMetadata = async () => {
         if (tokenData) {
@@ -71,8 +81,31 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
         }
     };
 
+    const updateAllowance = async () => {
+        if (tokenData) {
+            if (isCustomNetwork(tokenData.chain)) {
+                const allowanceFromContract = await getCustomTokenAllowance(
+                    tokenData.chain as CustomNetworkType,
+                    tokenData.address,
+                    tokenData.from,
+                    tokenData.to
+                );
+                setAllowance(allowanceFromContract);
+            } else {
+                const allowanceFromContract = await Web3Api.token.getTokenAllowance({
+                    owner_address: tokenData.from,
+                    spender_address: tokenData.to,
+                    address: tokenData.address,
+                    chain: tokenData.chain as MoralisNetworkType,
+                });
+                setAllowance(allowanceFromContract.allowance);
+            }
+        }
+    };
+
     useEffect(() => {
         updateTokenMetadata();
+        updateAllowance();
     }, [token, account]);
 
     const handleTransfer = async () => {
@@ -154,11 +187,13 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
             );
         }
 
+        const hasAllowance = !!(allowance && allowance !== "0");
+
         return (
             <Button
                 onClick={handleTransfer}
                 className="transfer-form__button"
-                disabled={!hasAllData || isTransferFetching || isDisabledContent}
+                disabled={!hasAllData || isTransferFetching || isDisabledContent || !hasAllowance}
             >
                 {isTransferFetching ? "Loading..." : "Receive"}
             </Button>
@@ -207,9 +242,20 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
                                 </div>
                             </div>
                         </InfoCell>
-                        <InfoCell title="Value:">
-                            <div id="value">{getValue(tokenMetadata, tokenData)}</div>
-                        </InfoCell>
+                        <div className="transfer-form__line">
+                            <InfoCell title="Value:">
+                                <div id="value">{getValue(tokenMetadata, tokenData)}</div>
+                            </InfoCell>
+                            {allowance && tokenMetadata && (
+                                <InfoCell title="Allowance:">
+                                    <div id="allowance">
+                                        {`${beautifyTokenBalance(allowance, +tokenMetadata.decimals)} ${
+                                            tokenMetadata?.symbol
+                                        }`}
+                                    </div>
+                                </InfoCell>
+                            )}
+                        </div>
                         {account && tokenData.to.toLowerCase() !== account?.toLowerCase() && (
                             <div className="transfer-form__error">
                                 Please change account to {getShortHash(tokenData.to)}

@@ -1,4 +1,5 @@
 import BN from "bn.js";
+import Moralis from "moralis";
 import { CustomNetworkType } from "./network";
 import { customWeb3s } from "../components/App/App";
 import CONTRACT_ERC20 from "../contracts/ERC20.json";
@@ -109,6 +110,12 @@ export const fromHRToBN = (n: number, decimals: number) => {
 export const toHRNumber = (bn: BN, decimal = 0) => bn.div(new BN(10).pow(new BN(decimal))).toNumber();
 export const toHRNumberFloat = (bn: BN, decimal = 0) => toHRNumber(bn.muln(1000), decimal) / 1000;
 
+export const getCustomTokenAllowance = async (chain: CustomNetworkType, address: string, from: string, to: string) => {
+    const tokenContract = new customWeb3s[chain].eth.Contract(CONTRACT_ERC20 as any, address);
+    const allowance = await tokenContract.methods.allowance(from, to).call();
+    return allowance;
+};
+
 export const getCustomTokenMetadata = async (chain: CustomNetworkType, address: string, account?: string) => {
     const tokenContract = new customWeb3s[chain].eth.Contract(CONTRACT_ERC20 as any, address);
     const balance = account ? await tokenContract.methods.balanceOf(account).call() : undefined;
@@ -120,4 +127,10 @@ export const getCustomTokenMetadata = async (chain: CustomNetworkType, address: 
         symbol: await tokenContract.methods.symbol().call(),
         decimals: await tokenContract.methods.decimals().call(),
     };
+};
+
+export const getTokenContractFactory = (web3: Moralis.MoralisWeb3Provider | null) => (address: string) => {
+    const ethers = Moralis.web3Library;
+    // @ts-ignore
+    return new ethers.Contract(address, CONTRACT_ERC20, web3?.getSigner());
 };
