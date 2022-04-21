@@ -16,7 +16,7 @@ import {
     networkToId,
 } from "../../utils/network";
 import { decodeToken, getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
-import { getCustomTokenMetadata, toHRNumberFloat, TokenMetadataType } from "../../utils/tokens";
+import { beautifyTokenBalance, getCustomTokenMetadata, toHRNumberFloat, TokenMetadataType } from "../../utils/tokens";
 import { TRANSFER_FROM_ABI } from "../../contracts/abi";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
@@ -35,7 +35,7 @@ interface TransferFormProps {
 
 const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: TokenInfoType) =>
     tokenMetadata
-        ? `${toHRNumberFloat(new BN(tokenData.value), +tokenMetadata.decimals)} ${tokenMetadata.symbol}`
+        ? `${beautifyTokenBalance(tokenData.value, +tokenMetadata.decimals)} ${tokenMetadata.symbol}`
         : tokenData.value;
 
 const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: TransferFormProps) => {
