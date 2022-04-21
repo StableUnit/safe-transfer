@@ -56,6 +56,33 @@ export const CUSTOM_TOKENS: Record<CustomNetworkType, TokenInfo[]> = {
             address: "0x7faa64faf54750a2e3ee621166635feaf406ab22",
         },
     ],
+    harmony: [
+        {
+            id: "dai",
+            symbol: "1DAI",
+            address: "0xEf977d2f931C1978Db5F6747666fa1eACB0d0339",
+        },
+        {
+            id: "busd",
+            symbol: "BUSD",
+            address: "0xE176EBE47d621b984a73036B9DA5d834411ef734",
+        },
+        {
+            id: "aave",
+            symbol: "1AAVE",
+            address: "0xcf323aad9e522b93f11c352caa519ad0e14eb40f",
+        },
+        {
+            id: "matic",
+            symbol: "1MATIC",
+            address: "0x301259f392b551ca8c592c9f676fcd2f9a0a84c5",
+        },
+        {
+            id: "usdc",
+            symbol: "1USDC",
+            address: "0x301259f392b551ca8c592c9f676fcd2f9a0a84c5",
+        },
+    ],
 };
 
 export const beautifyTokenBalance = (balance: string, decimals: number, fraction = 5) => {

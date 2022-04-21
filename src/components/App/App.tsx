@@ -15,10 +15,9 @@ import { CustomNetworkType } from "../../utils/network";
 
 const DEFAULT_CHAIN_ID = 137;
 
-// const auroraWeb3 = new Web3(new Web3.providers.HttpProvider("https://testnet.aurora.dev"));
-const auroraWeb3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.aurora.dev"));
 export const customWeb3s: Record<CustomNetworkType, Web3> = {
-    aurora: auroraWeb3,
+    aurora: new Web3(new Web3.providers.HttpProvider("https://mainnet.aurora.dev")),
+    harmony: new Web3(new Web3.providers.HttpProvider("https://api.harmony.one")),
 };
 
 const App = () => {

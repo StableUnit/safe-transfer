@@ -6,6 +6,7 @@ import FantomImage from "../../images/fantom.png";
 import BscImage from "../../images/bsc.png";
 import AvalancheImage from "../../images/avalanche.png";
 import AuroraImage from "../../images/aurora.png";
+import HarmonyImage from "../../images/harmony.png";
 
 export type NetworkType = "eth" | "rinkeby" | "polygon" | "bsc" | "fantom" | "avalanche" | string;
 
@@ -31,6 +32,8 @@ const getNetworkImage = (network?: NetworkType) => {
             return AvalancheImage;
         case "aurora":
             return AuroraImage;
+        case "harmony":
+            return HarmonyImage;
         default:
             return DefaultImage;
     }

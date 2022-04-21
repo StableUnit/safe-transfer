@@ -2,17 +2,16 @@ import Web3 from "web3";
 import Moralis from "moralis";
 
 // export type AlchemyNetworkType = "eth" | "polygon" | "arbitrum" | "optimism";
-export type CustomNetworkType = "aurora";
+export type CustomNetworkType = "aurora" | "harmony";
 export type MoralisNetworkType = "eth" | "rinkeby" | "polygon" | "bsc" | "fantom" | "avalanche";
 export type NetworkType = MoralisNetworkType | CustomNetworkType;
-
-export const isCustomNetwork = (network: NetworkType) => network === "aurora";
 
 export const NETWORK: Record<NetworkType, NetworkType> = {
     eth: "eth",
     rinkeby: "rinkeby",
     polygon: "polygon",
     aurora: "aurora",
+    harmony: "harmony",
     // arbitrum: "arbitrum",
     // optimism: "optimism",
     bsc: "bsc",
@@ -20,11 +19,14 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     avalanche: "avalanche",
 };
 
+export const isCustomNetwork = (network: NetworkType) => [NETWORK.aurora, NETWORK.harmony].includes(network);
+
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",
     [NETWORK.polygon]: "Polygon",
     [NETWORK.rinkeby]: "Rinkeby",
     [NETWORK.aurora]: "Aurora",
+    [NETWORK.harmony]: "Harmony",
     // [NETWORK.arbitrum]: "Arbitrum",
     // [NETWORK.optimism]: "Optimism",
     [NETWORK.bsc]: "Binance Smart Chain",
@@ -45,6 +47,8 @@ export const idToNetwork: Record<number, NetworkType> = {
     43114: NETWORK.avalanche,
     1313161554: NETWORK.aurora,
     // 1313161555: NETWORK.aurora, // testnet
+    1666600000: NETWORK.harmony,
+    // 1666700000: NETWORK.harmony, // testnet
 };
 
 export const networkToId = inverse(idToNetwork);
@@ -136,6 +140,17 @@ const networkInfo = {
         nativeCurrency: {
             name: "ETH",
             symbol: "ETH",
+            decimals: 18,
+        },
+    },
+    [NETWORK.harmony]: {
+        chainName: "Harmony Mainnet",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.harmony]),
+        rpcUrls: ["https://api.harmony.one"],
+        blockExplorerUrls: ["https://explorer.harmony.one/"],
+        nativeCurrency: {
+            name: "ONE",
+            symbol: "ONE",
             decimals: 18,
         },
     },
