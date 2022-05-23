@@ -89,27 +89,10 @@
         cursor: pointer;
     }
 
-    &__button__wc,
-    &__button__metamask {
+    &__button {
         width: 100%;
         height: 58px;
         margin: 32px auto 0 auto;
-    }
-
-    &__button__wc {
-        display: none;
-    }
-    &__button__metamask {
-        display: block;
-    }
-
-    @media screen and (max-width: 600px) {
-        &__button__wc {
-            display: block;
-        }
-        &__button__metamask {
-            display: none;
-        }
     }
 
     &__hash {

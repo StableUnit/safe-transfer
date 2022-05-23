@@ -21,13 +21,6 @@
             height: 40px;
             width: 40px;
         }
-
-        #connect-button-metamask {
-            display: none;
-        }
-        #connect-button-wallet-connect {
-            display: flex !important;
-        }
     }
 
     &__logo {
@@ -87,9 +80,5 @@
             border-radius: inherit;
             background: linear-gradient(74.43deg, #DBB0FF -12.43%, #C2DCFF 24.51%, #B4FFE0 63.46%, #FEFBDA 82.01%, #FECBFF 110.47%);
         }
-    }
-
-    #connect-button-wallet-connect {
-        display: none;
     }
 }

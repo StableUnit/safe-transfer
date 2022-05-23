@@ -7,13 +7,12 @@ import NavbarLink from "./supportComponents/NavbarLink/NavbarLink";
 import "./Header.scss";
 
 interface NavbarProps {
-    onMetamaskConnect: () => void;
-    onWalletConnect: () => void;
+    onConnect: () => void;
     onDisconnect: () => void;
     token: string | null;
 }
 
-const Header = ({ token, onWalletConnect, onMetamaskConnect, onDisconnect }: NavbarProps) => {
+const Header = ({ token, onConnect, onDisconnect }: NavbarProps) => {
     const { account } = useMoralis();
 
     const handleOpenSendPage = () => {
@@ -36,13 +35,8 @@ const Header = ({ token, onWalletConnect, onMetamaskConnect, onDisconnect }: Nav
                         {getShortAddress(account)}
                     </div>
                 ) : (
-                    <div>
-                        <div className="header__button" onClick={onMetamaskConnect} id="connect-button-metamask">
-                            Connect wallet
-                        </div>
-                        <div className="header__button" onClick={onWalletConnect} id="connect-button-wallet-connect">
-                            Connect wallet
-                        </div>
+                    <div className="header__button" onClick={onConnect} id="connect-button">
+                        Connect wallet
                     </div>
                 )}
             </div>

@@ -12,6 +12,7 @@ import "./App.scss";
 import { Footer } from "../Footer/Footer";
 import YoutubeEmbed from "../YoutubeEmbed/YoutubeEmbed";
 import { CustomNetworkType } from "../../utils/network";
+import WalletModal from "../WalletModal/WalletModal";
 
 const DEFAULT_CHAIN_ID = 137;
 
@@ -22,6 +23,7 @@ export const customWeb3s: Record<CustomNetworkType, Web3> = {
 
 const App = () => {
     const { logout, authenticate, isWeb3Enabled, isAuthenticated, enableWeb3 } = useMoralis();
+    const [showModal, setShowModal] = useState(false);
     const [token, setToken] = useState<string | null>(null);
     const [isInstructions, setIsInstructions] = useState(true);
 
@@ -30,6 +32,17 @@ const App = () => {
         setToken(urlParams.get("token"));
     }, []);
 
+    const openModal = () => {
+        setShowModal(true);
+    };
+    const closeModal = () => {
+        setShowModal(false);
+    };
+
+    const onConnect = () => {
+        openModal();
+    };
+
     const onDisconnect = async () => {
         await logout();
     };
@@ -37,12 +50,14 @@ const App = () => {
     const onWalletConnect = async () => {
         authenticate({
             provider: "walletconnect",
+            mobileLinks: ["metamask", "trust"],
         });
+        closeModal();
     };
 
     const onMetamaskConnect = () => {
-        // authenticate();
         enableWeb3({ chainId: DEFAULT_CHAIN_ID });
+        closeModal();
     };
 
     useEffect(() => {
@@ -57,26 +72,19 @@ const App = () => {
 
     return (
         <div className={cn("App", { "App--padded": !isInstructions })}>
-            <Header
-                token={token}
-                onMetamaskConnect={onMetamaskConnect}
-                onWalletConnect={onWalletConnect}
-                onDisconnect={onDisconnect}
-            />
+            <Header token={token} onConnect={onConnect} onDisconnect={onDisconnect} />
             <div className="App__container">
                 <YoutubeEmbed embedId="Z8UjMCWpplM" />
                 {isInstructions && <Instructions onClose={handleOnCloseInstructions} />}
-                {token ? (
-                    <TransferForm
-                        onWalletConnect={onWalletConnect}
-                        onMetamaskConnect={onMetamaskConnect}
-                        token={token}
-                    />
-                ) : (
-                    <ApproveForm onMetamaskConnect={onMetamaskConnect} onWalletConnect={onWalletConnect} />
-                )}
+                {token ? <TransferForm onConnect={onConnect} token={token} /> : <ApproveForm onConnect={onConnect} />}
             </div>
             <Footer />
+            <WalletModal
+                visible={showModal}
+                onClose={() => setShowModal(false)}
+                onMetamaskConnect={onMetamaskConnect}
+                onWalletConnect={onWalletConnect}
+            />
         </div>
     );
 };

@@ -36,8 +36,7 @@ import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage"
 
 interface TransferFormProps {
     token: string;
-    onMetamaskConnect?: () => void;
-    onWalletConnect?: () => void;
+    onConnect: () => void;
 }
 
 const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: TokenInfoType) =>
@@ -45,7 +44,7 @@ const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: Token
         ? `${beautifyTokenBalance(tokenData.value, +tokenMetadata.decimals)} ${tokenMetadata.symbol}`
         : tokenData.value;
 
-const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: TransferFormProps) => {
+const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
     const { account, chainId: hexChainId, web3 } = useMoralis();
     const Web3Api = useMoralisWeb3Api();
     const [tokenMetadata, setTokenMetadata] = useState<undefined | TokenMetadataType>(undefined);
@@ -172,18 +171,9 @@ const TransferForm = React.memo(({ token, onMetamaskConnect, onWalletConnect }: 
         }
         if (!account) {
             return (
-                <>
-                    <Button id="connect-button-wc" onClick={onWalletConnect} className="transfer-form__button__wc">
-                        CONNECT WALLET
-                    </Button>
-                    <Button
-                        id="connect-button-metamask"
-                        onClick={onMetamaskConnect}
-                        className="transfer-form__button__metamask"
-                    >
-                        CONNECT WALLET
-                    </Button>
-                </>
+                <Button onClick={onConnect} className="transfer-form__button">
+                    CONNECT WALLET
+                </Button>
             );
         }
 
