@@ -18,6 +18,8 @@ export const generateUrl = ({ address, from, to, value, chain }: TokenInfoType) 
 
     return `${origin}?token=${token}`;
 };
+// @ts-ignore
+window.generateUrl = generateUrl;
 
 export const decodeToken = (token: string) => {
     try {
