@@ -51,6 +51,7 @@ const App = () => {
         authenticate({
             provider: "walletconnect",
             mobileLinks: ["metamask", "trust"],
+            chainId: DEFAULT_CHAIN_ID,
         });
         closeModal();
     };
