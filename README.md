@@ -4,6 +4,14 @@
 
 This project was made by [StableUnit team](https://stableunit.org/).
 
+Safe Transfer is a tool that makes blockchain assets transfers really safe! No more lost funds because of address misstape or un-deployed multisig! 
+
+It’s like when you want to send any tokens to your friend you do not just send it with a chance that you do a mistake with one letter in the address or your friend use not that blockchain that you expected. Because this way you could easily lose your money. Instead, you could use Safe Transfer and give an **allowance** to your friend to take this **specific amount** of **specific tokes** in the **specific blockchain**. This way, if you did a mistake with the address or blockchain, your friend would be unable to claim this transfer and you can easily cancel it, and submit a new correct one. Your money will not leave your wallet before correct approval from your friend's wallet. 
+
+Safe Transfer doesn’t lock the assets in the smart contract, it only sets a limit amount of your tokens that can be claimed by the receiver (token allowance). You can still revoke the token approval to cancel the allowance.
+
+**Your money transfer is safe with Safe Transfer**
+
 ## Available Scripts
 
 In the project directory, you can run:
