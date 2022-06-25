@@ -2,7 +2,7 @@ import Web3 from "web3";
 import Moralis from "moralis";
 
 // export type AlchemyNetworkType = "eth" | "polygon" | "arbitrum" | "optimism";
-export type CustomNetworkType = "aurora" | "harmony";
+export type CustomNetworkType = "aurora" | "harmony" | "optimism";
 export type MoralisNetworkType = "eth" | "rinkeby" | "polygon" | "bsc" | "fantom" | "avalanche";
 export type NetworkType = MoralisNetworkType | CustomNetworkType;
 
@@ -13,13 +13,14 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     aurora: "aurora",
     harmony: "harmony",
     // arbitrum: "arbitrum",
-    // optimism: "optimism",
+    optimism: "optimism",
     bsc: "bsc",
     fantom: "fantom",
     avalanche: "avalanche",
 };
 
-export const isCustomNetwork = (network: NetworkType) => [NETWORK.aurora, NETWORK.harmony].includes(network);
+export const isCustomNetwork = (network: NetworkType) =>
+    [NETWORK.aurora, NETWORK.harmony, NETWORK.optimism].includes(network);
 
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",
@@ -28,7 +29,7 @@ export const networkNames = {
     [NETWORK.aurora]: "Aurora",
     [NETWORK.harmony]: "Harmony",
     // [NETWORK.arbitrum]: "Arbitrum",
-    // [NETWORK.optimism]: "Optimism",
+    [NETWORK.optimism]: "Optimism",
     [NETWORK.bsc]: "Binance Smart Chain",
     [NETWORK.fantom]: "Fantom",
     [NETWORK.avalanche]: "Avalanche",
@@ -39,8 +40,9 @@ const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj
 export const idToNetwork: Record<number, NetworkType> = {
     1: NETWORK.eth,
     4: NETWORK.rinkeby,
-    // 10: NETWORK.optimism,
+    // 10: NETWORK.optimism, // mainnet
     56: NETWORK.bsc,
+    69: NETWORK.optimism, // testnet
     137: NETWORK.polygon,
     250: NETWORK.fantom,
     // 42161: NETWORK.arbitrum,
@@ -53,7 +55,7 @@ export const idToNetwork: Record<number, NetworkType> = {
 
 export const networkToId = inverse(idToNetwork);
 
-const networkInfo = {
+export const networkInfo = {
     [NETWORK.eth]: {
         chainName: "Ethereum Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.eth]),
@@ -66,17 +68,30 @@ const networkInfo = {
         blockExplorerUrls: ["https://rinkeby.etherscan.io"],
         rpcUrls: ["https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
     },
+    // mainnet
     // [NETWORK.optimism]: {
     //     chainName: "Optimism",
     //     chainId: Web3.utils.toHex(networkToId[NETWORK.optimism]),
     //     rpcUrls: ["https://mainnet.optimism.io/"],
     //     blockExplorerUrls: ["https://optimistic.etherscan.io"],
     //     nativeCurrency: {
-    //         name: "ETH",
-    //         symbol: "ETH",
+    //         name: "KOR",
+    //         symbol: "KOR",
     //         decimals: 18,
     //     },
     // },
+    // testnet
+    [NETWORK.optimism]: {
+        chainName: "Optimism",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.optimism]),
+        rpcUrls: ["https://kovan.optimism.io/"],
+        blockExplorerUrls: ["https://kovan-optimistic.etherscan.io/"],
+        nativeCurrency: {
+            name: "KOR",
+            symbol: "KOR",
+            decimals: 18,
+        },
+    },
     [NETWORK.bsc]: {
         chainName: "Binance Smart Chain Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.bsc]),

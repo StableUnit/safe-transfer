@@ -11,14 +11,15 @@ import TransferForm from "../TransferForm/TransferForm";
 import "./App.scss";
 import { Footer } from "../Footer/Footer";
 import YoutubeEmbed from "../YoutubeEmbed/YoutubeEmbed";
-import { CustomNetworkType } from "../../utils/network";
+import { CustomNetworkType, NETWORK, networkInfo } from "../../utils/network";
 import WalletModal from "../WalletModal/WalletModal";
 
 const DEFAULT_CHAIN_ID = 137;
 
 export const customWeb3s: Record<CustomNetworkType, Web3> = {
-    aurora: new Web3(new Web3.providers.HttpProvider("https://mainnet.aurora.dev")),
-    harmony: new Web3(new Web3.providers.HttpProvider("https://api.harmony.one")),
+    aurora: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.aurora].rpcUrls[0])),
+    optimism: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.optimism].rpcUrls[0])),
+    harmony: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.harmony].rpcUrls[0])),
 };
 
 const App = () => {
@@ -75,7 +76,6 @@ const App = () => {
         <div className={cn("App", { "App--padded": !isInstructions })}>
             <Header token={token} onConnect={onConnect} onDisconnect={onDisconnect} />
             <div className="App__container">
-                <YoutubeEmbed embedId="Z8UjMCWpplM" />
                 {isInstructions && <Instructions onClose={handleOnCloseInstructions} />}
                 {token ? <TransferForm onConnect={onConnect} token={token} /> : <ApproveForm onConnect={onConnect} />}
             </div>
