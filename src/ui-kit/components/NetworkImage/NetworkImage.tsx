@@ -10,6 +10,7 @@ import HarmonyImage from "../../images/harmony.png";
 import OptimismImage from "../../images/optimism.png";
 import BobaImage from "../../images/boba.png";
 import SkaleImage from "../../images/skale.png";
+import CronosImage from "../../images/cronos.png";
 
 export type NetworkType =
     | "eth"
@@ -21,6 +22,7 @@ export type NetworkType =
     | "optimism"
     | "boba"
     | "skale"
+    | "cronos"
     | string;
 
 interface NetworkImageProps {
@@ -53,6 +55,8 @@ const getNetworkImage = (network?: NetworkType) => {
             return BobaImage;
         case "skale":
             return SkaleImage;
+        case "cronos":
+            return CronosImage;
         default:
             return DefaultImage;
     }

@@ -21,6 +21,7 @@ export const customWeb3s: Record<CustomNetworkType, Web3> = {
     harmony: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.harmony].rpcUrls[0])),
     boba: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.boba].rpcUrls[0])),
     skale: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.skale].rpcUrls[0])),
+    cronos: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.cronos].rpcUrls[0])),
 };
 
 const App = () => {

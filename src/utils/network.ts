@@ -2,7 +2,7 @@ import Web3 from "web3";
 import Moralis from "moralis";
 
 // export type AlchemyNetworkType = "eth" | "polygon" | "arbitrum" | "optimism";
-export type CustomNetworkType = "aurora" | "harmony" | "optimism" | "boba" | "skale";
+export type CustomNetworkType = "aurora" | "harmony" | "optimism" | "boba" | "skale" | "cronos";
 export type MoralisNetworkType = "eth" | "rinkeby" | "polygon" | "bsc" | "fantom" | "avalanche";
 export type NetworkType = MoralisNetworkType | CustomNetworkType;
 
@@ -16,13 +16,14 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     optimism: "optimism",
     boba: "boba",
     skale: "skale",
+    cronos: "cronos",
     bsc: "bsc",
     fantom: "fantom",
     avalanche: "avalanche",
 };
 
 export const isCustomNetwork = (network: NetworkType) =>
-    [NETWORK.aurora, NETWORK.harmony, NETWORK.optimism, NETWORK.boba, NETWORK.skale].includes(network);
+    [NETWORK.aurora, NETWORK.harmony, NETWORK.optimism, NETWORK.boba, NETWORK.skale, NETWORK.cronos].includes(network);
 
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",
@@ -34,6 +35,7 @@ export const networkNames = {
     [NETWORK.optimism]: "Optimism",
     [NETWORK.boba]: "Boba",
     [NETWORK.skale]: "Skale",
+    [NETWORK.cronos]: "Cronos",
     [NETWORK.bsc]: "Binance Smart Chain",
     [NETWORK.fantom]: "Fantom",
     [NETWORK.avalanche]: "Avalanche",
@@ -45,12 +47,14 @@ export const idToNetwork: Record<number, NetworkType> = {
     1: NETWORK.eth,
     4: NETWORK.rinkeby,
     // 10: NETWORK.optimism, // mainnet
+    25: NETWORK.cronos, // mainnet
     28: NETWORK.boba, // testnet
     56: NETWORK.bsc,
     69: NETWORK.optimism, // testnet
     137: NETWORK.polygon,
     250: NETWORK.fantom,
     // 288: NETWORK.boba, // mainnet
+    // 338: NETWORK.cronos, // testnet
     // 42161: NETWORK.arbitrum,
     43114: NETWORK.avalanche,
     1085866509: NETWORK.skale, // hackathon chainID
@@ -134,6 +138,30 @@ export const networkInfo = {
             decimals: 18,
         },
     },
+    // mainnet
+    [NETWORK.cronos]: {
+        chainName: "Cronos",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.cronos]),
+        rpcUrls: ["https://evm.cronos.org"],
+        blockExplorerUrls: ["https://cronoscan.com/"],
+        nativeCurrency: {
+            name: "CRO",
+            symbol: "CRO",
+            decimals: 18,
+        },
+    },
+    // testnet
+    // [NETWORK.cronos]: {
+    //     chainName: "Cronos Testnet",
+    //     chainId: Web3.utils.toHex(networkToId[NETWORK.cronos]),
+    //     rpcUrls: ["https://evm-t3.cronos.org"],
+    //     blockExplorerUrls: ["https://testnet.cronoscan.com/"],
+    //     nativeCurrency: {
+    //         name: "tCRO",
+    //         symbol: "tCRO",
+    //         decimals: 18,
+    //     },
+    // },
     [NETWORK.bsc]: {
         chainName: "Binance Smart Chain Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.bsc]),

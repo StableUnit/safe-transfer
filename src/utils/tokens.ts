@@ -93,6 +93,7 @@ export const CUSTOM_TOKENS: Record<CustomNetworkType, TokenInfo[]> = {
     ],
     boba: [],
     skale: [],
+    cronos: [],
 };
 
 export const beautifyTokenBalance = (balance: string, decimals: number, fraction = 5) => {
