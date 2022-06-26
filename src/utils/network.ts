@@ -2,7 +2,7 @@ import Web3 from "web3";
 import Moralis from "moralis";
 
 // export type AlchemyNetworkType = "eth" | "polygon" | "arbitrum" | "optimism";
-export type CustomNetworkType = "aurora" | "harmony" | "optimism" | "boba";
+export type CustomNetworkType = "aurora" | "harmony" | "optimism" | "boba" | "skale";
 export type MoralisNetworkType = "eth" | "rinkeby" | "polygon" | "bsc" | "fantom" | "avalanche";
 export type NetworkType = MoralisNetworkType | CustomNetworkType;
 
@@ -15,13 +15,14 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     // arbitrum: "arbitrum",
     optimism: "optimism",
     boba: "boba",
+    skale: "skale",
     bsc: "bsc",
     fantom: "fantom",
     avalanche: "avalanche",
 };
 
 export const isCustomNetwork = (network: NetworkType) =>
-    [NETWORK.aurora, NETWORK.harmony, NETWORK.optimism, NETWORK.boba].includes(network);
+    [NETWORK.aurora, NETWORK.harmony, NETWORK.optimism, NETWORK.boba, NETWORK.skale].includes(network);
 
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",
@@ -32,6 +33,7 @@ export const networkNames = {
     // [NETWORK.arbitrum]: "Arbitrum",
     [NETWORK.optimism]: "Optimism",
     [NETWORK.boba]: "Boba",
+    [NETWORK.skale]: "Skale",
     [NETWORK.bsc]: "Binance Smart Chain",
     [NETWORK.fantom]: "Fantom",
     [NETWORK.avalanche]: "Avalanche",
@@ -51,6 +53,7 @@ export const idToNetwork: Record<number, NetworkType> = {
     // 288: NETWORK.boba, // mainnet
     // 42161: NETWORK.arbitrum,
     43114: NETWORK.avalanche,
+    1085866509: NETWORK.skale, // hackathon chainID
     1313161554: NETWORK.aurora,
     // 1313161555: NETWORK.aurora, // testnet
     1666600000: NETWORK.harmony,
@@ -117,6 +120,17 @@ export const networkInfo = {
         nativeCurrency: {
             name: "ETH",
             symbol: "ETH",
+            decimals: 18,
+        },
+    },
+    [NETWORK.skale]: {
+        chainName: "Hackathon Skale Chain| downright-royal-saiph",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.skale]),
+        rpcUrls: ["https://hackathon.skalenodes.com/v1/downright-royal-saiph"],
+        blockExplorerUrls: ["https://downright-royal-saiph.explorer.hackathon.skalenodes.com/"],
+        nativeCurrency: {
+            name: "sFUEL",
+            symbol: "sFUEL",
             decimals: 18,
         },
     },
