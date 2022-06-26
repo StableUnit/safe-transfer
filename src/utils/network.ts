@@ -2,7 +2,7 @@ import Web3 from "web3";
 import Moralis from "moralis";
 
 // export type AlchemyNetworkType = "eth" | "polygon" | "arbitrum" | "optimism";
-export type CustomNetworkType = "aurora" | "harmony" | "optimism";
+export type CustomNetworkType = "aurora" | "harmony" | "optimism" | "boba";
 export type MoralisNetworkType = "eth" | "rinkeby" | "polygon" | "bsc" | "fantom" | "avalanche";
 export type NetworkType = MoralisNetworkType | CustomNetworkType;
 
@@ -14,13 +14,14 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     harmony: "harmony",
     // arbitrum: "arbitrum",
     optimism: "optimism",
+    boba: "boba",
     bsc: "bsc",
     fantom: "fantom",
     avalanche: "avalanche",
 };
 
 export const isCustomNetwork = (network: NetworkType) =>
-    [NETWORK.aurora, NETWORK.harmony, NETWORK.optimism].includes(network);
+    [NETWORK.aurora, NETWORK.harmony, NETWORK.optimism, NETWORK.boba].includes(network);
 
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",
@@ -30,6 +31,7 @@ export const networkNames = {
     [NETWORK.harmony]: "Harmony",
     // [NETWORK.arbitrum]: "Arbitrum",
     [NETWORK.optimism]: "Optimism",
+    [NETWORK.boba]: "Boba",
     [NETWORK.bsc]: "Binance Smart Chain",
     [NETWORK.fantom]: "Fantom",
     [NETWORK.avalanche]: "Avalanche",
@@ -41,10 +43,12 @@ export const idToNetwork: Record<number, NetworkType> = {
     1: NETWORK.eth,
     4: NETWORK.rinkeby,
     // 10: NETWORK.optimism, // mainnet
+    28: NETWORK.boba, // testnet
     56: NETWORK.bsc,
     69: NETWORK.optimism, // testnet
     137: NETWORK.polygon,
     250: NETWORK.fantom,
+    // 288: NETWORK.boba, // mainnet
     // 42161: NETWORK.arbitrum,
     43114: NETWORK.avalanche,
     1313161554: NETWORK.aurora,
@@ -89,6 +93,30 @@ export const networkInfo = {
         nativeCurrency: {
             name: "KOR",
             symbol: "KOR",
+            decimals: 18,
+        },
+    },
+    // mainnet
+    // [NETWORK.boba]: {
+    //     chainName: "Boba",
+    //     chainId: Web3.utils.toHex(networkToId[NETWORK.boba]),
+    //     rpcUrls: ["https://mainnet.boba.network"],
+    //     blockExplorerUrls: ["https://blockexplorer.boba.network/"],
+    //     nativeCurrency: {
+    //         name: "ETH",
+    //         symbol: "ETH",
+    //         decimals: 18,
+    //     },
+    // },
+    // testnet
+    [NETWORK.boba]: {
+        chainName: "Boba",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.boba]),
+        rpcUrls: ["https://rinkeby.boba.network/"],
+        blockExplorerUrls: ["https://blockexplorer.rinkeby.boba.network/"],
+        nativeCurrency: {
+            name: "ETH",
+            symbol: "ETH",
             decimals: 18,
         },
     },

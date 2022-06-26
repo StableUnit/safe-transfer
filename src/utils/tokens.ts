@@ -91,6 +91,7 @@ export const CUSTOM_TOKENS: Record<CustomNetworkType, TokenInfo[]> = {
             address: "0x4911b761993b9c8c0d14ba2d86902af6b0074f5b",
         },
     ],
+    boba: [],
 };
 
 export const beautifyTokenBalance = (balance: string, decimals: number, fraction = 5) => {
