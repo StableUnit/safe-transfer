@@ -8,8 +8,9 @@ import AvalancheImage from "../../images/avalanche.png";
 import AuroraImage from "../../images/aurora.png";
 import HarmonyImage from "../../images/harmony.png";
 import OptimismImage from "../../images/optimism.png";
+import BobaImage from "../../images/boba.png";
 
-export type NetworkType = "eth" | "rinkeby" | "polygon" | "bsc" | "fantom" | "avalanche" | "optimism" | string;
+export type NetworkType = "eth" | "rinkeby" | "polygon" | "bsc" | "fantom" | "avalanche" | "optimism" | "boba" | string;
 
 interface NetworkImageProps {
     network?: NetworkType;
@@ -37,6 +38,8 @@ const getNetworkImage = (network?: NetworkType) => {
             return HarmonyImage;
         case "optimism":
             return OptimismImage;
+        case "boba":
+            return BobaImage;
         default:
             return DefaultImage;
     }
