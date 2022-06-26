@@ -48,14 +48,6 @@ module.exports = {
                 },
             },
         ],
-        "jsx-a11y/label-has-for": [
-            "error",
-            {
-                required: {
-                    some: ["nesting", "id"],
-                },
-            },
-        ],
         "react/self-closing-comp": "warn",
         "consistent-return": "warn",
         "import/prefer-default-export": "warn",

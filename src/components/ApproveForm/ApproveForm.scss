@@ -222,6 +222,18 @@
 
     &__hash {
         padding: 0px 8px 16px 16px;
+
+        a {
+            background: none;
+            color: $black;
+            -webkit-text-fill-color: $black;
+            text-decoration-line: none;
+        }
+
+        &__text {
+            display: flex;
+            color: $black;
+        }
     }
 
     &__url {
