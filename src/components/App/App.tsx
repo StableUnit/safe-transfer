@@ -10,7 +10,6 @@ import TransferForm from "../TransferForm/TransferForm";
 
 import "./App.scss";
 import { Footer } from "../Footer/Footer";
-import YoutubeEmbed from "../YoutubeEmbed/YoutubeEmbed";
 import { CustomNetworkType, NETWORK, networkInfo } from "../../utils/network";
 import WalletModal from "../WalletModal/WalletModal";
 

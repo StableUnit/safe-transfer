@@ -208,7 +208,9 @@ const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
                                 </div>
                             </InfoCell>
                             <InfoCell className="transfer-form__copy-container" title="To:">
-                                <div id="to">{getShortHash(tokenData.to)}</div>
+                                <div id="to">
+                                    {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to}
+                                </div>
                                 <div onClick={handleCopyUrl(tokenData.to)}>
                                     <ContentCopyIcon />
                                 </div>
@@ -248,7 +250,8 @@ const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
                         </div>
                         {account && tokenData.to.toLowerCase() !== account?.toLowerCase() && (
                             <div className="transfer-form__error">
-                                Please change account to {getShortHash(tokenData.to)}
+                                Please change account to{" "}
+                                {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to}
                             </div>
                         )}
                         {account && tokenData.chain !== networkName && (

@@ -13,7 +13,7 @@ import {
     isCustomNetwork,
     networkNames,
 } from "../../utils/network";
-import { isAddress } from "../../utils/wallet";
+import { ensToAddress, isAddress } from "../../utils/wallet";
 import {
     beautifyTokenBalance,
     CUSTOM_TOKENS,
@@ -209,7 +209,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
         const gasPrice = await web3?.getGasPrice();
         try {
             setIsCancelApproveLoading(true);
-            const trx = await tokenContract.approve(toAddress, "0", {
+            const trx = await tokenContract.approve(await ensToAddress(toAddress), "0", {
                 gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice,
             });
             await trx.wait();
@@ -237,9 +237,10 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
             const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
             const tokenContract = getTokenContract(currentToken.token_address);
             const gasPrice = await web3?.getGasPrice();
+            const ensAddress = await ensToAddress(toAddress);
 
             try {
-                const trx = await tokenContract.approve(toAddress, valueBN, {
+                const trx = await tokenContract.approve(ensAddress, valueBN, {
                     gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice,
                 });
                 setTrxHash(trx.hash);
@@ -266,15 +267,21 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
         setValue(+currentTokenBalance);
     };
 
-    useEffect(() => {
+    const setAllowanceAsync = async () => {
         if (isCorrectData && currentToken) {
             const tokenContract = getTokenContract(currentToken.token_address);
-            tokenContract.functions.allowance(account, toAddress).then((allowanceFromContract) => {
-                setAllowance(allowanceFromContract.toString());
-            });
+            const allowanceFromContract = await tokenContract.functions.allowance(
+                account,
+                await ensToAddress(toAddress)
+            );
+            setAllowance(allowanceFromContract.toString());
         } else {
             setAllowance(undefined);
         }
+    };
+
+    useEffect(() => {
+        setAllowanceAsync();
     }, [isCorrectData]);
 
     return (
