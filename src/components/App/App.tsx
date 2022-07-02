@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import cn from "classnames";
-import Web3 from "web3";
 
 import Header from "../Header/Header";
 import Instructions from "../Insctructions/Instructions";
 import ApproveForm from "../ApproveForm/ApproveForm";
 import TransferForm from "../TransferForm/TransferForm";
 import { Footer } from "../Footer/Footer";
-import { NETWORK, networkInfo, NetworkType } from "../../utils/network";
 import WalletModal from "../WalletModal/WalletModal";
 
 import "./App.scss";
@@ -55,6 +53,7 @@ const App = () => {
 
     const onWalletConnectNative = async () => {
         await connect();
+        closeModal();
     };
 
     const onMetamaskConnect = () => {

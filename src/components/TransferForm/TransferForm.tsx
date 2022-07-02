@@ -3,8 +3,8 @@ import { IconButton } from "@mui/material";
 import { useMoralisWeb3Api } from "react-moralis";
 import Web3 from "web3";
 import Moralis from "moralis";
-
 import cn from "classnames";
+
 import {
     CustomNetworkType,
     getAddressLink,

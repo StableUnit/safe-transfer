@@ -83,7 +83,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
     const onMount = async () => {
         if (chainId && address) {
             if (!isCustomNetwork(networkName)) {
-                const options = { chain: chainId.toString(16), address };
+                const options = { chain: Web3.utils.toHex(chainId), address };
                 // @ts-ignore
                 const result = await Web3Api.account.getTokenBalances(options);
                 setBalances(sortBySymbol(result));

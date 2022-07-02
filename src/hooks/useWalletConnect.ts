@@ -26,6 +26,7 @@ export default function useWalletConnect(): ResultType {
                     qrcodeModalOptions: {
                         mobileLinks: ["metamask", "trust"],
                     },
+                    infuraId: "55d755b10d6d44388eab19222388b87f",
                     qrcode: true,
                 })
             );
@@ -41,7 +42,6 @@ export default function useWalletConnect(): ResultType {
 
     const handleChainChanged = useCallback(
         (hexChainId: string) => {
-            console.log("handleChainChanged", hexChainId);
             dispatch({ type: Actions.AddChain, payload: parseInt(hexChainId, 16) });
         },
         [dispatch]
@@ -49,7 +49,6 @@ export default function useWalletConnect(): ResultType {
 
     const handleAccountsChanged = useCallback(
         (accounts: string[]) => {
-            console.log("handleAccountsChanged", accounts);
             dispatch({ type: Actions.AddAddress, payload: accounts[0].toLowerCase() });
         },
         [dispatch]
@@ -57,20 +56,12 @@ export default function useWalletConnect(): ResultType {
 
     useEffect(() => {
         if (provider) {
-            console.log("set listeners");
             provider.on("accountsChanged", handleAccountsChanged);
-            console.log(provider.connector);
-            provider.once("accountsChanged", console.log);
-            provider.once("accountChanged", console.log);
-
             provider.on("chainChanged", handleChainChanged);
-            provider.on("connect", console.log);
-            provider.on("disconnect", console.log);
         }
 
         return () => {
             if (provider) {
-                console.log("remove listeners");
                 provider.removeListener("accountsChanged", handleAccountsChanged);
                 provider.removeListener("chainChanged", handleChainChanged);
             }
