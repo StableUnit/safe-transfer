@@ -4,6 +4,7 @@ import { MoralisProvider } from "react-moralis";
 import { ReactNotifications } from "react-notifications-component";
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
+import amplitude from "amplitude-js";
 
 import App from "./components/App/App";
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
@@ -21,6 +22,8 @@ Sentry.init({
     integrations: [new Integrations.BrowserTracing(), new Sentry.Integrations.Breadcrumbs({ console: false })],
     tracesSampleRate: 1.0,
 });
+
+amplitude.getInstance().init("33269ec4443fd55fdcb0c426627ec40f");
 
 const AppContainer = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
