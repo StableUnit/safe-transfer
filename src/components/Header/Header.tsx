@@ -1,10 +1,10 @@
 import React from "react";
-import { useMoralis } from "react-moralis";
 
 import { getShortAddress } from "../../utils/wallet";
 import NavbarLink from "./supportComponents/NavbarLink/NavbarLink";
 
 import "./Header.scss";
+import useWalletData from "../../hooks/useWalletData";
 
 interface NavbarProps {
     onConnect: () => void;
@@ -13,7 +13,7 @@ interface NavbarProps {
 }
 
 const Header = ({ token, onConnect, onDisconnect }: NavbarProps) => {
-    const { account } = useMoralis();
+    const { address } = useWalletData();
 
     const handleOpenSendPage = () => {
         window.open("/", "_self");
@@ -30,9 +30,9 @@ const Header = ({ token, onConnect, onDisconnect }: NavbarProps) => {
                 <NavbarLink isSelected={!token} onClick={token ? handleOpenSendPage : undefined}>
                     SEND
                 </NavbarLink>
-                {account ? (
+                {address ? (
                     <div className="header__address" onClick={onDisconnect}>
-                        {getShortAddress(account)}
+                        {getShortAddress(address)}
                     </div>
                 ) : (
                     <div className="header__button" onClick={onConnect} id="connect-button">

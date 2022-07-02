@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useContext, useState } from "react";
 import { TextField } from "@mui/material";
 import Web3 from "web3";
-import { useMoralis } from "react-moralis";
 
 import { InfoCell } from "../../../InfoCell/InfoCell";
 import {
@@ -18,6 +17,7 @@ import Button from "../../../../ui-kit/components/Button/Button";
 import { addToken, getTokens } from "../../../../utils/storage";
 import { DispatchContext } from "../../../../reducer/constants";
 import { Actions } from "../../../../reducer";
+import useWalletData from "../../../../hooks/useWalletData";
 
 interface CustomTokenModalContentProps {
     networkName: CustomNetworkType;
@@ -26,23 +26,23 @@ interface CustomTokenModalContentProps {
 
 const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModalContentProps>(
     ({ networkName, onClose }, ref) => {
-        const { account } = useMoralis();
+        const { address } = useWalletData();
         const dispatch = useContext(DispatchContext);
-        const [address, setAddress] = useState<undefined | string>(undefined);
+        const [tokenAddress, setTokenAddress] = useState<undefined | string>(undefined);
         const [tokenMetadata, setTokenMetadata] = useState<TokenMetadataType | undefined>(undefined);
 
         const handleAddressChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            setAddress(event.target.value);
+            setTokenAddress(event.target.value);
         };
 
         const handleBlur = async () => {
-            if (!address || !account) {
+            if (!tokenAddress || !address) {
                 return;
             }
 
             setTokenMetadata(undefined);
-            if (Web3.utils.isAddress(address)) {
-                setTokenMetadata(await getCustomTokenMetadata(networkName, address, account));
+            if (Web3.utils.isAddress(tokenAddress)) {
+                setTokenMetadata(await getCustomTokenMetadata(networkName, tokenAddress, address));
             } else {
                 addErrorNotification("Error", "Address is not correct");
             }
@@ -58,9 +58,9 @@ const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModa
         };
 
         const hasTokenAdded = !!(
-            address &&
-            (getTokens().find((customToken) => customToken.address === address) ||
-                CUSTOM_TOKENS[networkName].find((customToken) => customToken.address === address))
+            tokenAddress &&
+            (getTokens().find((customToken) => customToken.address === tokenAddress) ||
+                CUSTOM_TOKENS[networkName].find((customToken) => customToken.address === tokenAddress))
         );
 
         return (
@@ -72,7 +72,7 @@ const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModa
                     id="custom-token-address"
                     className="custom-token-modal__address"
                     placeholder="Paste address here ..."
-                    value={address}
+                    value={tokenAddress}
                     variant="outlined"
                     onChange={handleAddressChange}
                     onBlur={handleBlur}

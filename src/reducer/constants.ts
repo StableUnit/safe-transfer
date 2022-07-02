@@ -3,6 +3,9 @@ import { ActionType, ReducerState } from "./index";
 
 export const initialState: ReducerState = {
     newCustomToken: undefined,
+    walletChainId: undefined,
+    walletAddress: undefined,
+    web3: undefined,
 };
 
 export const StateContext = React.createContext(initialState);

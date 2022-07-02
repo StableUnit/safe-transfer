@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from "react";
 import Web3 from "web3";
 import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
-import { useMoralis, useMoralisWeb3Api } from "react-moralis";
+import { useMoralisWeb3Api } from "react-moralis";
 import cn from "classnames";
 
 import BN from "bn.js";
@@ -33,8 +33,10 @@ import "./ApproveForm.scss";
 import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
 import { StateContext } from "../../reducer/constants";
 import { sortByBalance, sortBySymbol } from "../../utils/array";
-import { customWeb3s } from "../App/App";
+import { customWeb3s } from "../../utils/rpc";
 import { getTokens } from "../../utils/storage";
+import { trackEvent } from "../../utils/events";
+import useWalletData from "../../hooks/useWalletData";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -53,8 +55,7 @@ interface ApproveFormProps {
 
 const ApproveForm = ({ onConnect }: ApproveFormProps) => {
     const state = useContext(StateContext);
-    const { account, chainId: hexChainId, web3 } = useMoralis();
-    const chainId = Web3.utils.hexToNumber(hexChainId ?? "");
+    const { address, chainId, web3 } = useWalletData();
     const networkName = idToNetwork[chainId];
     const [toAddress, setToAddress] = useState<undefined | string>(undefined);
     const [value, setValue] = useState<undefined | number>(undefined);
@@ -80,9 +81,9 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
     const getTokenContract = getTokenContractFactory(web3);
 
     const onMount = async () => {
-        if (hexChainId && account) {
+        if (chainId && address) {
             if (!isCustomNetwork(networkName)) {
-                const options = { chain: hexChainId, address: account };
+                const options = { chain: chainId.toString(16), address };
                 // @ts-ignore
                 const result = await Web3Api.account.getTokenBalances(options);
                 setBalances(sortBySymbol(result));
@@ -102,7 +103,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                         token.address
                     );
                     const decimals = await tokenContract.methods.decimals().call();
-                    const balance = await tokenContract.methods.balanceOf(account).call();
+                    const balance = await tokenContract.methods.balanceOf(address).call();
 
                     const newTokenBalance = {
                         token_address: token.address,
@@ -138,7 +139,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
 
     useEffect(() => {
         onMount();
-    }, [hexChainId, account]);
+    }, [chainId, address]);
 
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);
@@ -196,7 +197,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
         setGenUrl(
             generateUrl({
                 address: selectedTokenInfo?.token_address,
-                from: account ?? "",
+                from: address ?? "",
                 to: toAddress ?? "",
                 value: valueBN,
                 chain: networkName,
@@ -227,8 +228,12 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
         }
     };
 
+    const getTokenName = (tokenAddress?: string) => {
+        return balances.find((v) => v.token_address === tokenAddress)?.symbol ?? tokenAddress;
+    };
+
     const handleApprove = async () => {
-        if (currentToken && value && toAddress && account) {
+        if (currentToken && value && toAddress && address) {
             setGenUrl(undefined);
             setTrxHash("");
             setTrxLink("");
@@ -240,12 +245,24 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
             const ensAddress = await ensToAddress(toAddress);
 
             try {
+                trackEvent("APPROVE_CREATED", {
+                    fromAddress: address,
+                    networkName,
+                    value,
+                    currency: getTokenName(selectedToken),
+                });
                 const trx = await tokenContract.approve(ensAddress, valueBN, {
                     gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice,
                 });
                 setTrxHash(trx.hash);
                 setTrxLink(getTrxHashLink(trx.hash, networkName));
                 await trx.wait();
+                trackEvent("APPROVE_FINISHED", {
+                    fromAddress: address,
+                    networkName,
+                    value,
+                    currency: getTokenName(selectedToken),
+                });
                 onSuccessApprove(currentToken);
             } catch (error) {
                 // @ts-ignore
@@ -271,7 +288,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
         if (isCorrectData && currentToken) {
             const tokenContract = getTokenContract(currentToken.token_address);
             const allowanceFromContract = await tokenContract.functions.allowance(
-                account,
+                address,
                 await ensToAddress(toAddress)
             );
             setAllowance(allowanceFromContract.toString());
@@ -286,7 +303,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
 
     return (
         <div className="approve-form__container">
-            <div className={cn("approve-form", { "approve-form--disabled": !account })}>
+            <div className={cn("approve-form", { "approve-form--disabled": !address })}>
                 <div className="approve-form__title">Send</div>
 
                 <div className="approve-form__content">
@@ -392,7 +409,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                     </div>
                 )}
 
-                {account ? (
+                {address ? (
                     <Button
                         onClick={handleApprove}
                         className="approve-form__button"
@@ -447,7 +464,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                     <Button
                         onClick={handleRestore}
                         className="approve-form__button"
-                        disabled={isRestoreLoading || !account}
+                        disabled={isRestoreLoading || !address}
                     >
                         {isRestoreLoading ? "Loading..." : "Restore"}
                     </Button>

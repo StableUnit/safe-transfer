@@ -7,28 +7,21 @@ import Header from "../Header/Header";
 import Instructions from "../Insctructions/Instructions";
 import ApproveForm from "../ApproveForm/ApproveForm";
 import TransferForm from "../TransferForm/TransferForm";
-
-import "./App.scss";
 import { Footer } from "../Footer/Footer";
-import { CustomNetworkType, NETWORK, networkInfo } from "../../utils/network";
+import { NETWORK, networkInfo, NetworkType } from "../../utils/network";
 import WalletModal from "../WalletModal/WalletModal";
 
-const DEFAULT_CHAIN_ID = 137;
+import "./App.scss";
+import useWalletConnect from "../../hooks/useWalletConnect";
 
-export const customWeb3s: Record<CustomNetworkType, Web3> = {
-    aurora: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.aurora].rpcUrls[0])),
-    optimism: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.optimism].rpcUrls[0])),
-    harmony: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.harmony].rpcUrls[0])),
-    boba: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.boba].rpcUrls[0])),
-    skale: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.skale].rpcUrls[0])),
-    cronos: new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK.cronos].rpcUrls[0])),
-};
+const DEFAULT_CHAIN_ID = 137;
 
 const App = () => {
     const { logout, authenticate, isWeb3Enabled, isAuthenticated, enableWeb3 } = useMoralis();
     const [showModal, setShowModal] = useState(false);
     const [token, setToken] = useState<string | null>(null);
     const [isInstructions, setIsInstructions] = useState(true);
+    const { connect, disconnect } = useWalletConnect();
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -48,6 +41,7 @@ const App = () => {
 
     const onDisconnect = async () => {
         await logout();
+        await disconnect();
     };
 
     const onWalletConnect = async () => {
@@ -57,6 +51,10 @@ const App = () => {
             chainId: DEFAULT_CHAIN_ID,
         });
         closeModal();
+    };
+
+    const onWalletConnectNative = async () => {
+        await connect();
     };
 
     const onMetamaskConnect = () => {
@@ -87,6 +85,7 @@ const App = () => {
                 onClose={() => setShowModal(false)}
                 onMetamaskConnect={onMetamaskConnect}
                 onWalletConnect={onWalletConnect}
+                onWalletConnectNative={onWalletConnectNative}
             />
         </div>
     );
