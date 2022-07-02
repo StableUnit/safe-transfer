@@ -27,11 +27,12 @@ import { addErrorNotification, addSuccessNotification } from "../../utils/notifi
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
 import { ReactComponent as MetamaskIcon } from "../../ui-kit/images/metamask.svg";
 import Button from "../../ui-kit/components/Button/Button";
-
-import "./TransferForm.scss";
 import { InfoCell } from "../InfoCell/InfoCell";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
 import useWalletData from "../../hooks/useWalletData";
+import CONTRACT_ERC20 from "../../contracts/ERC20.json";
+
+import "./TransferForm.scss";
 
 interface TransferFormProps {
     token: string;
@@ -44,7 +45,7 @@ const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: Token
         : tokenData.value;
 
 const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
-    const { address, chainId } = useWalletData();
+    const { address, chainId, web3, isNativeConnect } = useWalletData();
     const Web3Api = useMoralisWeb3Api();
     const [tokenMetadata, setTokenMetadata] = useState<undefined | TokenMetadataType>(undefined);
     const [isTransferFetching, setIsTransferFetching] = useState(false);
@@ -107,17 +108,24 @@ const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
         setIsTransferFetching(true);
 
         try {
-            if (tokenData) {
+            if (tokenData && web3) {
                 const options = {
                     contractAddress: tokenData.address,
                     functionName: "transferFrom",
                     abi: TRANSFER_FROM_ABI,
                     params: { _from: tokenData.from, _to: tokenData.to, _value: tokenData.value },
                 };
-                const transaction = await Moralis.executeFunction(options);
-                setTrxHash(transaction.hash);
-                // @ts-ignore
-                await transaction.wait();
+                if (isNativeConnect) {
+                    const tokenContract = new (web3 as Web3).eth.Contract(CONTRACT_ERC20 as any, tokenData.address);
+                    await tokenContract.methods
+                        .transferFrom(tokenData.from, tokenData.to, tokenData.value)
+                        .send({ from: address });
+                } else {
+                    const transaction = await Moralis.executeFunction(options);
+                    setTrxHash(transaction.hash);
+                    // @ts-ignore
+                    await transaction.wait();
+                }
                 addSuccessNotification("Success", "Transfer from transaction completed");
                 setIsSuccess(true);
                 setIsTransferFetching(false);

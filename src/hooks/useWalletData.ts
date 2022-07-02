@@ -10,5 +10,6 @@ export default function useWalletData() {
         address: walletAddress ?? account,
         chainId: walletChainId ?? parseInt(hexChainId ?? "0", 16),
         web3: web3 ?? moralisWeb3,
+        isNativeConnect: !!walletAddress,
     };
 }
