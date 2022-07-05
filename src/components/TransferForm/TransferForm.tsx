@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
-import { useMoralis, useMoralisWeb3Api } from "react-moralis";
+import { useMoralisWeb3Api } from "react-moralis";
 import Web3 from "web3";
 import Moralis from "moralis";
-
 import cn from "classnames";
+
 import {
     CustomNetworkType,
     getAddressLink,
@@ -20,8 +20,6 @@ import {
     beautifyTokenBalance,
     getCustomTokenAllowance,
     getCustomTokenMetadata,
-    getTokenContractFactory,
-    toHRNumberFloat,
     TokenMetadataType,
 } from "../../utils/tokens";
 import { TRANSFER_FROM_ABI } from "../../contracts/abi";
@@ -29,10 +27,12 @@ import { addErrorNotification, addSuccessNotification } from "../../utils/notifi
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
 import { ReactComponent as MetamaskIcon } from "../../ui-kit/images/metamask.svg";
 import Button from "../../ui-kit/components/Button/Button";
-
-import "./TransferForm.scss";
 import { InfoCell } from "../InfoCell/InfoCell";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
+import useWalletData from "../../hooks/useWalletData";
+import CONTRACT_ERC20 from "../../contracts/ERC20.json";
+
+import "./TransferForm.scss";
 
 interface TransferFormProps {
     token: string;
@@ -45,18 +45,15 @@ const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: Token
         : tokenData.value;
 
 const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
-    const { account, chainId: hexChainId, web3 } = useMoralis();
+    const { address, chainId, web3, isNativeConnect } = useWalletData();
     const Web3Api = useMoralisWeb3Api();
     const [tokenMetadata, setTokenMetadata] = useState<undefined | TokenMetadataType>(undefined);
     const [isTransferFetching, setIsTransferFetching] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
-    const chainId = Web3.utils.hexToNumber(hexChainId ?? "");
     const networkName = idToNetwork[chainId];
     const tokenData = decodeToken(token);
-
-    const getTokenContract = getTokenContractFactory(web3);
 
     const updateTokenMetadata = async () => {
         if (tokenData) {
@@ -105,23 +102,30 @@ const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
     useEffect(() => {
         updateTokenMetadata();
         updateAllowance();
-    }, [token, account]);
+    }, [token, address]);
 
     const handleTransfer = async () => {
         setIsTransferFetching(true);
 
         try {
-            if (tokenData) {
+            if (tokenData && web3) {
                 const options = {
                     contractAddress: tokenData.address,
                     functionName: "transferFrom",
                     abi: TRANSFER_FROM_ABI,
                     params: { _from: tokenData.from, _to: tokenData.to, _value: tokenData.value },
                 };
-                const transaction = await Moralis.executeFunction(options);
-                setTrxHash(transaction.hash);
-                // @ts-ignore
-                await transaction.wait();
+                if (isNativeConnect) {
+                    const tokenContract = new (web3 as Web3).eth.Contract(CONTRACT_ERC20 as any, tokenData.address);
+                    await tokenContract.methods
+                        .transferFrom(tokenData.from, tokenData.to, tokenData.value)
+                        .send({ from: address });
+                } else {
+                    const transaction = await Moralis.executeFunction(options);
+                    setTrxHash(transaction.hash);
+                    // @ts-ignore
+                    await transaction.wait();
+                }
                 addSuccessNotification("Success", "Transfer from transaction completed");
                 setIsSuccess(true);
                 setIsTransferFetching(false);
@@ -163,13 +167,13 @@ const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
         tokenData.value !== "0";
 
     const isDisabledContent =
-        !account || tokenData.to.toLowerCase() !== account.toLowerCase() || tokenData.chain !== networkName;
+        !address || tokenData.to.toLowerCase() !== address.toLowerCase() || tokenData.chain !== networkName;
 
     const renderButton = () => {
         if (isSuccess) {
             return null;
         }
-        if (!account) {
+        if (!address) {
             return (
                 <Button onClick={onConnect} className="transfer-form__button">
                     CONNECT WALLET
@@ -248,13 +252,13 @@ const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
                                 </InfoCell>
                             )}
                         </div>
-                        {account && tokenData.to.toLowerCase() !== account?.toLowerCase() && (
+                        {address && tokenData.to.toLowerCase() !== address?.toLowerCase() && (
                             <div className="transfer-form__error">
                                 Please change account to{" "}
                                 {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to}
                             </div>
                         )}
-                        {account && tokenData.chain !== networkName && (
+                        {address && tokenData.chain !== networkName && (
                             <div className="transfer-form__error">Please change network to {tokenData.chain}</div>
                         )}
                         {renderButton()}

@@ -1,8 +1,8 @@
 import BN from "bn.js";
 import Moralis from "moralis";
 import { CustomNetworkType } from "./network";
-import { customWeb3s } from "../components/App/App";
 import CONTRACT_ERC20 from "../contracts/ERC20.json";
+import { customWeb3s } from "./rpc";
 
 export type TokenMetadataType = {
     address: string;

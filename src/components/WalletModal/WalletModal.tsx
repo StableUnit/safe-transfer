@@ -13,8 +13,15 @@ interface WalletModalProps {
     onClose: () => void;
     onMetamaskConnect: () => void;
     onWalletConnect: () => void;
+    onWalletConnectNative: () => void;
 }
-const WalletModal = ({ visible, onWalletConnect, onMetamaskConnect, onClose }: WalletModalProps) => {
+const WalletModal = ({
+    visible,
+    onWalletConnect,
+    onWalletConnectNative,
+    onMetamaskConnect,
+    onClose,
+}: WalletModalProps) => {
     return (
         <Modal
             isOpen={visible}
@@ -32,6 +39,11 @@ const WalletModal = ({ visible, onWalletConnect, onMetamaskConnect, onClose }: W
                 <div className="wallet-modal__item" onClick={onWalletConnect}>
                     <WalletConnectIcon className="wallet-modal__item__icon" />
                     <div className="wallet-modal__item__name">WalletConnect</div>
+                    <ArrowRightIcon className="wallet-modal__item__arrow" />
+                </div>
+                <div className="wallet-modal__item" onClick={onWalletConnectNative}>
+                    <WalletConnectIcon className="wallet-modal__item__icon" />
+                    <div className="wallet-modal__item__name">WalletConnect (Gnosis Safe)</div>
                     <ArrowRightIcon className="wallet-modal__item__arrow" />
                 </div>
             </div>
