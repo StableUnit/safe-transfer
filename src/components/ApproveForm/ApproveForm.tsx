@@ -254,6 +254,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
             const tokenContract = getTokenContract(currentToken.token_address);
             const gasPrice = await web3.eth.getGasPrice();
             const ensAddress = await ensToAddress(toAddress);
+            let timeoutId;
 
             try {
                 trackEvent("APPROVE_CREATED", {
@@ -271,6 +272,15 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                     .on("transactionHash", (hash: string) => {
                         setTrxHash(hash);
                         setTrxLink(getTrxHashLink(hash, networkName));
+                        timeoutId = setTimeout(() => {
+                            trackEvent("APPROVE_FINISHED", {
+                                fromAddress: address,
+                                networkName,
+                                value,
+                                currency: getTokenName(selectedToken),
+                            });
+                            onSuccessApprove(currentToken);
+                        }, 15000);
                     });
                 trackEvent("APPROVE_FINISHED", {
                     fromAddress: address,
@@ -280,6 +290,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                 });
                 onSuccessApprove(currentToken);
             } catch (error) {
+                clearTimeout(timeoutId);
                 // @ts-ignore
                 const replacedHash = error?.replacement?.hash;
                 if (replacedHash) {
