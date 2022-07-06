@@ -3,8 +3,8 @@ import { ActionType, ReducerState } from "./index";
 
 export const initialState: ReducerState = {
     newCustomToken: undefined,
-    walletChainId: undefined,
-    walletAddress: undefined,
+    chainId: undefined,
+    address: undefined,
     web3: undefined,
 };
 

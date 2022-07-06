@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { getShortAddress } from "../../utils/wallet";
 import NavbarLink from "./supportComponents/NavbarLink/NavbarLink";
+import { StateContext } from "../../reducer/constants";
 
 import "./Header.scss";
-import useWalletData from "../../hooks/useWalletData";
 
 interface NavbarProps {
     onConnect: () => void;
@@ -13,7 +13,7 @@ interface NavbarProps {
 }
 
 const Header = ({ token, onConnect, onDisconnect }: NavbarProps) => {
-    const { address } = useWalletData();
+    const { address } = useContext(StateContext);
 
     const handleOpenSendPage = () => {
         window.open("/", "_self");

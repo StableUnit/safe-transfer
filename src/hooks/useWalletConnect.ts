@@ -1,7 +1,7 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Web3 from "web3";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { customWeb3s, moralisWeb3s } from "../utils/rpc";
+import { rpcList } from "../utils/rpc";
 import { DispatchContext } from "../reducer/constants";
 import { Actions } from "../reducer";
 
@@ -19,10 +19,7 @@ export default function useWalletConnect(): ResultType {
         if (!provider) {
             setProvider(
                 new WalletConnectProvider({
-                    rpc: {
-                        ...customWeb3s,
-                        ...moralisWeb3s,
-                    },
+                    rpc: rpcList,
                     qrcodeModalOptions: {
                         mobileLinks: ["metamask", "trust"],
                     },

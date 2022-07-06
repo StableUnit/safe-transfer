@@ -1,10 +1,18 @@
 import Web3 from "web3";
-import Moralis from "moralis";
 
-// export type AlchemyNetworkType = "eth" | "polygon" | "arbitrum" | "optimism";
-export type CustomNetworkType = "aurora" | "harmony" | "optimism" | "boba" | "skale" | "cronos";
-export type MoralisNetworkType = "eth" | "rinkeby" | "polygon" | "bsc" | "fantom" | "avalanche";
-export type NetworkType = MoralisNetworkType | CustomNetworkType;
+export type NetworkType =
+    | "eth"
+    | "rinkeby"
+    | "polygon"
+    | "bsc"
+    | "fantom"
+    | "avalanche"
+    | "aurora"
+    | "harmony"
+    | "optimism"
+    | "boba"
+    | "skale"
+    | "cronos";
 
 export const NETWORK: Record<NetworkType, NetworkType> = {
     eth: "eth",
@@ -21,9 +29,6 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     fantom: "fantom",
     avalanche: "avalanche",
 };
-
-export const isCustomNetwork = (network: NetworkType) =>
-    [NETWORK.aurora, NETWORK.harmony, NETWORK.optimism, NETWORK.boba, NETWORK.skale, NETWORK.cronos].includes(network);
 
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",

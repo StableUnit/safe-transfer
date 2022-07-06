@@ -13,41 +13,32 @@ interface WalletModalProps {
     onClose: () => void;
     onMetamaskConnect: () => void;
     onWalletConnect: () => void;
-    onWalletConnectNative: () => void;
 }
-const WalletModal = ({
-    visible,
-    onWalletConnect,
-    onWalletConnectNative,
-    onMetamaskConnect,
-    onClose,
-}: WalletModalProps) => {
+const WalletModal = ({ visible, onWalletConnect, onMetamaskConnect, onClose }: WalletModalProps) => {
     return (
-        <Modal
-            isOpen={visible}
-            onRequestClose={onClose}
-            className="wallet-modal"
-            overlayClassName="wallet-modal-overlay"
-        >
-            <CloseIcon className="wallet-modal__close" onClick={onClose} />
-            <div className="wallet-modal__items">
-                <div className="wallet-modal__item" onClick={onMetamaskConnect}>
-                    <MetamaskIcon className="wallet-modal__item__icon" />
-                    <div className="wallet-modal__item__name">Metamask</div>
-                    <ArrowRightIcon className="wallet-modal__item__arrow" />
+        <>
+            {/* @ts-ignore */}
+            <Modal
+                isOpen={visible}
+                onRequestClose={onClose}
+                className="wallet-modal"
+                overlayClassName="wallet-modal-overlay"
+            >
+                <CloseIcon className="wallet-modal__close" onClick={onClose} />
+                <div className="wallet-modal__items">
+                    <div className="wallet-modal__item" onClick={onMetamaskConnect}>
+                        <MetamaskIcon className="wallet-modal__item__icon" />
+                        <div className="wallet-modal__item__name">Metamask</div>
+                        <ArrowRightIcon className="wallet-modal__item__arrow" />
+                    </div>
+                    <div className="wallet-modal__item" onClick={onWalletConnect}>
+                        <WalletConnectIcon className="wallet-modal__item__icon" />
+                        <div className="wallet-modal__item__name">WalletConnect</div>
+                        <ArrowRightIcon className="wallet-modal__item__arrow" />
+                    </div>
                 </div>
-                <div className="wallet-modal__item" onClick={onWalletConnect}>
-                    <WalletConnectIcon className="wallet-modal__item__icon" />
-                    <div className="wallet-modal__item__name">WalletConnect</div>
-                    <ArrowRightIcon className="wallet-modal__item__arrow" />
-                </div>
-                <div className="wallet-modal__item" onClick={onWalletConnectNative}>
-                    <WalletConnectIcon className="wallet-modal__item__icon" />
-                    <div className="wallet-modal__item__name">WalletConnect (Gnosis Safe)</div>
-                    <ArrowRightIcon className="wallet-modal__item__arrow" />
-                </div>
-            </div>
-        </Modal>
+            </Modal>
+        </>
     );
 };
 

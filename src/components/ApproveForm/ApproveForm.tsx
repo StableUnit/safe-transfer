@@ -1,18 +1,10 @@
 import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from "react";
 import Web3 from "web3";
 import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
-import { useMoralisWeb3Api } from "react-moralis";
 import cn from "classnames";
 
 import BN from "bn.js";
-import {
-    changeNetworkAtMetamask,
-    CustomNetworkType,
-    getTrxHashLink,
-    idToNetwork,
-    isCustomNetwork,
-    networkNames,
-} from "../../utils/network";
+import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
 import { ensToAddress, isAddress } from "../../utils/wallet";
 import {
     beautifyTokenBalance,
@@ -32,11 +24,10 @@ import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage"
 import "./ApproveForm.scss";
 import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
 import { StateContext } from "../../reducer/constants";
-import { sortByBalance, sortBySymbol } from "../../utils/array";
-import { customWeb3s } from "../../utils/rpc";
+import { sortByBalance } from "../../utils/array";
+import { rpcList } from "../../utils/rpc";
 import { getTokens } from "../../utils/storage";
 import { trackEvent } from "../../utils/events";
-import useWalletData from "../../hooks/useWalletData";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -54,9 +45,8 @@ interface ApproveFormProps {
 }
 
 const ApproveForm = ({ onConnect }: ApproveFormProps) => {
-    const state = useContext(StateContext);
-    const { address, chainId, web3 } = useWalletData();
-    const networkName = idToNetwork[chainId];
+    const { address, chainId, web3, newCustomToken } = useContext(StateContext);
+    const networkName = chainId ? idToNetwork[chainId] : undefined;
     const [toAddress, setToAddress] = useState<undefined | string>(undefined);
     const [value, setValue] = useState<undefined | number>(undefined);
     const [selectedToken, setSelectedToken] = useState<undefined | string>(undefined); // address
@@ -69,7 +59,6 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
-    const Web3Api = useMoralisWeb3Api();
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
     const currentToken = balances.find((v) => v.token_address === selectedToken);
@@ -82,50 +71,43 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
 
     const onMount = async () => {
         if (chainId && address) {
-            if (!isCustomNetwork(networkName)) {
-                const options = { chain: Web3.utils.toHex(chainId), address };
-                // @ts-ignore
-                const result = await Web3Api.account.getTokenBalances(options);
-                setBalances(sortBySymbol(result));
-            } else {
-                setBalances([]);
-                const tokens = [
-                    ...CUSTOM_TOKENS[networkName as CustomNetworkType],
-                    ...getTokens().map((token) => ({
-                        address: token.address,
-                        id: token.name,
-                        symbol: token.symbol,
-                    })),
-                ];
-                for (const token of tokens) {
-                    const tokenContract = new customWeb3s[networkName as CustomNetworkType].eth.Contract(
-                        ERC20_ABI as any,
-                        token.address
-                    );
-                    const decimals = await tokenContract.methods.decimals().call();
-                    const balance = await tokenContract.methods.balanceOf(address).call();
+            setBalances([]);
+            const tokens = [
+                ...CUSTOM_TOKENS[networkName as NetworkType],
+                ...getTokens().map((token) => ({
+                    address: token.address,
+                    id: token.name,
+                    symbol: token.symbol,
+                })),
+            ];
+            for (const token of tokens) {
+                const tokenContract = new rpcList[networkName as NetworkType].eth.Contract(
+                    ERC20_ABI as any,
+                    token.address
+                );
+                const decimals = await tokenContract.methods.decimals().call();
+                const balance = await tokenContract.methods.balanceOf(address).call();
 
-                    const newTokenBalance = {
-                        token_address: token.address,
-                        name: token.id,
-                        symbol: token.symbol,
-                        decimals,
-                        balance,
-                    } as BalanceType;
-                    setBalances((oldBalances) => sortByBalance([...oldBalances, newTokenBalance]));
-                }
+                const newTokenBalance = {
+                    token_address: token.address,
+                    name: token.id,
+                    symbol: token.symbol,
+                    decimals,
+                    balance,
+                } as BalanceType;
+                setBalances((oldBalances) => sortByBalance([...oldBalances, newTokenBalance]));
             }
         }
     };
 
     useEffect(() => {
-        if (state.newCustomToken) {
+        if (newCustomToken) {
             const newTokenBalance = {
-                token_address: state.newCustomToken.address,
-                name: state.newCustomToken.name,
-                symbol: state.newCustomToken.symbol,
-                decimals: state.newCustomToken.decimals,
-                balance: state.newCustomToken.balance,
+                token_address: newCustomToken.address,
+                name: newCustomToken.name,
+                symbol: newCustomToken.symbol,
+                decimals: newCustomToken.decimals,
+                balance: newCustomToken.balance,
             } as BalanceType;
             setBalances((oldBalances) => {
                 const hasToken = !!oldBalances.find(
@@ -135,7 +117,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                 return hasToken ? oldBalances : sortByBalance([...oldBalances, newTokenBalance]);
             });
         }
-    }, [state.newCustomToken]);
+    }, [newCustomToken]);
 
     useEffect(() => {
         onMount();
@@ -164,8 +146,8 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
     const handleRestore = async () => {
         try {
             setIsRestoreLoading(true);
-            const transaction = await web3?.getTransactionReceipt(restoreHash ?? "");
-            if (!transaction) {
+            const transaction = await web3?.eth.getTransactionReceipt(restoreHash ?? "");
+            if (!transaction || !networkName) {
                 addErrorNotification("Error", "Can't get transaction");
                 setIsRestoreLoading(false);
                 return;
@@ -190,6 +172,12 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const onSuccessApprove = (selectedTokenInfo: BalanceType) => {
+        if (!networkName) {
+            addErrorNotification("Error", "No network");
+            setIsApproveLoading(false);
+            return;
+        }
+
         const valueBN = fromHRToBN(value ?? 0, +selectedTokenInfo.decimals).toString();
 
         addSuccessNotification("Success", "Approve transaction completed");
@@ -207,13 +195,17 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
 
     const cancelApprove = async () => {
         const tokenContract = getTokenContract(currentToken?.token_address ?? "");
-        const gasPrice = await web3?.getGasPrice();
+        if (!tokenContract || !web3) {
+            addErrorNotification("Error", "No network");
+            return;
+        }
+
+        const gasPrice = await web3?.eth.getGasPrice();
         try {
             setIsCancelApproveLoading(true);
-            const trx = await tokenContract.approve(await ensToAddress(toAddress), "0", {
-                gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice,
-            });
-            await trx.wait();
+            await tokenContract.methods
+                .approve(await ensToAddress(toAddress), "0")
+                .send({ from: address, gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice });
             setAllowance(undefined);
         } catch (error) {
             // @ts-ignore
@@ -233,7 +225,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const handleApprove = async () => {
-        if (currentToken && value && toAddress && address) {
+        if (currentToken && value && toAddress && address && web3 && networkName) {
             setGenUrl(undefined);
             setTrxHash("");
             setTrxLink("");
@@ -241,7 +233,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
 
             const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
             const tokenContract = getTokenContract(currentToken.token_address);
-            const gasPrice = await web3?.getGasPrice();
+            const gasPrice = await web3.eth.getGasPrice();
             const ensAddress = await ensToAddress(toAddress);
 
             try {
@@ -251,12 +243,16 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                     value,
                     currency: getTokenName(selectedToken),
                 });
-                const trx = await tokenContract.approve(ensAddress, valueBN, {
-                    gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice,
-                });
-                setTrxHash(trx.hash);
-                setTrxLink(getTrxHashLink(trx.hash, networkName));
-                await trx.wait();
+                await tokenContract?.methods
+                    .approve(ensAddress, valueBN)
+                    .send({
+                        from: address,
+                        gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice,
+                    })
+                    .on("transactionHash", (hash: string) => {
+                        setTrxHash(hash);
+                        setTrxLink(getTrxHashLink(hash, networkName));
+                    });
                 trackEvent("APPROVE_FINISHED", {
                     fromAddress: address,
                     networkName,
@@ -287,11 +283,12 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
     const setAllowanceAsync = async () => {
         if (isCorrectData && currentToken) {
             const tokenContract = getTokenContract(currentToken.token_address);
-            const allowanceFromContract = await tokenContract.functions.allowance(
-                address,
-                await ensToAddress(toAddress)
-            );
-            setAllowance(allowanceFromContract.toString());
+            if (tokenContract) {
+                const allowanceFromContract = await tokenContract.methods
+                    .allowance(address, await ensToAddress(toAddress))
+                    .call();
+                setAllowance(allowanceFromContract.toString());
+            }
         } else {
             setAllowance(undefined);
         }
@@ -371,7 +368,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                                         </div>
                                     </MenuItem>
                                 ))}
-                                <CustomTokenMenuItem networkName={networkName} />
+                                {networkName && <CustomTokenMenuItem networkName={networkName} />}
                             </Select>
                         </FormControl>
 

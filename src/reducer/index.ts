@@ -35,8 +35,8 @@ export type ActionType =
 
 export interface ReducerState {
     newCustomToken?: TokenMetadataType;
-    walletChainId?: number;
-    walletAddress?: string;
+    chainId?: number;
+    address?: string;
     web3?: Web3;
 }
 
@@ -51,12 +51,12 @@ const reducer = (state: ReducerState, action: ActionType) => {
         case Actions.AddChain:
             return {
                 ...state,
-                walletChainId: payload,
+                chainId: payload,
             };
         case Actions.AddAddress:
             return {
                 ...state,
-                walletAddress: payload,
+                address: payload,
             };
         case Actions.AddWeb3:
             return {
@@ -66,8 +66,8 @@ const reducer = (state: ReducerState, action: ActionType) => {
         case Actions.ClearWalletData:
             return {
                 ...state,
-                walletChainId: undefined,
-                walletAddress: undefined,
+                chainId: undefined,
+                address: undefined,
                 web3: undefined,
             };
         default:

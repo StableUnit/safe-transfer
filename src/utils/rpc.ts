@@ -13,5 +13,17 @@ const createRPC = (names: NetworkType[]) =>
         {} as Record<NetworkType, Web3>
     );
 
-export const customWeb3s = createRPC(["aurora", "optimism", "harmony", "boba", "skale", "cronos"]);
-export const moralisWeb3s = createRPC(["eth", "rinkeby", "polygon", "bsc", "fantom", "avalanche"]);
+export const rpcList = createRPC([
+    "eth",
+    "rinkeby",
+    "polygon",
+    "bsc",
+    "fantom",
+    "avalanche",
+    "aurora",
+    "optimism",
+    "harmony",
+    "boba",
+    "skale",
+    "cronos",
+]);

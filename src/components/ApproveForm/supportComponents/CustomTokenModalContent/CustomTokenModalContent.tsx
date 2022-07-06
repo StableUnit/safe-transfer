@@ -12,21 +12,20 @@ import {
 import { addErrorNotification, addSuccessNotification } from "../../../../utils/notifications";
 
 import "./CustomTokenModalContent.scss";
-import { CustomNetworkType } from "../../../../utils/network";
+import { NetworkType } from "../../../../utils/network";
 import Button from "../../../../ui-kit/components/Button/Button";
 import { addToken, getTokens } from "../../../../utils/storage";
-import { DispatchContext } from "../../../../reducer/constants";
+import { DispatchContext, StateContext } from "../../../../reducer/constants";
 import { Actions } from "../../../../reducer";
-import useWalletData from "../../../../hooks/useWalletData";
 
 interface CustomTokenModalContentProps {
-    networkName: CustomNetworkType;
+    networkName: NetworkType;
     onClose: () => void;
 }
 
 const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModalContentProps>(
     ({ networkName, onClose }, ref) => {
-        const { address } = useWalletData();
+        const { address } = useContext(StateContext);
         const dispatch = useContext(DispatchContext);
         const [tokenAddress, setTokenAddress] = useState<undefined | string>(undefined);
         const [tokenMetadata, setTokenMetadata] = useState<TokenMetadataType | undefined>(undefined);

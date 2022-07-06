@@ -1,36 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
-import { useMoralisWeb3Api } from "react-moralis";
 import Web3 from "web3";
-import Moralis from "moralis";
 import cn from "classnames";
 
-import {
-    CustomNetworkType,
-    getAddressLink,
-    getTrxHashLink,
-    idToNetwork,
-    isCustomNetwork,
-    MoralisNetworkType,
-    networkNames,
-    networkToId,
-} from "../../utils/network";
+import { NetworkType, getAddressLink, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
 import { decodeToken, getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
 import {
     beautifyTokenBalance,
     getCustomTokenAllowance,
     getCustomTokenMetadata,
+    getTokenContractFactory,
     TokenMetadataType,
 } from "../../utils/tokens";
-import { TRANSFER_FROM_ABI } from "../../contracts/abi";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
 import { ReactComponent as MetamaskIcon } from "../../ui-kit/images/metamask.svg";
 import Button from "../../ui-kit/components/Button/Button";
 import { InfoCell } from "../InfoCell/InfoCell";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
-import useWalletData from "../../hooks/useWalletData";
 import CONTRACT_ERC20 from "../../contracts/ERC20.json";
+import { StateContext } from "../../reducer/constants";
 
 import "./TransferForm.scss";
 
@@ -45,57 +34,32 @@ const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: Token
         : tokenData.value;
 
 const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
-    const { address, chainId, web3, isNativeConnect } = useWalletData();
-    const Web3Api = useMoralisWeb3Api();
+    const { address, chainId, web3 } = useContext(StateContext);
     const [tokenMetadata, setTokenMetadata] = useState<undefined | TokenMetadataType>(undefined);
     const [isTransferFetching, setIsTransferFetching] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
-    const networkName = idToNetwork[chainId];
+    const networkName = chainId ? idToNetwork[chainId] : undefined;
     const tokenData = decodeToken(token);
 
     const updateTokenMetadata = async () => {
         if (tokenData) {
-            if (isCustomNetwork(tokenData.chain)) {
-                const newTokenMetadata = await getCustomTokenMetadata(
-                    tokenData.chain as CustomNetworkType,
-                    tokenData.address
-                );
-                setTokenMetadata(newTokenMetadata);
-                document.title = `Receive ${getValue(newTokenMetadata, tokenData)}`;
-            } else {
-                const options = {
-                    chain: Web3.utils.numberToHex(networkToId[tokenData.chain]),
-                    addresses: [tokenData.address],
-                };
-                // @ts-ignore
-                const res = await Web3Api.token.getTokenMetadata(options);
-                setTokenMetadata(res?.[0]);
-                document.title = `Receive ${getValue(res?.[0], tokenData)}`;
-            }
+            const newTokenMetadata = await getCustomTokenMetadata(tokenData.chain as NetworkType, tokenData.address);
+            setTokenMetadata(newTokenMetadata);
+            document.title = `Receive ${getValue(newTokenMetadata, tokenData)}`;
         }
     };
 
     const updateAllowance = async () => {
         if (tokenData) {
-            if (isCustomNetwork(tokenData.chain)) {
-                const allowanceFromContract = await getCustomTokenAllowance(
-                    tokenData.chain as CustomNetworkType,
-                    tokenData.address,
-                    tokenData.from,
-                    tokenData.to
-                );
-                setAllowance(allowanceFromContract);
-            } else {
-                const allowanceFromContract = await Web3Api.token.getTokenAllowance({
-                    owner_address: tokenData.from,
-                    spender_address: tokenData.to,
-                    address: tokenData.address,
-                    chain: tokenData.chain as MoralisNetworkType,
-                });
-                setAllowance(allowanceFromContract.allowance);
-            }
+            const allowanceFromContract = await getCustomTokenAllowance(
+                tokenData.chain as NetworkType,
+                tokenData.address,
+                tokenData.from,
+                tokenData.to
+            );
+            setAllowance(allowanceFromContract);
         }
     };
 
@@ -109,28 +73,23 @@ const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
 
         try {
             if (tokenData && web3) {
-                const options = {
-                    contractAddress: tokenData.address,
-                    functionName: "transferFrom",
-                    abi: TRANSFER_FROM_ABI,
-                    params: { _from: tokenData.from, _to: tokenData.to, _value: tokenData.value },
-                };
-                if (isNativeConnect) {
-                    const tokenContract = new (web3 as Web3).eth.Contract(CONTRACT_ERC20 as any, tokenData.address);
+                const getTokenContract = getTokenContractFactory(web3);
+                const tokenContract = getTokenContract(tokenData.address);
+                if (tokenContract) {
                     await tokenContract.methods
                         .transferFrom(tokenData.from, tokenData.to, tokenData.value)
-                        .send({ from: address });
-                } else {
-                    const transaction = await Moralis.executeFunction(options);
-                    setTrxHash(transaction.hash);
-                    // @ts-ignore
-                    await transaction.wait();
+                        .send({ from: address })
+                        .on("transactionHash", (hash: string) => {
+                            setTrxHash(hash);
+                        });
+
+                    addSuccessNotification("Success", "Transfer from transaction completed");
+                    setIsSuccess(true);
+                    setIsTransferFetching(false);
                 }
-                addSuccessNotification("Success", "Transfer from transaction completed");
-                setIsSuccess(true);
-                setIsTransferFetching(false);
             }
         } catch (e) {
+            console.log(e);
             // @ts-ignore
             addErrorNotification("TransferFrom Error", e?.error?.message);
             setIsTransferFetching(false);
@@ -265,7 +224,7 @@ const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
                     </>
                 )}
             </div>
-            {trxHash && (
+            {trxHash && networkName && (
                 <div className="transfer-form__hash">
                     <div className="transfer-form__hash__text">
                         <div>Hash:&nbsp;&nbsp;</div>

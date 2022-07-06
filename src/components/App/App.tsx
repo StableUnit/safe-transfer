@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useMoralis } from "react-moralis";
 import cn from "classnames";
 
 import Header from "../Header/Header";
@@ -11,15 +10,16 @@ import WalletModal from "../WalletModal/WalletModal";
 
 import "./App.scss";
 import useWalletConnect from "../../hooks/useWalletConnect";
+import useMetamask from "../../hooks/useMetamask";
 
 const DEFAULT_CHAIN_ID = 137;
 
 const App = () => {
-    const { logout, authenticate, isWeb3Enabled, isAuthenticated, enableWeb3 } = useMoralis();
     const [showModal, setShowModal] = useState(false);
     const [token, setToken] = useState<string | null>(null);
     const [isInstructions, setIsInstructions] = useState(true);
-    const { connect, disconnect } = useWalletConnect();
+    const { connect: connectWC, disconnect: disconnectWC } = useWalletConnect();
+    const { connect: connectMetamask, disconnect: disconnectMetamask } = useMetamask();
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -38,34 +38,19 @@ const App = () => {
     };
 
     const onDisconnect = async () => {
-        await logout();
-        await disconnect();
+        await disconnectMetamask();
+        await disconnectWC();
     };
 
     const onWalletConnect = async () => {
-        authenticate({
-            provider: "walletconnect",
-            mobileLinks: ["metamask", "trust"],
-            chainId: DEFAULT_CHAIN_ID,
-        });
+        await connectWC();
         closeModal();
     };
 
-    const onWalletConnectNative = async () => {
-        await connect();
+    const onMetamaskConnect = async () => {
+        await connectMetamask();
         closeModal();
     };
-
-    const onMetamaskConnect = () => {
-        enableWeb3({ chainId: DEFAULT_CHAIN_ID });
-        closeModal();
-    };
-
-    useEffect(() => {
-        if (!isWeb3Enabled && isAuthenticated) {
-            enableWeb3({ chainId: DEFAULT_CHAIN_ID });
-        }
-    }, [isWeb3Enabled, isAuthenticated, enableWeb3]);
 
     const handleOnCloseInstructions = () => {
         setIsInstructions(false);
@@ -84,7 +69,6 @@ const App = () => {
                 onClose={() => setShowModal(false)}
                 onMetamaskConnect={onMetamaskConnect}
                 onWalletConnect={onWalletConnect}
-                onWalletConnectNative={onWalletConnectNative}
             />
         </div>
     );
