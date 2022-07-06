@@ -2,8 +2,9 @@ import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from
 import Web3 from "web3";
 import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import cn from "classnames";
-
+import { useMoralisWeb3Api } from "react-moralis";
 import BN from "bn.js";
+
 import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
 import { ensToAddress, isAddress } from "../../utils/wallet";
 import {
@@ -24,7 +25,7 @@ import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage"
 import "./ApproveForm.scss";
 import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
 import { StateContext } from "../../reducer/constants";
-import { sortByBalance } from "../../utils/array";
+import { arrayUniqueByKey, sortByBalance, sortBySymbol } from "../../utils/array";
 import { rpcList } from "../../utils/rpc";
 import { getTokens } from "../../utils/storage";
 import { trackEvent } from "../../utils/events";
@@ -59,6 +60,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
+    const Web3Api = useMoralisWeb3Api();
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
     const currentToken = balances.find((v) => v.token_address === selectedToken);
@@ -71,7 +73,15 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
 
     const onMount = async () => {
         if (chainId && address) {
-            setBalances([]);
+            const options = { chain: Web3.utils.toHex(chainId), address };
+            try {
+                // @ts-ignore
+                const result = await Web3Api.account.getTokenBalances(options);
+                setBalances(sortBySymbol(result));
+            } catch (e) {
+                setBalances([]);
+            }
+
             const tokens = [
                 ...CUSTOM_TOKENS[networkName as NetworkType],
                 ...getTokens().map((token) => ({
@@ -95,7 +105,16 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                     decimals,
                     balance,
                 } as BalanceType;
-                setBalances((oldBalances) => sortByBalance([...oldBalances, newTokenBalance]));
+                setBalances((oldBalances) => {
+                    const newBalances = arrayUniqueByKey(
+                        [...oldBalances, newTokenBalance].map((v) => ({
+                            ...v,
+                            token_address: v.token_address.toLowerCase(),
+                        })),
+                        "token_address"
+                    );
+                    return sortByBalance(newBalances);
+                });
             }
         }
     };
