@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
-import Web3 from "web3";
 import cn from "classnames";
 
 import { NetworkType, getAddressLink, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
@@ -18,7 +17,6 @@ import { ReactComponent as MetamaskIcon } from "../../ui-kit/images/metamask.svg
 import Button from "../../ui-kit/components/Button/Button";
 import { InfoCell } from "../InfoCell/InfoCell";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
-import CONTRACT_ERC20 from "../../contracts/ERC20.json";
 import { StateContext } from "../../reducer/constants";
 
 import "./TransferForm.scss";

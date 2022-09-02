@@ -110,14 +110,18 @@
         box-sizing: border-box;
 
         a {
-            text-decoration-line: none;
+            text-decoration-line: underline;
             cursor: pointer;
-            color: $black;
+
+            background: linear-gradient(74.43deg, #DBB0FF -12.43%, #C2DCFF 24.51%, #B4FFE0 63.46%, #FEFBDA 82.01%, #FECBFF 110.47%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
         }
 
         &__text {
             display: flex;
-            color: $black;
         }
     }
 
