@@ -219,9 +219,12 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
             return;
         }
 
+        const gasPrice = await web3?.eth.getGasPrice();
         try {
             setIsCancelApproveLoading(true);
-            await tokenContract.methods.approve(await ensToAddress(toAddress), "0").send({ from: address });
+            await tokenContract.methods
+                .approve(await ensToAddress(toAddress), "0")
+                .send({ from: address, gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice });
             setAllowance(undefined);
         } catch (error) {
             // @ts-ignore
@@ -262,7 +265,10 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                 });
                 await tokenContract?.methods
                     .approve(ensAddress, valueBN)
-                    .send({ from: address })
+                    .send({
+                        from: address,
+                        gasPrice: gasPrice && networkName === "polygon" ? +gasPrice * 2 : gasPrice,
+                    })
                     .on("transactionHash", (hash: string) => {
                         setTrxHash(hash);
                         setTrxLink(getTrxHashLink(hash, networkName));
