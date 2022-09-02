@@ -50,18 +50,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-
-        .navbar-link {
-            color: $black;
-            background: none;
-            -webkit-text-fill-color: $black;
-        }
-
-        .navbar-link--selected {
-            color: $dark-gray;
-            background: none;
-            -webkit-text-fill-color: $dark-gray;
-        }
     }
 
     &__button {

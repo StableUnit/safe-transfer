@@ -7,14 +7,13 @@
   font-weight: 400;
   font-size: 14px;
   line-height: 18px;
-  color: $dark-gray;
+  color: $gray2;
 
   &__made-by {
     text-align: center;
 
     a {
-      font-weight: 600;
-      color: $black;
+      color: white;
       text-decoration: none !important;
     }
   }
