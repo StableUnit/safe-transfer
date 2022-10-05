@@ -76,7 +76,7 @@ const TransferForm = React.memo(({ token, onConnect }: TransferFormProps) => {
                 if (tokenContract) {
                     await tokenContract.methods
                         .transferFrom(tokenData.from, tokenData.to, tokenData.value)
-                        .send({ from: address })
+                        .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
                         .on("transactionHash", (hash: string) => {
                             setTrxHash(hash);
                         });
