@@ -1,35 +1,66 @@
 import React, { useContext } from "react";
+import { useLocation } from "react-router-dom";
+import cn from "classnames";
 
 import { getShortAddress } from "../../utils/wallet";
-import NavbarLink from "./supportComponents/NavbarLink/NavbarLink";
 import { StateContext } from "../../reducer/constants";
+import { GradientHref } from "../../ui-kit/components/GradientHref";
 
 import "./Header.scss";
 
 interface NavbarProps {
     onConnect: () => void;
     onDisconnect: () => void;
-    token: string | null;
 }
 
-const Header = ({ token, onConnect, onDisconnect }: NavbarProps) => {
-    const { address } = useContext(StateContext);
+const LINKS = [
+    {
+        href: "/send",
+        text: "Send",
+    },
+    {
+        href: "/receive",
+        text: "Receive",
+    },
+];
 
-    const handleOpenSendPage = () => {
-        window.open("/", "_self");
-    };
+const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
+    const { address } = useContext(StateContext);
+    const location = useLocation();
+
+    const totalTransferred = 1_000_000;
 
     return (
         <div className="header">
-            <div className="header__logo">
-                <a href="https://stableunit.org/" target="_blank" rel="noreferrer">
-                    <img src="https://stableunit.org/assets/img/logo.svg" />
-                </a>
+            <div className="header__logo-info">
+                <div className="header__logo">
+                    <a href="https://stableunit.org/" target="_blank" rel="noreferrer">
+                        <img src="https://stableunit.org/assets/img/logo.svg" />
+                    </a>
+                </div>
+                <div>
+                    <GradientHref>Total transferred: </GradientHref>
+                    <span>{totalTransferred.toLocaleString()}$</span>
+                </div>
             </div>
+
             <div className="header__navbar">
-                <NavbarLink isSelected={!token} onClick={token ? handleOpenSendPage : undefined}>
-                    SEND
-                </NavbarLink>
+                <div className="header__links">
+                    {LINKS.map(({ href, text }) => {
+                        const isSelected = location.pathname.includes(href);
+                        return (
+                            <GradientHref
+                                id={`links-${text.toLowerCase()}`}
+                                className={cn("header__link", { "header__link--selected": isSelected })}
+                                key={text}
+                                href={href}
+                                disabled={isSelected}
+                            >
+                                {text}
+                            </GradientHref>
+                        );
+                    })}
+                </div>
                 {address ? (
                     <div className="header__address" onClick={onDisconnect}>
                         {getShortAddress(address)}

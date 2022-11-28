@@ -1,5 +1,33 @@
 $gray1: #7A7A7A;
-$gray2: #BCBCBC;
-$dark-gray: #313131;
+$gray2: #CFCFCF;
+$gray3: #ECECEC;
+$gray4: #BDBDBD;
 
 $black: #20201D;
+$dark: #383838;
+$dark2: #3D3D3D;
+$dark-gray: #313131;
+
+$dark-green: #233A31;
+$green: #65EDB5;
+$red: #FC7557;
+$red-contrast: rgb(255, 67, 67);
+
+$max-width: 400px;
+
+$header-height: 79px;
+
+$gradient: linear-gradient(74.43deg, #DBB0FF -12.43%, #C2DCFF 24.51%, #B4FFE0 63.46%, #FEFBDA 82.01%, #FECBFF 110.47%);
+$gradient-fallback: #C2DCFF;
+
+$mobile-width: 670px;
+$tablet-width: 1280px;
+
+@keyframes placeholder-active {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}

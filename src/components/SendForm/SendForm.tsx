@@ -21,14 +21,14 @@ import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg"
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
 import Button from "../../ui-kit/components/Button/Button";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
-
-import "./ApproveForm.scss";
 import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
 import { StateContext } from "../../reducer/constants";
 import { arrayUniqueByKey, sortByBalance, sortBySymbol } from "../../utils/array";
 import { rpcList } from "../../utils/rpc";
 import { getTokens } from "../../utils/storage";
 import { trackEvent } from "../../utils/events";
+
+import "./SendForm.scss";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -45,7 +45,7 @@ interface ApproveFormProps {
     onConnect: () => void;
 }
 
-const ApproveForm = ({ onConnect }: ApproveFormProps) => {
+const SendForm = ({ onConnect }: ApproveFormProps) => {
     const { address, chainId, web3, newCustomToken } = useContext(StateContext);
     const networkName = chainId ? idToNetwork[chainId] : undefined;
     const [toAddress, setToAddress] = useState<undefined | string>(undefined);
@@ -55,8 +55,6 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
     const [isCancelApproveLoading, setIsCancelApproveLoading] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [trxLink, setTrxLink] = useState("");
-    const [restoreHash, setRestoreHash] = useState<undefined | string>(undefined);
-    const [isRestoreLoading, setIsRestoreLoading] = useState(false);
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
@@ -156,38 +154,6 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
 
     const handleValueChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setValue(+event.target.value);
-    };
-
-    const handleRestoreHashChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setRestoreHash(event.target.value);
-    };
-
-    const handleRestore = async () => {
-        try {
-            setIsRestoreLoading(true);
-            const transaction = await web3?.eth.getTransactionReceipt(restoreHash ?? "");
-            if (!transaction || !networkName) {
-                addErrorNotification("Error", "Can't get transaction");
-                setIsRestoreLoading(false);
-                return;
-            }
-            const valueBN = Web3.utils.hexToNumberString(transaction.logs[0].data);
-            const to = `0x${transaction.logs[0].topics[2]?.slice(-40)}`;
-            setGenUrl(
-                generateUrl({
-                    address: transaction.to,
-                    from: transaction.from,
-                    to,
-                    value: valueBN,
-                    chain: networkName,
-                })
-            );
-            setIsRestoreLoading(false);
-        } catch (e) {
-            setIsRestoreLoading(false);
-            console.error(e);
-            addErrorNotification("Error", "Restore transaction failed");
-        }
     };
 
     const onSuccessApprove = (selectedTokenInfo: BalanceType) => {
@@ -324,19 +290,19 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
     }, [isCorrectData]);
 
     return (
-        <div className="approve-form__container">
-            <div className={cn("approve-form", { "approve-form--disabled": !address })}>
-                <div className="approve-form__title">Send</div>
+        <div className="send-form__container">
+            <div className={cn("send-form", { "send-form--disabled": !address })}>
+                <div className="send-form__title">Send</div>
 
-                <div className="approve-form__content">
-                    <div className="approve-form__label">Network</div>
-                    <FormControl className="approve-form__network-form">
+                <div className="send-form__content">
+                    <div className="send-form__label">Network</div>
+                    <FormControl className="send-form__network-form">
                         <Select
                             value={networkName || "placeholder-value"}
                             onChange={handleNetworkChange}
                             inputProps={{ "aria-label": "Without label" }}
                             IconComponent={ArrowDownIcon}
-                            MenuProps={{ classes: { paper: "approve-form__paper", list: "approve-form__list" } }}
+                            MenuProps={{ classes: { paper: "send-form__paper", list: "send-form__list" } }}
                         >
                             <MenuItem disabled value="placeholder-value">
                                 <NetworkImage />
@@ -351,24 +317,24 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                         </Select>
                     </FormControl>
 
-                    <div className="approve-form__label">Recipient address</div>
+                    <div className="send-form__label">Recipient address</div>
                     <TextField
                         id="address"
-                        className="approve-form__address"
+                        className="send-form__address"
                         placeholder="Paste address here ..."
                         variant="outlined"
                         onChange={handleAddressChange}
                     />
 
-                    <div className="approve-form__content__line">
-                        <div className="approve-form__label">Balance: {currentTokenBalance}</div>
-                        <div className="approve-form__max-button" onClick={handleMaxClick}>
+                    <div className="send-form__content__line">
+                        <div className="send-form__label">Balance: {currentTokenBalance}</div>
+                        <div className="send-form__max-button" onClick={handleMaxClick}>
                             MAX
                         </div>
                     </div>
 
-                    <div className="approve-form__content__line">
-                        <FormControl className="approve-form__token-form">
+                    <div className="send-form__content__line">
+                        <FormControl className="send-form__token-form">
                             <Select
                                 value={selectedToken || "placeholder-value" || "custom-value"}
                                 onChange={handleTokenChange}
@@ -376,9 +342,9 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                                 IconComponent={ArrowDownIcon}
                                 MenuProps={{
                                     classes: {
-                                        root: "approve-form__token-dropdown",
-                                        paper: "approve-form__paper",
-                                        list: "approve-form__list",
+                                        root: "send-form__token-dropdown",
+                                        paper: "send-form__paper",
+                                        list: "send-form__list",
                                     },
                                 }}
                             >
@@ -388,7 +354,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                                 {balances.map((token) => (
                                     <MenuItem key={token.token_address} value={token.token_address}>
                                         <div>{token.symbol}</div>
-                                        <div className="approve-form__token-form__balance">
+                                        <div className="send-form__token-form__balance">
                                             {beautifyTokenBalance(token.balance, +token.decimals)}
                                         </div>
                                     </MenuItem>
@@ -399,7 +365,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
 
                         <TextField
                             id="value"
-                            className="approve-form__value"
+                            className="send-form__value"
                             placeholder="0.00"
                             type="number"
                             onChange={handleValueChange}
@@ -412,8 +378,8 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                 </div>
 
                 {hasAllowance && currentToken && (
-                    <div className="approve-form__allowance">
-                        <div className="approve-form__allowance__text">
+                    <div className="send-form__allowance">
+                        <div className="send-form__allowance__text">
                             <span>Allowance for selected address is </span>
                             <span>
                                 {beautifyTokenBalance(allowance, +currentToken.decimals)} {currentToken.symbol}
@@ -421,11 +387,7 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                             <br />
                             Please cancel this approve.
                         </div>
-                        <Button
-                            onClick={cancelApprove}
-                            className="approve-form__button"
-                            disabled={isCancelApproveLoading}
-                        >
+                        <Button onClick={cancelApprove} className="send-form__button" disabled={isCancelApproveLoading}>
                             {isCancelApproveLoading ? "Loading..." : "Cancel Approve"}
                         </Button>
                     </div>
@@ -434,20 +396,20 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                 {address ? (
                     <Button
                         onClick={handleApprove}
-                        className="approve-form__button"
+                        className="send-form__button"
                         disabled={!isCorrectData || isApproveLoading || hasAllowance}
                     >
                         {isApproveLoading ? "Loading..." : "Approve"}
                     </Button>
                 ) : (
-                    <Button onClick={onConnect} className="approve-form__button">
+                    <Button onClick={onConnect} className="send-form__button">
                         CONNECT WALLET
                     </Button>
                 )}
             </div>
             {trxHash && (
-                <div className="approve-form__hash">
-                    <div className="approve-form__hash__text">
+                <div className="send-form__hash">
+                    <div className="send-form__hash__text">
                         <div>Hash:&nbsp;&nbsp;</div>
                         <div id="generated-url">
                             <a href={trxLink} target="_blank" rel="noreferrer">
@@ -461,8 +423,8 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                 </div>
             )}
             {genUrl && (
-                <div className="approve-form__url">
-                    <div className="approve-form__url__text">
+                <div className="send-form__url">
+                    <div className="send-form__url__text">
                         <div>Link to receive:&nbsp;&nbsp;</div>
                         <a href={genUrl} target="_blank" rel="noreferrer">
                             {getShortUrl(genUrl)}
@@ -473,27 +435,8 @@ const ApproveForm = ({ onConnect }: ApproveFormProps) => {
                     </IconButton>
                 </div>
             )}
-            <div className="approve-form">
-                <div className="approve-form__restore">
-                    <div>Restore link by Approve transaction hash</div>
-                    <TextField
-                        id="address"
-                        className="approve-form__restore__input"
-                        placeholder="Paste transaction hash here ..."
-                        variant="outlined"
-                        onChange={handleRestoreHashChange}
-                    />
-                    <Button
-                        onClick={handleRestore}
-                        className="approve-form__button"
-                        disabled={isRestoreLoading || !address}
-                    >
-                        {isRestoreLoading ? "Loading..." : "Restore"}
-                    </Button>
-                </div>
-            </div>
         </div>
     );
 };
 
-export default ApproveForm;
+export default SendForm;

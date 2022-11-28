@@ -1,5 +1,5 @@
 .App {
-    padding-top: 120px;
+    padding-top: 100px;
     min-height: 100vh;
     box-sizing: border-box;
     position: relative;
@@ -14,9 +14,5 @@
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-
-        &--padded {
-            padding-top: 160px;
-        }
     }
 }

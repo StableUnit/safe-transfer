@@ -5,6 +5,7 @@ import { ReactNotifications } from "react-notifications-component";
 import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
 import amplitude from "amplitude-js";
+import { BrowserRouter } from "react-router-dom";
 
 import App from "./components/App/App";
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
@@ -33,7 +34,9 @@ const AppContainer = () => {
                 <DispatchContext.Provider value={dispatch}>
                     <ErrorBoundary>
                         <ReactNotifications />
-                        <App />
+                        <BrowserRouter>
+                            <App />
+                        </BrowserRouter>
                     </ErrorBoundary>
                 </DispatchContext.Provider>
             </StateContext.Provider>

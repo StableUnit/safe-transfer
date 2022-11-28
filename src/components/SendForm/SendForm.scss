@@ -1,11 +1,10 @@
 @import "../../ui-kit/styles/vars";
 
-.approve-form {
+.send-form {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-bottom: 24px;
     max-width: 356px;
 
     &:last-child {
@@ -233,38 +232,6 @@
         width: 100%;
         height: 58px;
         margin: 32px auto 0 auto;
-    }
-
-    &__restore {
-        font-weight: 700;
-        font-size: 18px;
-        line-height: 24px;
-        text-align: center;
-        &__input {
-            width: 352px;
-            margin: 32px 0 0 0;
-            border: 1px solid #313131;
-            border-radius: 80px;
-
-            & > div {
-                color: $gray1;
-            }
-
-            input {
-                color: $gray1;
-                background-color: $black !important;
-                border-radius: 80px;
-                outline: none;
-            }
-
-            fieldset {
-                display: none;
-            }
-
-            @media screen and (max-width: 600px) {
-                width: 340px;
-            }
-        }
     }
 
     &__allowance {
