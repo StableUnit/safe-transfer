@@ -1,6 +1,8 @@
+@import "src/ui-kit/styles/vars";
+
 .swiper {
   width: calc(100% - 100px);
-  height: 580px;
+  height: 570px;
   padding: 0 50px;
   user-select: none;
 }
@@ -45,4 +47,13 @@
       background: #0070f3;
     }
   }
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  padding: 20px 10px;
+  border-radius: 10px;
+  background: $black;
+  box-shadow: 0 0 10px 5px rgb(32 32 29 / 80%);
+  color: $gradient-fallback;
 }
