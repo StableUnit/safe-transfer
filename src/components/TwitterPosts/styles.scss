@@ -1,0 +1,48 @@
+.swiper {
+  width: calc(100% - 100px);
+  height: 580px;
+  padding: 0 50px;
+  user-select: none;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: transparent;
+
+  /* Center slide text vertically */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+
+  & > div {
+    width: 100%;
+    border-radius: 12px;
+  }
+
+  .twitter-tweet {
+    margin-top: 0 !important;
+    max-height: 500px;
+    overflow: auto;
+    border-radius: 12px;
+  }
+}
+
+.swiper-pagination {
+  .swiper-pagination-bullet {
+    background: #ECECEC;
+
+    &-active {
+      background: #0070f3;
+    }
+  }
+}

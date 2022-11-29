@@ -29,6 +29,7 @@ import { getTokens } from "../../utils/storage";
 import { trackEvent } from "../../utils/events";
 
 import "./SendForm.scss";
+import { TwitterPosts } from "../TwitterPosts";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -290,152 +291,170 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     }, [isCorrectData]);
 
     return (
-        <div className="send-form__container">
-            <div className={cn("send-form", { "send-form--disabled": !address })}>
-                <div className="send-form__title">Send</div>
+        <>
+            <div className="send-form__container">
+                <div className={cn("send-form", { "send-form--disabled": !address })}>
+                    <div className="send-form__title">Send</div>
 
-                <div className="send-form__content">
-                    <div className="send-form__label">Network</div>
-                    <FormControl className="send-form__network-form">
-                        <Select
-                            value={networkName || "placeholder-value"}
-                            onChange={handleNetworkChange}
-                            inputProps={{ "aria-label": "Without label" }}
-                            IconComponent={ArrowDownIcon}
-                            MenuProps={{ classes: { paper: "send-form__paper", list: "send-form__list" } }}
-                        >
-                            <MenuItem disabled value="placeholder-value">
-                                <NetworkImage />
-                                Select network
-                            </MenuItem>
-                            {Object.entries(networkNames).map(([id, name]) => (
-                                <MenuItem key={id} value={id}>
-                                    <NetworkImage network={id} />
-                                    {name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-
-                    <div className="send-form__label">Recipient address</div>
-                    <TextField
-                        id="address"
-                        className="send-form__address"
-                        placeholder="Paste address here ..."
-                        variant="outlined"
-                        onChange={handleAddressChange}
-                    />
-
-                    <div className="send-form__content__line">
-                        <div className="send-form__label">Balance: {currentTokenBalance}</div>
-                        <div className="send-form__max-button" onClick={handleMaxClick}>
-                            MAX
-                        </div>
-                    </div>
-
-                    <div className="send-form__content__line">
-                        <FormControl className="send-form__token-form">
+                    <div className="send-form__content">
+                        <div className="send-form__label">Network</div>
+                        <FormControl className="send-form__network-form">
                             <Select
-                                value={selectedToken || "placeholder-value" || "custom-value"}
-                                onChange={handleTokenChange}
+                                value={networkName || "placeholder-value"}
+                                onChange={handleNetworkChange}
                                 inputProps={{ "aria-label": "Without label" }}
                                 IconComponent={ArrowDownIcon}
-                                MenuProps={{
-                                    classes: {
-                                        root: "send-form__token-dropdown",
-                                        paper: "send-form__paper",
-                                        list: "send-form__list",
-                                    },
-                                }}
+                                MenuProps={{ classes: { paper: "send-form__paper", list: "send-form__list" } }}
                             >
                                 <MenuItem disabled value="placeholder-value">
-                                    Select token
+                                    <NetworkImage />
+                                    Select network
                                 </MenuItem>
-                                {balances.map((token) => (
-                                    <MenuItem key={token.token_address} value={token.token_address}>
-                                        <div>{token.symbol}</div>
-                                        <div className="send-form__token-form__balance">
-                                            {beautifyTokenBalance(token.balance, +token.decimals)}
-                                        </div>
+                                {Object.entries(networkNames).map(([id, name]) => (
+                                    <MenuItem key={id} value={id}>
+                                        <NetworkImage network={id} />
+                                        {name}
                                     </MenuItem>
                                 ))}
-                                {networkName && <CustomTokenMenuItem networkName={networkName} />}
                             </Select>
                         </FormControl>
 
+                        <div className="send-form__label">Recipient address</div>
                         <TextField
-                            id="value"
-                            className="send-form__value"
-                            placeholder="0.00"
-                            type="number"
-                            onChange={handleValueChange}
-                            value={value}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
+                            id="address"
+                            className="send-form__address"
+                            placeholder="Paste address here ..."
+                            variant="outlined"
+                            onChange={handleAddressChange}
                         />
-                    </div>
-                </div>
 
-                {hasAllowance && currentToken && (
-                    <div className="send-form__allowance">
-                        <div className="send-form__allowance__text">
-                            <span>Allowance for selected address is </span>
-                            <span>
-                                {beautifyTokenBalance(allowance, +currentToken.decimals)} {currentToken.symbol}
-                            </span>
-                            <br />
-                            Please cancel this approve.
+                        <div className="send-form__content__line">
+                            <div className="send-form__label">Balance: {currentTokenBalance}</div>
+                            <div className="send-form__max-button" onClick={handleMaxClick}>
+                                MAX
+                            </div>
                         </div>
-                        <Button onClick={cancelApprove} className="send-form__button" disabled={isCancelApproveLoading}>
-                            {isCancelApproveLoading ? "Loading..." : "Cancel Approve"}
+
+                        <div className="send-form__content__line">
+                            <FormControl className="send-form__token-form">
+                                <Select
+                                    value={selectedToken || "placeholder-value" || "custom-value"}
+                                    onChange={handleTokenChange}
+                                    inputProps={{ "aria-label": "Without label" }}
+                                    IconComponent={ArrowDownIcon}
+                                    MenuProps={{
+                                        classes: {
+                                            root: "send-form__token-dropdown",
+                                            paper: "send-form__paper",
+                                            list: "send-form__list",
+                                        },
+                                    }}
+                                >
+                                    <MenuItem disabled value="placeholder-value">
+                                        Select token
+                                    </MenuItem>
+                                    {balances.map((token) => (
+                                        <MenuItem key={token.token_address} value={token.token_address}>
+                                            <div>{token.symbol}</div>
+                                            <div className="send-form__token-form__balance">
+                                                {beautifyTokenBalance(token.balance, +token.decimals)}
+                                            </div>
+                                        </MenuItem>
+                                    ))}
+                                    {networkName && <CustomTokenMenuItem networkName={networkName} />}
+                                </Select>
+                            </FormControl>
+
+                            <TextField
+                                id="value"
+                                className="send-form__value"
+                                placeholder="0.00"
+                                type="number"
+                                onChange={handleValueChange}
+                                value={value}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    {hasAllowance && currentToken && (
+                        <div className="send-form__allowance">
+                            <div className="send-form__allowance__text">
+                                <span>Allowance for selected address is </span>
+                                <span>
+                                    {beautifyTokenBalance(allowance, +currentToken.decimals)} {currentToken.symbol}
+                                </span>
+                                <br />
+                                Please cancel this approve.
+                            </div>
+                            <Button
+                                onClick={cancelApprove}
+                                className="send-form__button"
+                                disabled={isCancelApproveLoading}
+                            >
+                                {isCancelApproveLoading ? "Loading..." : "Cancel Approve"}
+                            </Button>
+                        </div>
+                    )}
+
+                    {address ? (
+                        <Button
+                            onClick={handleApprove}
+                            className="send-form__button"
+                            disabled={!isCorrectData || isApproveLoading || hasAllowance}
+                        >
+                            {isApproveLoading ? "Loading..." : "Approve"}
                         </Button>
+                    ) : (
+                        <Button onClick={onConnect} className="send-form__button">
+                            CONNECT WALLET
+                        </Button>
+                    )}
+                </div>
+                {trxHash && (
+                    <div className="send-form__hash">
+                        <div className="send-form__hash__text">
+                            <div>Hash:&nbsp;&nbsp;</div>
+                            <div id="generated-url">
+                                <a href={trxLink} target="_blank" rel="noreferrer">
+                                    {getShortHash(trxHash)}
+                                </a>
+                            </div>
+                        </div>
+                        <IconButton aria-label="copy" onClick={handleCopyUrl(trxHash)}>
+                            <ContentCopyIcon />
+                        </IconButton>
                     </div>
                 )}
-
-                {address ? (
-                    <Button
-                        onClick={handleApprove}
-                        className="send-form__button"
-                        disabled={!isCorrectData || isApproveLoading || hasAllowance}
-                    >
-                        {isApproveLoading ? "Loading..." : "Approve"}
-                    </Button>
-                ) : (
-                    <Button onClick={onConnect} className="send-form__button">
-                        CONNECT WALLET
-                    </Button>
-                )}
-            </div>
-            {trxHash && (
-                <div className="send-form__hash">
-                    <div className="send-form__hash__text">
-                        <div>Hash:&nbsp;&nbsp;</div>
-                        <div id="generated-url">
-                            <a href={trxLink} target="_blank" rel="noreferrer">
-                                {getShortHash(trxHash)}
+                {genUrl && (
+                    <div className="send-form__url">
+                        <div className="send-form__url__text">
+                            <div>Link to receive:&nbsp;&nbsp;</div>
+                            <a href={genUrl} target="_blank" rel="noreferrer">
+                                {getShortUrl(genUrl)}
                             </a>
                         </div>
+                        <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
+                            <ContentCopyIcon />
+                        </IconButton>
                     </div>
-                    <IconButton aria-label="copy" onClick={handleCopyUrl(trxHash)}>
-                        <ContentCopyIcon />
-                    </IconButton>
-                </div>
-            )}
-            {genUrl && (
-                <div className="send-form__url">
-                    <div className="send-form__url__text">
-                        <div>Link to receive:&nbsp;&nbsp;</div>
-                        <a href={genUrl} target="_blank" rel="noreferrer">
-                            {getShortUrl(genUrl)}
-                        </a>
-                    </div>
-                    <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
-                        <ContentCopyIcon />
-                    </IconButton>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+            <div className="send-form__twitter">
+                <div className="send-form__twitter__header">Tell us how you feel about Safe Transfer</div>
+                <TwitterPosts
+                    ids={[
+                        "1595799588010659840",
+                        "1566772879257214976",
+                        "1594655384869879808",
+                        "1595849732668248064",
+                        "1595798604047859712",
+                    ]}
+                />
+            </div>
+        </>
     );
 };
 
