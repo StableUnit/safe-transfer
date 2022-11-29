@@ -2,7 +2,7 @@
 
 .swiper {
   width: calc(100% - 100px);
-  height: 570px;
+  height: 295px;
   padding: 0 50px;
   user-select: none;
 }
@@ -21,10 +21,7 @@
   -ms-flex-pack: center;
   -webkit-justify-content: center;
   justify-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  -webkit-align-items: center;
-  align-items: center;
+  align-items: flex-start;
 
   & > div {
     width: 100%;
@@ -33,7 +30,7 @@
 
   .twitter-tweet {
     margin-top: 0 !important;
-    max-height: 500px;
+    max-height: 247px;
     overflow: auto;
     border-radius: 12px;
   }

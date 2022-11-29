@@ -33,7 +33,7 @@ const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
     const { address } = useContext(StateContext);
     const location = useLocation();
 
-    const totalTransferred = 1_000_000;
+    const totalTransferred = 1_250_500;
 
     return (
         <div className="header">
@@ -45,7 +45,7 @@ const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
                 </div>
                 <div>
                     <GradientHref>Total transferred: </GradientHref>
-                    <span>{totalTransferred.toLocaleString()}$</span>
+                    <span>${totalTransferred.toLocaleString()}+</span>
                 </div>
             </div>
 

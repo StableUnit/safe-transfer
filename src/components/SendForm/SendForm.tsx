@@ -5,6 +5,7 @@ import cn from "classnames";
 import { useMoralisWeb3Api } from "react-moralis";
 import BN from "bn.js";
 
+import { TwitterShareButton } from "react-twitter-embed";
 import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
 import { ensToAddress, isAddress } from "../../utils/wallet";
 import {
@@ -443,15 +444,16 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                 )}
             </div>
             <div className="send-form__twitter">
-                <div className="send-form__twitter__header">Tell us how you feel about Safe Transfer</div>
+                <div className="send-form__twitter__header">
+                    <div className="send-form__twitter__title">Tell us how you feel about Safe Transfer</div>
+                    <TwitterShareButton
+                        url="https://safe-transfer.stableunit.org/"
+                        options={{ text: "#safetransfer is awesome", via: "stableUnit", size: "large" }}
+                        placeholder="Some placeholder"
+                    />
+                </div>
                 <TwitterPosts
-                    ids={[
-                        "1595799588010659840",
-                        "1566772879257214976",
-                        "1594655384869879808",
-                        "1595849732668248064",
-                        "1595798604047859712",
-                    ]}
+                    ids={["1595062904679956482", "1594459327674425346", "1543956221614489601", "1511317628576362502"]}
                 />
             </div>
         </>

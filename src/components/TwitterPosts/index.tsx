@@ -28,8 +28,8 @@ export const TwitterPosts = ({ ids }: Props) => (
             },
             // when window width is >= 640px
             640: {
-                slidesPerView: 3,
-                spaceBetween: 30,
+                slidesPerView: 4,
+                spaceBetween: 15,
             },
         }}
         keyboard={{

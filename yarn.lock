@@ -2750,57 +2750,57 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@sentry/browser@7.21.1":
-  version "7.21.1"
-  resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-7.21.1.tgz#bffa3ea19050c06400107d2297b9802f9719f98b"
-  integrity sha512-cS2Jz2+fs9+4pJqLJPtYqGyY97ywJDWAWIR1Yla3hs1QQuH6m0Nz3ojZD1gE2eKH9mHwkGbnNAh+hHcrYrfGzw==
+"@sentry/browser@7.22.0":
+  version "7.22.0"
+  resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-7.22.0.tgz#c4f283cd7825db0db59ac97c3334c939982ace94"
+  integrity sha512-8MA+f46+T3G7fb4BYYX9Wl3bMDloG5a3Ng0GWdBeq6DE2tXVHeCvba8Yrrcnn1qFHpmnOn5Nz4xWBUDs3uBFxA==
   dependencies:
-    "@sentry/core" "7.21.1"
-    "@sentry/types" "7.21.1"
-    "@sentry/utils" "7.21.1"
+    "@sentry/core" "7.22.0"
+    "@sentry/types" "7.22.0"
+    "@sentry/utils" "7.22.0"
     tslib "^1.9.3"
 
-"@sentry/core@7.21.1":
-  version "7.21.1"
-  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-7.21.1.tgz#d0423282d90875625802dfe380f9657e9242b72b"
-  integrity sha512-Og5wEEsy24fNvT/T7IKjcV4EvVK5ryY2kxbJzKY6GU2eX+i+aBl+n/vp7U0Es351C/AlTkS+0NOUsp2TQQFxZA==
+"@sentry/core@7.22.0":
+  version "7.22.0"
+  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-7.22.0.tgz#8e50f288e5e8fcaa2774daffd2487e042a392893"
+  integrity sha512-qYJiJrL1mfQQln84mNunBRUkXq7xDGQQoNh4Sz9VYP5698va51zmS5BLYRCZ5CkPwRYNuhUqlUXN7bpYGYOOIA==
   dependencies:
-    "@sentry/types" "7.21.1"
-    "@sentry/utils" "7.21.1"
+    "@sentry/types" "7.22.0"
+    "@sentry/utils" "7.22.0"
     tslib "^1.9.3"
 
 "@sentry/react@^7.4.1":
-  version "7.21.1"
-  resolved "https://registry.yarnpkg.com/@sentry/react/-/react-7.21.1.tgz#275e6fd46212f608f382c7dde46d21e748f93491"
-  integrity sha512-w91PIUyX07mErKgrBQA+7ID8zFKrYDUYSOrFSHufg5DdPq4EpHiNDe/Yngg3e9ELhtr1AbCnEvx9wlvqLi3nZQ==
+  version "7.22.0"
+  resolved "https://registry.yarnpkg.com/@sentry/react/-/react-7.22.0.tgz#04e2f100b02e1051f8e9b3f69506efa21a18ca9a"
+  integrity sha512-nbZD+bobhV65r/4mpfRgGct1nrYWEmnNzTYZM4PQyPyImuk/VmNNdnzP3BLWqAnV4LvbVWEkgZIcquN8yA098g==
   dependencies:
-    "@sentry/browser" "7.21.1"
-    "@sentry/types" "7.21.1"
-    "@sentry/utils" "7.21.1"
+    "@sentry/browser" "7.22.0"
+    "@sentry/types" "7.22.0"
+    "@sentry/utils" "7.22.0"
     hoist-non-react-statics "^3.3.2"
     tslib "^1.9.3"
 
 "@sentry/tracing@^7.4.1":
-  version "7.21.1"
-  resolved "https://registry.yarnpkg.com/@sentry/tracing/-/tracing-7.21.1.tgz#db02643e84960f1ea14b35fe75a93fc0bbca1fcb"
-  integrity sha512-b1BTPsRaNQpohzegoz59KGuBl+To651vEq0vMS4tCzSyIdxkYso3JCrjDdEqW/2MliQYANNVrUai2bmwmU9h1g==
+  version "7.22.0"
+  resolved "https://registry.yarnpkg.com/@sentry/tracing/-/tracing-7.22.0.tgz#ec29325ee2c5959670097c104e47a78797cef17b"
+  integrity sha512-s68aSnrRaWQ+Z5oG9ozIegUkofZy9PwicuXYEPA8K/R30F1CVpHvDZ/3KlFnByl+aXTbAyLBQzN2sAObB5g4pQ==
   dependencies:
-    "@sentry/core" "7.21.1"
-    "@sentry/types" "7.21.1"
-    "@sentry/utils" "7.21.1"
+    "@sentry/core" "7.22.0"
+    "@sentry/types" "7.22.0"
+    "@sentry/utils" "7.22.0"
     tslib "^1.9.3"
 
-"@sentry/types@7.21.1":
-  version "7.21.1"
-  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-7.21.1.tgz#408a7b95a66ddc30c4359979594e03bee8f9fbdc"
-  integrity sha512-3/IKnd52Ol21amQvI+kz+WB76s8/LR5YvFJzMgIoI2S8d82smIr253zGijRXxHPEif8kMLX4Yt+36VzrLxg6+A==
+"@sentry/types@7.22.0":
+  version "7.22.0"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-7.22.0.tgz#58e4ce77b523048e0f31e2ea4b597946d76f6079"
+  integrity sha512-LhCL+wb1Jch+OesB2CIt6xpfO1Ab6CRvoNYRRzVumWPLns1T3ZJkarYfhbLaOEIb38EIbPgREdxn2AJT560U4Q==
 
-"@sentry/utils@7.21.1":
-  version "7.21.1"
-  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-7.21.1.tgz#96582345178015fd32fe9159c25c44ccf2f99d2a"
-  integrity sha512-F0W0AAi8tgtTx6ApZRI2S9HbXEA9ENX1phTZgdNNWcMFm1BNbc21XEwLqwXBNjub5nlA6CE8xnjXRgdZKx4kzQ==
+"@sentry/utils@7.22.0":
+  version "7.22.0"
+  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-7.22.0.tgz#fb46dc2761e2d44cf70bc3e1fba61d55852904b5"
+  integrity sha512-1GiNw1opIngxg0nktCTc9wibh4/LV12kclrnB9dAOHrqazZXHXZRAkjqrhQphKcMpT+3By91W6EofjaDt5a/hg==
   dependencies:
-    "@sentry/types" "7.21.1"
+    "@sentry/types" "7.22.0"
     tslib "^1.9.3"
 
 "@sindresorhus/is@^4.0.0", "@sindresorhus/is@^4.6.0":
@@ -4221,13 +4221,6 @@
   version "3.13.1"
   resolved "https://registry.yarnpkg.com/@types/react-modal/-/react-modal-3.13.1.tgz#5b9845c205fccc85d9a77966b6e16dc70a60825a"
   integrity sha512-iY/gPvTDIy6Z+37l+ibmrY+GTV4KQTHcCyR5FIytm182RQS69G5ps4PH2FxtC7bAQ2QRHXMevsBgck7IQruHNg==
-  dependencies:
-    "@types/react" "*"
-
-"@types/react-slick@^0.23.10":
-  version "0.23.10"
-  resolved "https://registry.yarnpkg.com/@types/react-slick/-/react-slick-0.23.10.tgz#56126e6e4e95cdce7771535b2811c2c1931a7caa"
-  integrity sha512-ZiqdencANDZy6sWOWJ54LDvebuXFEhDlHtXU9FFipQR2BcYU2QJxZhvJPW6YK7cocibUiNn+YvDTbt1HtCIBVA==
   dependencies:
     "@types/react" "*"
 
@@ -7675,20 +7668,10 @@ deep-equal@^2.0.5:
     which-collection "^1.0.1"
     which-typed-array "^1.1.8"
 
-deep-freeze@0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/deep-freeze/-/deep-freeze-0.0.1.tgz#3a0b0005de18672819dfd38cd31f91179c893e84"
-  integrity sha512-Z+z8HiAvsGwmjqlphnHW5oz6yWlOwu6EQfFTjmeTWlDeda3FS2yv3jhq35TX/ewmsnqB+RX2IdsIOyjJCQN5tg==
-
 deep-is@^0.1.3, deep-is@~0.1.3:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/deep-is/-/deep-is-0.1.4.tgz#a6f2dce612fadd2ef1f519b73551f17e85199831"
   integrity sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==
-
-deepmerge@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-2.2.1.tgz#5d3ff22a01c00f645405a2fbc17d0778a1801170"
-  integrity sha512-R9hc1Xa/NOBi9WRVUWg19rl1UB7Tt4kuPd+thNJgFZoxXsTz7ncaPaeIm+40oSGuP33DfMb4sZt1QIGiJzC4EA==
 
 deepmerge@^4.2.2:
   version "4.2.2"
@@ -8209,13 +8192,6 @@ env-paths@^2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/env-paths/-/env-paths-2.2.1.tgz#420399d416ce1fbe9bc0a07c62fa68d67fd0f8f2"
   integrity sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==
-
-equals@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/equals/-/equals-1.0.5.tgz#212062dde5e1a510d955f13598efcc6a621b6ace"
-  integrity sha512-wI15a6ZoaaXPv+55+Vh2Kqn3+efKRv8QPtcGTjW5xmanMnQzESdAt566jevtMZyt3W/jwLDTzXpMph5ECDJ2zg==
-  dependencies:
-    jkroso-type "1"
 
 errno@^0.1.3, errno@~0.1.1, errno@~0.1.7:
   version "0.1.8"
@@ -11920,11 +11896,6 @@ jest@26.6.0:
     import-local "^3.0.2"
     jest-cli "^26.6.0"
 
-jkroso-type@1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/jkroso-type/-/jkroso-type-1.1.1.tgz#bc4ced6d6c45fe0745282bafc86a9f8c4fc9ce61"
-  integrity sha512-zZgay+fPG6PgMUrpyFADmQmvLo39+AZa7Gc5pZhev2RhDxwANEq2etwD8d0e6rTg5NkwOIlQmaEmns3draC6Ng==
-
 js-base64@^2.1.8:
   version "2.6.4"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.6.4.tgz#f4e686c5de1ea1f867dbcad3d46d969428df98c4"
@@ -15195,17 +15166,6 @@ puppeteer@^13.5.1:
     tar-fs "2.1.1"
     unbzip2-stream "1.4.3"
     ws "8.5.0"
-
-pure-react-carousel@^1.30.1:
-  version "1.30.1"
-  resolved "https://registry.yarnpkg.com/pure-react-carousel/-/pure-react-carousel-1.30.1.tgz#006a333869b51339dafcdee2afa0561eb46d1743"
-  integrity sha512-B1qi62hZk0OFqRR4cTjtgIeOn/Ls5wo+HsLtrXT4jVf5et8ldBHSt+6LsYRJN86Or8dm+XbnJNEHy6WDJ0/DQw==
-  dependencies:
-    "@babel/runtime" "^7.5.5"
-    deep-freeze "0.0.1"
-    deepmerge "^2.2.1"
-    equals "^1.0.5"
-    prop-types "^15.6.2"
 
 q@^1.1.2:
   version "1.5.1"
