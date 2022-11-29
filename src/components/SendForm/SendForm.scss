@@ -265,4 +265,14 @@
             padding: 0 16px;
         }
     }
+
+    @media screen and (max-width: 600px) {
+        width: 330px;
+
+        &__twitter {
+            &__title {
+                font-size: 14px;
+            }
+        }
+    }
 }
