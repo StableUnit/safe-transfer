@@ -18,11 +18,11 @@ const SOCIAL_NETWORKS: Record<string, { href: string; icon: React.ReactNode }> =
         icon: TgIcon,
     },
     discord: {
-        href: "https://discord.gg/puMeUhUpJf",
+        href: "https://discord.gg/5bzcBtkGvu",
         icon: DiscordIcon,
     },
     medium: {
-        href: "https://blog.stableunit.org/",
+        href: "https://medium.com/stableunit",
         icon: MediumIcon,
     },
     twitter: {
@@ -30,7 +30,7 @@ const SOCIAL_NETWORKS: Record<string, { href: string; icon: React.ReactNode }> =
         icon: TwitterIcon,
     },
     github: {
-        href: "https://github.com/StableUnit",
+        href: "https://github.com/StableUnit/safe-transfer",
         icon: GithubIcon,
     },
 };
