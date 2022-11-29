@@ -15,6 +15,11 @@ interface NavbarProps {
 
 const LINKS = [
     {
+        isExternal: true,
+        href: "https://medium.com/stableunit/avoid-sending-tokens-to-the-wrong-address-with-safe-transfer-7c649284496f",
+        text: "Tutorial",
+    },
+    {
         href: "/send",
         text: "Send",
     },
@@ -46,7 +51,7 @@ const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
 
             <div className="header__navbar">
                 <div className="header__links">
-                    {LINKS.map(({ href, text }) => {
+                    {LINKS.map(({ href, text, isExternal }) => {
                         const isSelected = location.pathname.includes(href);
                         return (
                             <GradientHref
@@ -54,6 +59,8 @@ const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
                                 className={cn("header__link", { "header__link--selected": isSelected })}
                                 key={text}
                                 href={href}
+                                isExternal={isExternal}
+                                target={isExternal ? "_blank" : undefined}
                                 disabled={isSelected}
                             >
                                 {text}
