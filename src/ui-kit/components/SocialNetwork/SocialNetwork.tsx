@@ -18,7 +18,7 @@ const SOCIAL_NETWORKS: Record<string, { href: string; icon: React.ReactNode }> =
         icon: TgIcon,
     },
     discord: {
-        href: "https://discord.gg/5bzcBtkGvu",
+        href: "https://discord.gg/WrCrCW6F4c",
         icon: DiscordIcon,
     },
     medium: {

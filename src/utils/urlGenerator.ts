@@ -16,7 +16,7 @@ export const generateUrl = ({ address, from, to, value, chain }: TokenInfoType) 
     const { origin } = window.location;
     const token = jwt.sign({ address, from, to, value, chain }, SECRET_KEY);
 
-    return `${origin}?token=${token}`;
+    return `${origin}/receive?token=${token}`;
 };
 // @ts-ignore
 window.generateUrl = generateUrl;

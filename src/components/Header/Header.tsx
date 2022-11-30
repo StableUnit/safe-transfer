@@ -45,7 +45,7 @@ const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
                 </div>
                 <div>
                     <GradientHref>Total transferred: </GradientHref>
-                    <span>${totalTransferred.toLocaleString()}+</span>
+                    <span className="header__transferred">${totalTransferred.toLocaleString()}+</span>
                 </div>
             </div>
 

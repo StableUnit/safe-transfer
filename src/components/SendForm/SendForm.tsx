@@ -294,6 +294,34 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     return (
         <>
             <div className="send-form__container">
+                {trxHash && (
+                    <div className="send-form__hash">
+                        <div className="send-form__hash__text">
+                            <div>Hash:&nbsp;&nbsp;</div>
+                            <div id="generated-url">
+                                <a href={trxLink} target="_blank" rel="noreferrer">
+                                    {getShortHash(trxHash)}
+                                </a>
+                            </div>
+                        </div>
+                        <IconButton aria-label="copy" onClick={handleCopyUrl(trxHash)}>
+                            <ContentCopyIcon />
+                        </IconButton>
+                    </div>
+                )}
+                {genUrl && (
+                    <div className="send-form__url">
+                        <div className="send-form__url__text">
+                            <div>Link to receive:&nbsp;&nbsp;</div>
+                            <a href={genUrl} target="_blank" rel="noreferrer">
+                                {getShortUrl(genUrl)}
+                            </a>
+                        </div>
+                        <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
+                            <ContentCopyIcon />
+                        </IconButton>
+                    </div>
+                )}
                 <div className={cn("send-form", { "send-form--disabled": !address })}>
                     <div className="send-form__title">Send</div>
 
@@ -356,7 +384,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                     </MenuItem>
                                     {balances.map((token) => (
                                         <MenuItem key={token.token_address} value={token.token_address}>
-                                            <div>{token.symbol}</div>
+                                            <div className="send-form__token-form__symbol">{token.symbol}</div>
                                             <div className="send-form__token-form__balance">
                                                 {beautifyTokenBalance(token.balance, +token.decimals)}
                                             </div>
@@ -414,34 +442,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         </Button>
                     )}
                 </div>
-                {trxHash && (
-                    <div className="send-form__hash">
-                        <div className="send-form__hash__text">
-                            <div>Hash:&nbsp;&nbsp;</div>
-                            <div id="generated-url">
-                                <a href={trxLink} target="_blank" rel="noreferrer">
-                                    {getShortHash(trxHash)}
-                                </a>
-                            </div>
-                        </div>
-                        <IconButton aria-label="copy" onClick={handleCopyUrl(trxHash)}>
-                            <ContentCopyIcon />
-                        </IconButton>
-                    </div>
-                )}
-                {genUrl && (
-                    <div className="send-form__url">
-                        <div className="send-form__url__text">
-                            <div>Link to receive:&nbsp;&nbsp;</div>
-                            <a href={genUrl} target="_blank" rel="noreferrer">
-                                {getShortUrl(genUrl)}
-                            </a>
-                        </div>
-                        <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
-                            <ContentCopyIcon />
-                        </IconButton>
-                    </div>
-                )}
             </div>
             <div className="send-form__twitter">
                 <div className="send-form__twitter__header">
@@ -449,7 +449,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     <TwitterShareButton
                         url="https://safe-transfer.stableunit.org/"
                         options={{ text: "#safetransfer is awesome", via: "stableUnit", size: "large" }}
-                        placeholder="Some placeholder"
                     />
                 </div>
                 <TwitterPosts

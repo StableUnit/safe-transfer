@@ -142,6 +142,14 @@
         }
     }
 
+    &__token-form__symbol {
+        width: 90px;
+        padding-right: 8px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
     & &__token-form {
         .MuiSelect-select {
             padding: 18px 50px 16px 16px !important;
@@ -243,7 +251,7 @@
     }
 
     &__hash {
-        padding: 0px 8px 16px 16px;
+        padding: 16px 8px 16px 16px;
     }
 
     &__url {
