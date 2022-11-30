@@ -21,6 +21,7 @@ import { StateContext } from "../../reducer/constants";
 
 import "./ReceiveForm.scss";
 import RestoreForm from "../RestoreForm/RestoreForm";
+import { ensToAddress } from "../../utils/wallet";
 
 interface TransferFormProps {
     onConnect: () => void;
@@ -35,6 +36,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     const { address, chainId, web3 } = useContext(StateContext);
     const [tokenMetadata, setTokenMetadata] = useState<undefined | TokenMetadataType>(undefined);
     const [isTransferFetching, setIsTransferFetching] = useState(false);
+    const [isCancelFetching, setIsCancelFetching] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
@@ -101,6 +103,30 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         }
     };
 
+    const handleCancel = async () => {
+        setIsCancelFetching(true);
+
+        try {
+            if (tokenData && web3) {
+                const getTokenContract = getTokenContractFactory(web3);
+                const tokenContract = getTokenContract(tokenData.address);
+                if (tokenContract) {
+                    await tokenContract.methods
+                        .approve(await ensToAddress(tokenData.to), "0")
+                        .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null });
+
+                    addSuccessNotification("Success", "Cancel allowance completed");
+                    setIsCancelFetching(false);
+                }
+            }
+        } catch (e) {
+            console.log(e);
+            // @ts-ignore
+            addErrorNotification("Cancel Error", e?.error?.message);
+            setIsCancelFetching(false);
+        }
+    };
+
     const handleAddToMetamask = async () => {
         if (tokenData?.address) {
             await window.ethereum.request({
@@ -148,13 +174,24 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         const hasAllowance = !!(allowance && allowance !== "0");
 
         return (
-            <Button
-                onClick={handleTransfer}
-                className="receive-form__button"
-                disabled={!hasAllData || isTransferFetching || isDisabledContent || !hasAllowance}
-            >
-                {isTransferFetching ? "Loading..." : "Receive"}
-            </Button>
+            <>
+                {isSender && (
+                    <Button
+                        onClick={handleCancel}
+                        className="receive-form__button"
+                        disabled={!hasAllData || isCancelFetching || tokenData?.chain !== networkName}
+                    >
+                        {isCancelFetching ? "Loading..." : "Cancel"}
+                    </Button>
+                )}
+                <Button
+                    onClick={handleTransfer}
+                    className="receive-form__button"
+                    disabled={!hasAllData || isTransferFetching || isDisabledContent || !hasAllowance}
+                >
+                    {isTransferFetching ? "Loading..." : "Receive"}
+                </Button>
+            </>
         );
     };
 
