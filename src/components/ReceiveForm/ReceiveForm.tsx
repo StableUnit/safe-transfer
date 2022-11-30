@@ -22,6 +22,7 @@ import { StateContext } from "../../reducer/constants";
 import "./ReceiveForm.scss";
 import RestoreForm from "../RestoreForm/RestoreForm";
 import { ensToAddress } from "../../utils/wallet";
+import { GradientHref } from "../../ui-kit/components/GradientHref";
 
 interface TransferFormProps {
     onConnect: () => void;
@@ -158,6 +159,15 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
 
     const isReceiver = tokenData && address && tokenData.to.toLowerCase() === address.toLowerCase();
     const isSender = tokenData && address && tokenData.from.toLowerCase() === address.toLowerCase();
+
+    if (token && !hasAllData) {
+        return (
+            <div className="receive-form receive-form--error">
+                <div>Broken link, please be sure you use correct link. Or ask for support at </div>
+                <GradientHref href="https://t.me/stableunit">https://t.me/stableunit</GradientHref>
+            </div>
+        );
+    }
 
     const renderButton = () => {
         if (isSuccess) {

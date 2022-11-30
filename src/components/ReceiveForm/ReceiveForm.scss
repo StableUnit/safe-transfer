@@ -8,6 +8,13 @@
     width: 100%;
     max-width: 400px;
 
+    &--error {
+        text-align: center;
+        max-width: 510px;
+        padding: 50px 14px;
+        box-sizing: border-box;
+    }
+
     &--disabled {
         .info-cell__content {
             opacity: 0.5;
