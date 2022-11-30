@@ -130,6 +130,9 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     const isDisabledContent =
         !address || tokenData?.to.toLowerCase() !== address.toLowerCase() || tokenData?.chain !== networkName;
 
+    const isReceiver = tokenData && address && tokenData.to.toLowerCase() === address.toLowerCase();
+    const isSender = tokenData && address && tokenData.from.toLowerCase() === address.toLowerCase();
+
     const renderButton = () => {
         if (isSuccess) {
             return null;
@@ -167,13 +170,21 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                                 <div>&nbsp;&nbsp;{networkNames[tokenData.chain]}</div>
                             </InfoCell>
                             <div className="receive-form__line">
-                                <InfoCell className="receive-form__copy-container" title="From:">
+                                <InfoCell
+                                    className="receive-form__copy-container"
+                                    title="From:"
+                                    bubble={isSender ? "You" : undefined}
+                                >
                                     <div id="from">{getShortHash(tokenData.from)}</div>
                                     <div onClick={handleCopyUrl(tokenData.from)}>
                                         <ContentCopyIcon />
                                     </div>
                                 </InfoCell>
-                                <InfoCell className="receive-form__copy-container" title="To:">
+                                <InfoCell
+                                    className="receive-form__copy-container"
+                                    title="To:"
+                                    bubble={isReceiver ? "You" : undefined}
+                                >
                                     <div id="to">
                                         {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to}
                                     </div>

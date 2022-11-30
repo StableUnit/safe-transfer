@@ -8,11 +8,25 @@
   margin-bottom: 16px;
 
   &__title {
+    display: flex;
+    align-items: center;
     font-weight: 700;
     font-size: 12px;
     line-height: 16px;
     color: $gray1;
     padding-bottom: 5px;
+  }
+
+  &__bubble {
+    margin-left: 6px;
+    background: $green;
+    color: $black;
+    padding: 4px 6px;
+    border-radius: 10px;
+    font-size: 10px;
+    line-height: 9px;
+    height: 16px;
+    box-sizing: border-box;
   }
 
   &__content {
