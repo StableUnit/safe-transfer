@@ -29,10 +29,13 @@ You will also see any lint errors in the console.
 Launches the test launcher by `@chainsafe/dappeteer`\
 You can find E2E tests in `test/test.spec.ts`. They will be run in emulated browser with metamask.
 
-### `yarn build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Releases
+After PR approve you should merge it into master and run
+```
+npm run release -- --release-as minor
+```
+If it's small bugfix you should update only patch:
+```
+npm run release
+```
