@@ -3,7 +3,7 @@
 .footer {
   width: 100%;
 
-  height: 78px;
+  height: 85px;
   font-weight: 400;
   font-size: 14px;
   line-height: 18px;
@@ -16,6 +16,12 @@
       color: white;
       text-decoration: none !important;
     }
+  }
+
+  &__version {
+    text-align: center;
+    color: $gray1;
+    font-size: 12px;
   }
 
   &__social {
