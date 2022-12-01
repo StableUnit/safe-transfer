@@ -51,38 +51,44 @@ const RestoreForm = () => {
     };
 
     return (
-        <div className="send-form">
-            <div className="restore-form__restore">
-                <div>Restore link by Approve transaction hash</div>
-                <TextField
-                    id="address"
-                    className="restore-form__restore__input"
-                    placeholder="Paste transaction hash here ..."
-                    variant="outlined"
-                    onChange={handleRestoreHashChange}
-                />
-                <Button
-                    onClick={handleRestore}
-                    className="restore-form__button"
-                    disabled={isRestoreLoading || !address || !restoreHash}
-                >
-                    {isRestoreLoading ? "Loading..." : "Restore"}
-                </Button>
+        <>
+            <div className="restore-form__disclaimer">
+                Please ask sender to send you a link with receive details. <br />
+                Alternatively, you can use widget below to restore details from on-chain data.
             </div>
-            {genUrl && (
-                <div className="restore-form__url">
-                    <div className="restore-form__url__text">
-                        <div>Link to receive:&nbsp;&nbsp;</div>
-                        <a href={genUrl} target="_blank" rel="noreferrer">
-                            {getShortUrl(genUrl)}
-                        </a>
-                    </div>
-                    <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
-                        <ContentCopyIcon />
-                    </IconButton>
+            <div className="send-form">
+                <div className="restore-form__restore">
+                    <div>Restore link by Approve transaction hash</div>
+                    <TextField
+                        id="address"
+                        className="restore-form__restore__input"
+                        placeholder="Paste transaction hash here ..."
+                        variant="outlined"
+                        onChange={handleRestoreHashChange}
+                    />
+                    <Button
+                        onClick={handleRestore}
+                        className="restore-form__button"
+                        disabled={isRestoreLoading || !address || !restoreHash}
+                    >
+                        {isRestoreLoading ? "Loading..." : "Restore"}
+                    </Button>
                 </div>
-            )}
-        </div>
+                {genUrl && (
+                    <div className="restore-form__url">
+                        <div className="restore-form__url__text">
+                            <div>Link to receive:&nbsp;&nbsp;</div>
+                            <a href={genUrl} target="_blank" rel="noreferrer">
+                                {getShortUrl(genUrl)}
+                            </a>
+                        </div>
+                        <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
+                            <ContentCopyIcon />
+                        </IconButton>
+                    </div>
+                )}
+            </div>
+        </>
     );
 };
 

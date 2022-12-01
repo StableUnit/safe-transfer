@@ -27,6 +27,11 @@ const LINKS = [
         href: "/receive",
         text: "Receive",
     },
+    {
+        isExternal: true,
+        href: "https://revoke.cash/",
+        text: "Revoke",
+    },
 ];
 
 const Header = ({ onConnect, onDisconnect }: NavbarProps) => {

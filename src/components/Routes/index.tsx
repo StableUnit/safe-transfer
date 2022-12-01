@@ -3,6 +3,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 
 import SendForm from "../SendForm/SendForm";
 import ReceiveForm from "../ReceiveForm/ReceiveForm";
+import { PageNotFound } from "../PageNotFound";
 
 interface Props {
     onConnect: () => void;
@@ -23,6 +24,10 @@ export const Routes = ({ onConnect }: Props) => (
         {/* @ts-ignore */}
         <Route exact path="/">
             <Redirect to="/send" />
+        </Route>
+
+        <Route path="*">
+            <PageNotFound />
         </Route>
     </Switch>
 );
