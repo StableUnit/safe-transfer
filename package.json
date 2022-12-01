@@ -55,6 +55,7 @@
         "test": "mocha --require ts-node/register test/*.spec.ts --color --recursive --timeout 60000 --exit",
         "eject": "react-scripts eject",
         "storybook": "start-storybook -p 6006 -s public",
+        "release": "standard-version",
         "build-storybook": "build-storybook -s public"
     },
     "eslintConfig": {
@@ -122,6 +123,7 @@
         "eslint-plugin-react-hooks": "^4.2.0",
         "mocha": "^9.2.2",
         "prettier": "^2.3.0",
+        "standard-version": "^9.5.0",
         "ts-node": "^10.7.0",
         "webpack": "4.44.2"
     }
