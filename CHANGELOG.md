@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/StableUnit/safe-transfer/compare/v0.2.0...v0.3.1) (2022-12-01)
+
+
+### Features
+
+*  add versioning ([7d83ac9](https://github.com/StableUnit/safe-transfer/commit/7d83ac95651460a61c544615933c9dae0cd0f4fe))
+* add "You" for "From" and "To" ([1a5fd83](https://github.com/StableUnit/safe-transfer/commit/1a5fd834b32d01fea52d91d9c1c406da53bf087a))
+* add 404 PageNotFound ([6804b93](https://github.com/StableUnit/safe-transfer/commit/6804b93175ed64744d1d1bb29adcf5aaec0b72ed))
+* add cancel button ([4db44a8](https://github.com/StableUnit/safe-transfer/commit/4db44a8e4e60e8baeb3bad35f832d8bff132e1c0))
+* add disclaimer + remove restore with correct token ([4082316](https://github.com/StableUnit/safe-transfer/commit/4082316b397979350227696e6c4570f7d6c64d50))
+* add Revoke ([be275e1](https://github.com/StableUnit/safe-transfer/commit/be275e1cc9656e68e86551a62ff0b524e9d7a745))
+* add version ([6529129](https://github.com/StableUnit/safe-transfer/commit/6529129eedbaf0c50f561335b35e1330e388dcc6))
+* show error text in case of bad token ([3abfe89](https://github.com/StableUnit/safe-transfer/commit/3abfe89d5f827f9ff02d080813c640294ec7fb60))
+* update readme ([56b79dc](https://github.com/StableUnit/safe-transfer/commit/56b79dc916a90e3bb87dd830df519618d8d4bff1))
+
 ## 0.2.0 (2022-12-01)
 
 
