@@ -47,7 +47,7 @@ describe("dappeteer", () => {
             metamaskVersion: process.env.METAMASK_VERSION || RECOMMENDED_METAMASK_VERSION,
         });
         metamask = await dappeteer.setupMetamask(browser);
-        await metamask.switchNetwork("rinkeby");
+        await metamask.switchNetwork("goerli");
     });
 
     it("should Approve", async () => {

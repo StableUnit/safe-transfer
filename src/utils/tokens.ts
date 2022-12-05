@@ -27,7 +27,7 @@ interface TokenInfo {
 }
 export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
     eth: [],
-    rinkeby: [],
+    goerli: [],
     polygon: [],
     bsc: [],
     fantom: [],
