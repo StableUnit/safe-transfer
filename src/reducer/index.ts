@@ -5,9 +5,9 @@ import { TokenMetadataType } from "../utils/tokens";
 // eslint-disable-next-line no-shadow
 export enum Actions {
     AddToken = "ADD_TOKEN",
-    AddAddress = "ADD_ADDRESS",
-    AddChain = "ADD_CHAIN",
-    AddWeb3 = "ADD_WEB3",
+    SetCurrentAddress = "SET_CURRENT_ADDRESS",
+    SetChainId = "SET_CHAIN_ID",
+    SetWeb3 = "SET_WEB3",
     ClearWalletData = "CLEAR_WALLET_DATA",
 }
 
@@ -17,15 +17,15 @@ export type ActionType =
           payload: TokenMetadataType;
       }
     | {
-          type: Actions.AddAddress;
-          payload: string;
+          type: Actions.SetCurrentAddress;
+          payload?: string;
       }
     | {
-          type: Actions.AddChain;
-          payload: number;
+          type: Actions.SetChainId;
+          payload?: number;
       }
     | {
-          type: Actions.AddWeb3;
+          type: Actions.SetWeb3;
           payload: Web3;
       }
     | {
@@ -48,17 +48,17 @@ const reducer = (state: ReducerState, action: ActionType) => {
                 ...state,
                 newCustomToken: payload,
             };
-        case Actions.AddChain:
+        case Actions.SetChainId:
             return {
                 ...state,
                 chainId: payload,
             };
-        case Actions.AddAddress:
+        case Actions.SetCurrentAddress:
             return {
                 ...state,
                 address: payload,
             };
-        case Actions.AddWeb3:
+        case Actions.SetWeb3:
             return {
                 ...state,
                 web3: payload,

@@ -2175,6 +2175,36 @@
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.3.tgz#555193ab2e3bb3b6adc3d551c9c030d9e860daf6"
   integrity sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==
 
+"@gnosis.pm/safe-apps-provider@^0.15.1":
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-apps-provider/-/safe-apps-provider-0.15.1.tgz#1d070a7de87311190d09bb8e467137428c475d63"
+  integrity sha512-jVU0jpXf30HFdLHSHkmscIm04BYSwfoddjcHI4uPolP+u4F+tHRgfah1xo4XNRSCDqs4GTq38d7YAipGTj0CLA==
+  dependencies:
+    "@gnosis.pm/safe-apps-sdk" "7.8.0"
+    events "^3.3.0"
+
+"@gnosis.pm/safe-apps-react-sdk@^4.6.2":
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-apps-react-sdk/-/safe-apps-react-sdk-4.6.2.tgz#205908311c685b378338f82da261f06f10336532"
+  integrity sha512-93r9aDw9HzxC/xMmvnW4j5XswKxaAAFizCCZhA+xfQ6EBxH0nnBUmDq3kbxAWofvNgUKaSVgY/iHMvwkDBrllQ==
+  dependencies:
+    "@gnosis.pm/safe-apps-sdk" "7.8.0"
+
+"@gnosis.pm/safe-apps-sdk@7.8.0":
+  version "7.8.0"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-apps-sdk/-/safe-apps-sdk-7.8.0.tgz#295ab9d563b94208e3042495cdba787fa035c71e"
+  integrity sha512-kO8fJi1ebiKN9qH1NdDToVBuDQQ0U9NkL467U+84LtNTx5PzUJIu6O7tb4nZD24e/OItinf5W8GDWhhfZeiqOA==
+  dependencies:
+    "@gnosis.pm/safe-react-gateway-sdk" "^3.1.3"
+    ethers "^5.6.8"
+
+"@gnosis.pm/safe-react-gateway-sdk@^3.1.3":
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-react-gateway-sdk/-/safe-react-gateway-sdk-3.5.2.tgz#088b0d5db2eb7524ff4141795ecf948adc40c97c"
+  integrity sha512-6P2uJMnhHcJeErd/t13ChH6sda+vUIOqcrcUDKyWCNXpcmMniPcZzkQxZ8cYz186gQFbslsHSjQ6twnh4yhXUw==
+  dependencies:
+    cross-fetch "^3.1.5"
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -7425,7 +7455,7 @@ create-require@^1.1.0:
   resolved "https://registry.yarnpkg.com/create-require/-/create-require-1.1.1.tgz#c1d7e8f1e5f6cfc9ff65f9cd352d37348756c333"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
 
-cross-fetch@3.1.5, cross-fetch@^3.1.4:
+cross-fetch@3.1.5, cross-fetch@^3.1.4, cross-fetch@^3.1.5:
   version "3.1.5"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.5.tgz#e1389f44d9e7ba767907f7af8454787952ab534f"
   integrity sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==
@@ -9220,7 +9250,7 @@ ethers@5.6.0:
     "@ethersproject/web" "5.6.0"
     "@ethersproject/wordlists" "5.6.0"
 
-ethers@^5.6.9:
+ethers@^5.6.8, ethers@^5.6.9:
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.7.2.tgz#3a7deeabbb8c030d4126b24f84e525466145872e"
   integrity sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg==
@@ -9282,7 +9312,7 @@ eventemitter3@4.0.7, eventemitter3@^4.0.0:
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.7.tgz#2de9b68f6528d5644ef5c59526a1b4a07306169f"
   integrity sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==
 
-events@^3.0.0, events@^3.2.0:
+events@^3.0.0, events@^3.2.0, events@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
@@ -19130,7 +19160,7 @@ web3@*, web3@^1.7.1:
     web3-shh "1.8.1"
     web3-utils "1.8.1"
 
-web3modal@^1.9.5:
+web3modal@^1.9.10:
   version "1.9.10"
   resolved "https://registry.yarnpkg.com/web3modal/-/web3modal-1.9.10.tgz#ab7836ff27c6a16b9ca881ba0e8008bd33cb0dff"
   integrity sha512-gRByp+toRiADwkJLLGRXsnIVbLS1aJB71sJyryS6C7cF6jJ3cRN1LbPYEMObMyJkyjOZonx0CNZVAYGiD099aA==
