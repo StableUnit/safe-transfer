@@ -1,0 +1,52 @@
+@import "src/ui-kit/styles/vars";
+
+.menu-modal {
+  width: 100vw;
+  height: 100vh;
+
+  background: $dark-gray;
+  position: relative;
+
+  &__close {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 28px;
+    right: 16px;
+    cursor: pointer;
+
+    fill: white;
+  }
+
+  &__header {
+    padding: 11px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  &__content {
+    padding-top: 24px;
+  }
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__link {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 31px;
+
+    margin: 0 0 24px 40px;
+    width: fit-content;
+  }
+}
+
+.menu-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+}
