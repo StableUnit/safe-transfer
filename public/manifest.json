@@ -1,6 +1,7 @@
 {
     "short_name": "ERC-20 Safe Transfer",
     "name": "ERC-20 Safe Transfer",
+    "description": "Stop sending tokens to wrong address or blockchain",
     "icons": [
         {
             "src": "favicon.ico",
@@ -13,6 +14,7 @@
             "sizes": "150x150"
         }
     ],
+    "iconPath": "https://safe-transfer.stableunit.org/favicon150.png",
     "start_url": ".",
     "display": "standalone",
     "theme_color": "#000000",

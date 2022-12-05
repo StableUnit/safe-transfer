@@ -48,7 +48,7 @@
         "web3modal": "^1.9.5"
     },
     "scripts": {
-        "start": "TSC_COMPILE_ON_ERROR=true REACT_APP_VERSION=$npm_package_version react-scripts start",
+        "start": "TSC_COMPILE_ON_ERROR=true REACT_APP_VERSION=$npm_package_version HTTPS=true react-scripts start",
         "build": "TSC_COMPILE_ON_ERROR=true REACT_APP_VERSION=$npm_package_version react-scripts build",
         "test": "mocha --require ts-node/register test/*.spec.ts --color --recursive --timeout 60000 --exit",
         "eject": "react-scripts eject",
