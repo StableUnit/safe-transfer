@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
 
 import Header from "../Header/Header";
 import { Footer } from "../Footer/Footer";
@@ -37,7 +38,7 @@ const providerOptions = {
         },
     },
 };
-const web3Modal = new Web3Modal({
+const web3Modal = new SafeAppWeb3Modal({
     network: DEFAULT_NETWORK,
     cacheProvider: true,
     providerOptions,
@@ -80,7 +81,7 @@ const App = () => {
         });
     };
     const onConnect = async () => {
-        const provider = await web3Modal.connect();
+        const provider = await web3Modal.requestProvider();
         await subscribeProvider(provider);
 
         const newWeb3: Web3 = new Web3(provider);
@@ -91,6 +92,9 @@ const App = () => {
 
         const newChainId = await web3.eth.getChainId();
         dispatch({ type: Actions.SetChainId, payload: newChainId });
+
+        const loadedAsSafeApp = await web3Modal.isSafeApp();
+        console.log("Is connected to safe app:", loadedAsSafeApp);
     };
 
     useEffect(() => {

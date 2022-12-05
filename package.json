@@ -13,6 +13,8 @@
         "@emotion/styled": "^11.8.1",
         "@gnosis.pm/safe-apps-provider": "^0.15.1",
         "@gnosis.pm/safe-apps-react-sdk": "^4.6.2",
+        "@gnosis.pm/safe-apps-sdk": "^7.8.0",
+        "@gnosis.pm/safe-apps-web3modal": "^17.0.4",
         "@metamask/detect-provider": "^1.2.0",
         "@metamask/providers": "^9.0.0",
         "@mui/icons-material": "^5.5.0",
