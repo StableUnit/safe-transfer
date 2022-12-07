@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.4](https://github.com/StableUnit/safe-transfer/compare/v0.3.3...v0.3.4) (2022-12-07)
+
+
+### Bug Fixes
+
+* ui and text fixes + updateAllowance after Cancel ([3a31ef4](https://github.com/StableUnit/safe-transfer/commit/3a31ef4dcfd77609d8bd4904591001c5c9d20117))
+
 ### [0.3.3](https://github.com/StableUnit/safe-transfer/compare/v0.3.2...v0.3.3) (2022-12-07)
 
 
