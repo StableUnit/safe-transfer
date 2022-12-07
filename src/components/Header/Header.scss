@@ -30,23 +30,6 @@
         }
     }
 
-    &__transferred {
-        font-size: 20px;
-        font-weight: 600;
-    }
-
-    &__logo {
-        height: 48px;
-        width: 48px;
-        margin-right: 8px;
-    }
-
-    &__logo-info {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
     &__address {
         cursor: pointer;
         background: #313131;
@@ -120,5 +103,9 @@
 
     &__links {
         margin-right: 40px;
+    }
+
+    &__menu {
+        margin-left: 16px;
     }
 }
