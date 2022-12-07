@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.3](https://github.com/StableUnit/safe-transfer/compare/v0.3.2...v0.3.3) (2022-12-07)
+
+
+### Features
+
+* add burger for mobile ([555cf72](https://github.com/StableUnit/safe-transfer/commit/555cf721b49e2cdc1378c7c8d611b6dad0761afa))
+
 ### [0.3.2](https://github.com/StableUnit/safe-transfer/compare/v0.3.1...v0.3.2) (2022-12-01)
 
 
