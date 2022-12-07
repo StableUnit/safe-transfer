@@ -20,7 +20,6 @@ import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage"
 import { StateContext } from "../../reducer/constants";
 import RestoreForm from "../RestoreForm/RestoreForm";
 import { ensToAddress } from "../../utils/wallet";
-import { GradientHref } from "../../ui-kit/components/GradientHref";
 
 import "../PageNotFound/styles.scss";
 import "./ReceiveForm.scss";
@@ -120,6 +119,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
 
                     addSuccessNotification("Success", "Cancel allowance completed");
                     setIsCancelFetching(false);
+                    await updateAllowance();
                 }
             }
         } catch (e) {
@@ -186,7 +186,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                     <Button
                         onClick={handleCancel}
                         className="receive-form__button"
-                        disabled={!hasAllData || isCancelFetching || tokenData?.chain !== networkName}
+                        disabled={!hasAllData || isCancelFetching || tokenData?.chain !== networkName || !hasAllowance}
                     >
                         {isCancelFetching ? "Loading..." : "Cancel"}
                     </Button>
@@ -256,11 +256,11 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                                 </div>
                             </InfoCell>
                             <div className="receive-form__line">
-                                <InfoCell title="Value:">
+                                <InfoCell title="Approved value:">
                                     <div id="value">{getValue(tokenMetadata, tokenData)}</div>
                                 </InfoCell>
                                 {allowance && tokenMetadata && (
-                                    <InfoCell title="Allowance:">
+                                    <InfoCell title="Current allowance:">
                                         <div id="allowance">
                                             {`${beautifyTokenBalance(allowance, +tokenMetadata.decimals)} ${
                                                 tokenMetadata?.symbol
@@ -269,16 +269,17 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                                     </InfoCell>
                                 )}
                             </div>
+                            {renderButton()}
                             {address && tokenData.to.toLowerCase() !== address?.toLowerCase() && (
                                 <div className="receive-form__error">
-                                    Please change account to{" "}
-                                    {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to}
+                                    Only account{" "}
+                                    {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to} can
+                                    receive the transfer.
                                 </div>
                             )}
                             {address && tokenData.chain !== networkName && (
                                 <div className="receive-form__error">Please change network to {tokenData.chain}</div>
                             )}
-                            {renderButton()}
                         </>
                     )}
                 </div>
