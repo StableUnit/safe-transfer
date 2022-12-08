@@ -4,6 +4,7 @@ import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField
 import cn from "classnames";
 import { useMoralisWeb3Api } from "react-moralis";
 import BN from "bn.js";
+import axios from "axios";
 
 import { TwitterShareButton } from "react-twitter-embed";
 import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
@@ -12,6 +13,7 @@ import {
     beautifyTokenBalance,
     CUSTOM_TOKENS,
     fromHRToBN,
+    getCovalentUrl,
     getTokenContractFactory,
     toHRNumberFloat,
 } from "../../utils/tokens";
@@ -73,10 +75,18 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     const onMount = async () => {
         if (chainId && address) {
-            const options = { chain: Web3.utils.toHex(chainId), address };
             try {
-                // @ts-ignore
-                const result = await Web3Api.account.getTokenBalances(options);
+                const response = await axios.get(getCovalentUrl(chainId, address));
+                const result = response.data.data.items
+                    .map((v: Record<string, string>) => ({
+                        token_address: v.contract_address,
+                        name: v.contract_name,
+                        symbol: v.contract_ticker_symbol,
+                        logo: v.logo_url,
+                        decimals: v.contract_decimals,
+                        balance: v.balance,
+                    }))
+                    .filter((v: BalanceType) => v.balance !== "0") as BalanceType[];
                 setBalances(sortBySymbol(result));
             } catch (e) {
                 setBalances([]);

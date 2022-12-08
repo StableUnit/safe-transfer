@@ -153,3 +153,8 @@ export const getTokenContractFactory = (web3?: Web3) => (address: string) => {
 
     return new web3.eth.Contract(CONTRACT_ERC20 as any, address);
 };
+
+const REACT_APP_COVALENT_KEY = "ckey_48d66f5b051e407690a7e5ffc14";
+export const getCovalentUrl = (chainId: number, address: string) =>
+    // eslint-disable-next-line max-len
+    `https://api.covalenthq.com/v1/${chainId}/address/${address}/balances_v2/?quote-currency=USD&format=JSON&nft=false&no-nft-fetch=true&key=${REACT_APP_COVALENT_KEY}`;
