@@ -1,8 +1,6 @@
 import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from "react";
-import Web3 from "web3";
 import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import cn from "classnames";
-import { useMoralisWeb3Api } from "react-moralis";
 import BN from "bn.js";
 import axios from "axios";
 
@@ -62,7 +60,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
-    const Web3Api = useMoralisWeb3Api();
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
     const currentToken = balances.find((v) => v.token_address === selectedToken);
