@@ -155,7 +155,12 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const handleValueChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setValue(+event.target.value);
+        console.log(event.target.value, +event.target.value);
+        if (event.target.value === "") {
+            setValue(undefined);
+        } else {
+            setValue(+event.target.value);
+        }
     };
 
     const onSuccessApprove = (selectedTokenInfo: BalanceType) => {
@@ -400,7 +405,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                 placeholder="0.00"
                                 type="number"
                                 onChange={handleValueChange}
-                                value={value}
+                                value={value?.toString()}
                                 InputLabelProps={{
                                     shrink: true,
                                 }}

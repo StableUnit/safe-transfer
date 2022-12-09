@@ -13,11 +13,12 @@
     top: 0;
     left: 0;
 
+    background: $black;
+    box-shadow: 0 6px 12px 6px rgba(32,32,29,1);
+
     @media screen and (max-width: 600px) {
         height: 68px;
         padding: 0 16px;
-        background: $black;
-        box-shadow: 0 6px 12px 6px rgba(32,32,29,1);
 
         &__logo {
             height: 40px;
