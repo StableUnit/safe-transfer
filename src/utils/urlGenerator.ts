@@ -29,7 +29,7 @@ export const decodeToken = (token: string) => {
     }
 };
 
-export const getShortUrl = (url: string) => `${url.slice(0, 20)}...${url.slice(url.length - 4)}`;
+export const getShortUrl = (url: string) => `${url.slice(0, 18)}...${url.slice(url.length - 4)}`;
 export const getShortHash = (hash: string) => `${hash.slice(0, 6)}...${hash.slice(hash.length - 3)}`;
 
 export const handleCopyUrl = (url: string) => () => {

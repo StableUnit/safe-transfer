@@ -62,7 +62,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
-    const { isMobile } = useDevice();
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
     const currentToken = balances.find((v) => v.token_address === selectedToken);
@@ -165,7 +164,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const handleValueChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        console.log(event.target.value, +event.target.value);
         if (event.target.value === "") {
             setValue(undefined);
         } else {
@@ -174,6 +172,10 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const onSuccessApprove = (selectedTokenInfo: BalanceType) => {
+        if (genUrl) {
+            return;
+        }
+
         if (!networkName) {
             addErrorNotification("Error", "No network");
             setIsApproveLoading(false);
@@ -258,7 +260,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                 currency: getTokenName(selectedToken),
                             });
                             onSuccessApprove(currentToken);
-                        }, 15000);
+                        }, 20000);
                     });
                 trackEvent("APPROVE_FINISHED", {
                     fromAddress: address,
@@ -267,6 +269,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     currency: getTokenName(selectedToken),
                 });
                 onSuccessApprove(currentToken);
+                clearTimeout(timeoutId);
             } catch (error) {
                 clearTimeout(timeoutId);
                 // @ts-ignore
@@ -324,11 +327,21 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         </IconButton>
                     </div>
                 )}
-                {trxHash && !genUrl && <LoaderLine className="send-form__url" width={isMobile ? 305 : 328} />}
+                {trxHash && !genUrl && (
+                    <div className="send-form__url">
+                        <div className="send-form__url__text">
+                            <div className="send-form__url__text--title">Link to receive:&nbsp;&nbsp;</div>
+                            <LoaderLine width={155} height={18} />
+                        </div>
+                        <IconButton aria-label="copy" onClick={handleCopyUrl("")}>
+                            <ContentCopyIcon />
+                        </IconButton>
+                    </div>
+                )}
                 {genUrl && (
                     <div className="send-form__url">
                         <div className="send-form__url__text">
-                            <div>Link to receive:&nbsp;&nbsp;</div>
+                            <div className="send-form__url__text--title">Link to receive:&nbsp;&nbsp;</div>
                             <a href={genUrl} target="_blank" rel="noreferrer">
                                 {getShortUrl(genUrl)}
                             </a>
