@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/StableUnit/safe-transfer/compare/v0.3.6...v0.4.0) (2022-12-09)
+
+
+### Features
+
+* add rainbow ([2910f93](https://github.com/StableUnit/safe-transfer/commit/2910f93f08fb738829f416f923fa905894aac8c9))
+* change network to rinkeby ([59aad27](https://github.com/StableUnit/safe-transfer/commit/59aad274b14db5b9383d13f1deba3c94636994d2))
+* fix cors and manifest ([4b4126f](https://github.com/StableUnit/safe-transfer/commit/4b4126fb7230c5ecd2260895aa30215dd5c1c468))
+* use gnosis safe app ([67e6c44](https://github.com/StableUnit/safe-transfer/commit/67e6c445559708308da2e5479d8e18997bc659df))
+* use react-app-rewired + remove gnosis-safe connection ([4ed424c](https://github.com/StableUnit/safe-transfer/commit/4ed424c4e578ef8a9495f366428c7fd490229ed2))
+* use web3Modal ([f58c8bb](https://github.com/StableUnit/safe-transfer/commit/f58c8bbf5dd1a996f28fd3782aa31490748fac68))
+
 ### [0.3.6](https://github.com/StableUnit/safe-transfer/compare/v0.3.5...v0.3.6) (2022-12-09)
 
 
