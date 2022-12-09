@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/StableUnit/safe-transfer/compare/v0.4.0...v0.4.1) (2022-12-09)
+
+
+### Features
+
+* add LoaderLine + fix web3 setting ([d3611fd](https://github.com/StableUnit/safe-transfer/commit/d3611fd6f46b1227a680298fe92427ba5802213e))
+
+
+### Bug Fixes
+
+* height and border-radius ([9f767fc](https://github.com/StableUnit/safe-transfer/commit/9f767fc87d4dce15387adfdec2297791c906a276))
+
 ## [0.4.0](https://github.com/StableUnit/safe-transfer/compare/v0.3.6...v0.4.0) (2022-12-09)
 
 
