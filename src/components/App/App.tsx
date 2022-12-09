@@ -4,6 +4,12 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 // import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
 
+import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
+import { alchemyProvider } from "wagmi/providers/alchemy";
+import { infuraProvider } from "wagmi/providers/infura";
+import { publicProvider } from "wagmi/providers/public";
+
 import Header from "../Header/Header";
 import { Footer } from "../Footer/Footer";
 import { Routes } from "../Routes";
@@ -12,6 +18,7 @@ import { DispatchContext } from "../../reducer/constants";
 import { Actions } from "../../reducer";
 
 import "./App.scss";
+import "@rainbow-me/rainbowkit/styles.css";
 
 const getRPC = () => {
     const res = {} as Record<number, string>;
@@ -49,6 +56,29 @@ const web3Modal = new Web3Modal({
         border: "none",
         hover: "rgba(32, 32, 29, 0.8)",
     },
+});
+
+const { chains, provider } = configureChains(
+    [chain.mainnet, chain.goerli, chain.polygon, chain.optimism, chain.avalanche, chain.fantom],
+    [
+        alchemyProvider({ apiKey: "q5fiD2iD3DvCFDVabdRb5AJQbJIrq2Zs" }),
+        alchemyProvider({ apiKey: "mBZc4HPrEg8XbvqplmBfsZ8aSKxG5o_h" }),
+        alchemyProvider({ apiKey: "hxQgWCfs5GoEispnWNyGO3L47K22xD8x" }),
+        alchemyProvider({ apiKey: "wsko-YEYQMWnaDkio4D3Kp-K0fFmrERb" }),
+        infuraProvider({ apiKey: "yourInfuraApiKey" }),
+        publicProvider(),
+    ]
+);
+
+const { connectors } = getDefaultWallets({
+    appName: "My RainbowKit App",
+    chains,
+});
+
+const wagmiClient = createClient({
+    autoConnect: true,
+    connectors,
+    provider,
 });
 
 const App = () => {
