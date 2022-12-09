@@ -33,7 +33,7 @@ const providerOptions = {
             network: DEFAULT_NETWORK,
             qrcode: true,
             qrcodeModalOptions: {
-                mobileLinks: ["metamask", "trust"],
+                mobileLinks: ["metamask", "trust", "rainbow"],
             },
         },
     },
