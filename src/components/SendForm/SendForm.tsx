@@ -31,6 +31,8 @@ import { trackEvent } from "../../utils/events";
 
 import "./SendForm.scss";
 import { TwitterPosts } from "../TwitterPosts";
+import { LoaderLine } from "../../ui-kit/components/LoaderLine";
+import { useDevice } from "../../hooks/useDimensions";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -60,6 +62,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
+    const { isMobile } = useDevice();
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
     const currentToken = balances.find((v) => v.token_address === selectedToken);
@@ -321,6 +324,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         </IconButton>
                     </div>
                 )}
+                {trxHash && !genUrl && <LoaderLine className="send-form__url" width={isMobile ? 305 : 328} />}
                 {genUrl && (
                     <div className="send-form__url">
                         <div className="send-form__url__text">

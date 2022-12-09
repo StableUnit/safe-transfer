@@ -87,6 +87,7 @@ const App = () => {
 
         const newWeb3: Web3 = new Web3(provider);
         setWeb3(newWeb3);
+        dispatch({ type: Actions.SetWeb3, payload: newWeb3 });
 
         const accounts = await web3.eth.getAccounts();
         dispatch({ type: Actions.SetCurrentAddress, payload: accounts[0] });
