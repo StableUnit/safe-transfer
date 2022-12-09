@@ -1,9 +1,8 @@
 import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from "react";
-import Web3 from "web3";
 import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import cn from "classnames";
-import { useMoralisWeb3Api } from "react-moralis";
 import BN from "bn.js";
+import axios from "axios";
 
 import { TwitterShareButton } from "react-twitter-embed";
 import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
@@ -12,6 +11,7 @@ import {
     beautifyTokenBalance,
     CUSTOM_TOKENS,
     fromHRToBN,
+    getCovalentUrl,
     getTokenContractFactory,
     toHRNumberFloat,
 } from "../../utils/tokens";
@@ -60,7 +60,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
-    const Web3Api = useMoralisWeb3Api();
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
     const currentToken = balances.find((v) => v.token_address === selectedToken);
@@ -73,10 +72,18 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     const onMount = async () => {
         if (chainId && address) {
-            const options = { chain: Web3.utils.toHex(chainId), address };
             try {
-                // @ts-ignore
-                const result = await Web3Api.account.getTokenBalances(options);
+                const response = await axios.get(getCovalentUrl(chainId, address));
+                const result = response.data.data.items
+                    .map((v: Record<string, string>) => ({
+                        token_address: v.contract_address,
+                        name: v.contract_name,
+                        symbol: v.contract_ticker_symbol,
+                        logo: v.logo_url,
+                        decimals: v.contract_decimals,
+                        balance: v.balance,
+                    }))
+                    .filter((v: BalanceType) => v.balance !== "0") as BalanceType[];
                 setBalances(sortBySymbol(result));
             } catch (e) {
                 setBalances([]);
