@@ -1,3 +1,5 @@
+@import "src/ui-kit/styles/vars";
+
 .App {
     padding-top: 80px;
     min-height: 100vh;
@@ -14,5 +16,70 @@
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
+    }
+}
+
+.web3modal {
+    &-modal-card {
+        display: flex !important;
+        width: 350px !important;
+        flex-direction: column !important;
+        padding: 32px 40px !important;
+
+        &:before {
+            content: 'Connect a wallet';
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 26px;
+        }
+    }
+
+    &-provider {
+        &-wrapper {
+            padding: 0 0 8px 0 !important;
+
+            &:first-child {
+                padding-top: 32px !important;
+            }
+
+            &:last-child {
+                padding-bottom: 0;
+            }
+        }
+        &-container {
+            padding: 10px 16px !important;
+            background: $black !important;
+            border-radius: 8px !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            transition: background-color 0.1s ease-in-out 0s !important;
+            position: relative !important;
+
+            &:hover {
+                background-color: rgba(32, 32, 29, 0.5) !important;
+            }
+
+            &:after {
+                content: url("../../ui-kit/images/arrow-right.svg");
+                position: absolute;
+                top: 16px;
+                right: 16px;
+            }
+        }
+        &-icon {
+            width: 28px !important;
+            height: 28px !important;
+        }
+        &-name {
+            font-size: 14px !important;
+            line-height: 18px !important;
+            text-align: left;
+            padding-left: 12px;
+            margin-top: 4px !important;
+        }
+        &-description {
+            display: none;
+        }
     }
 }

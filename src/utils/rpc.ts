@@ -1,8 +1,10 @@
 import Web3 from "web3";
 import { NETWORK, networkInfo, NetworkType } from "./network";
 
-const createWeb3Provider = (name: NetworkType) =>
-    new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK[name]].rpcUrls[0]));
+const createWeb3Provider = (name: NetworkType) => {
+    console.log(name, networkInfo[NETWORK[name]].rpcUrls[0]);
+    return new Web3(new Web3.providers.HttpProvider(networkInfo[NETWORK[name]].rpcUrls[0]));
+};
 
 const createRPC = (names: NetworkType[]) =>
     names.reduce(
@@ -15,7 +17,7 @@ const createRPC = (names: NetworkType[]) =>
 
 export const rpcList = createRPC([
     "eth",
-    "rinkeby",
+    "goerli",
     "polygon",
     "bsc",
     "fantom",

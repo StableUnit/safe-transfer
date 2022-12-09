@@ -2,7 +2,7 @@ import Web3 from "web3";
 
 export type NetworkType =
     | "eth"
-    | "rinkeby"
+    | "goerli"
     | "polygon"
     | "bsc"
     | "fantom"
@@ -16,7 +16,7 @@ export type NetworkType =
 
 export const NETWORK: Record<NetworkType, NetworkType> = {
     eth: "eth",
-    rinkeby: "rinkeby",
+    goerli: "goerli",
     polygon: "polygon",
     aurora: "aurora",
     harmony: "harmony",
@@ -30,10 +30,12 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     avalanche: "avalanche",
 };
 
+export const DEFAULT_NETWORK = "mainnet"; // Name of NETWORK.eth in web3modal
+
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",
     [NETWORK.polygon]: "Polygon",
-    [NETWORK.rinkeby]: "Rinkeby",
+    [NETWORK.goerli]: "Goerli",
     [NETWORK.aurora]: "Aurora",
     [NETWORK.harmony]: "Harmony",
     // [NETWORK.arbitrum]: "Arbitrum",
@@ -50,7 +52,7 @@ const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj
 
 export const idToNetwork: Record<number, NetworkType> = {
     1: NETWORK.eth,
-    4: NETWORK.rinkeby,
+    5: NETWORK.goerli,
     // 10: NETWORK.optimism, // mainnet
     25: NETWORK.cronos, // mainnet
     28: NETWORK.boba, // testnet
@@ -78,11 +80,16 @@ export const networkInfo = {
         blockExplorerUrls: ["https://etherscan.io"],
         rpcUrls: ["https://rpc.ankr.com/eth"],
     },
-    [NETWORK.rinkeby]: {
-        chainName: "Rinkeby",
-        chainId: Web3.utils.toHex(networkToId[NETWORK.rinkeby]),
-        blockExplorerUrls: ["https://rinkeby.etherscan.io"],
-        rpcUrls: ["https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
+    [NETWORK.goerli]: {
+        chainName: "Goerli",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.goerli]),
+        blockExplorerUrls: ["https://goerli.etherscan.io"],
+        rpcUrls: ["https://goerli.infura.io/v3"],
+        nativeCurrency: {
+            name: "GoerliETH",
+            symbol: "GoerliETH",
+            decimals: 18,
+        },
     },
     // mainnet
     // [NETWORK.optimism]: {
