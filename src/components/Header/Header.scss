@@ -13,11 +13,12 @@
     top: 0;
     left: 0;
 
+    background: $black;
+    box-shadow: 0 6px 12px 6px rgba(32,32,29,1);
+
     @media screen and (max-width: 600px) {
         height: 68px;
         padding: 0 16px;
-        background: $black;
-        box-shadow: 0 6px 12px 6px rgba(32,32,29,1);
 
         &__logo {
             height: 40px;
@@ -28,23 +29,6 @@
             padding: 6px 6px;
             margin-right: 2px;
         }
-    }
-
-    &__transferred {
-        font-size: 20px;
-        font-weight: 600;
-    }
-
-    &__logo {
-        height: 48px;
-        width: 48px;
-        margin-right: 8px;
-    }
-
-    &__logo-info {
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 
     &__address {
@@ -119,6 +103,10 @@
     }
 
     &__links {
-        margin-right: 40px;
+        margin-right: 20px;
+    }
+
+    &__menu {
+        margin-left: 16px;
     }
 }

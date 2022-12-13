@@ -18,9 +18,12 @@ import Button from "../../ui-kit/components/Button/Button";
 import { InfoCell } from "../InfoCell/InfoCell";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
 import { StateContext } from "../../reducer/constants";
-
-import "./ReceiveForm.scss";
 import RestoreForm from "../RestoreForm/RestoreForm";
+import { ensToAddress } from "../../utils/wallet";
+
+import "../PageNotFound/styles.scss";
+import "./ReceiveForm.scss";
+import { PageNotFound } from "../PageNotFound";
 
 interface TransferFormProps {
     onConnect: () => void;
@@ -35,6 +38,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     const { address, chainId, web3 } = useContext(StateContext);
     const [tokenMetadata, setTokenMetadata] = useState<undefined | TokenMetadataType>(undefined);
     const [isTransferFetching, setIsTransferFetching] = useState(false);
+    const [isCancelFetching, setIsCancelFetching] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
@@ -101,6 +105,31 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         }
     };
 
+    const handleCancel = async () => {
+        setIsCancelFetching(true);
+
+        try {
+            if (tokenData && web3) {
+                const getTokenContract = getTokenContractFactory(web3);
+                const tokenContract = getTokenContract(tokenData.address);
+                if (tokenContract) {
+                    await tokenContract.methods
+                        .approve(await ensToAddress(tokenData.to), "0")
+                        .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null });
+
+                    addSuccessNotification("Success", "Cancel allowance completed");
+                    setIsCancelFetching(false);
+                    await updateAllowance();
+                }
+            }
+        } catch (e) {
+            console.log(e);
+            // @ts-ignore
+            addErrorNotification("Cancel Error", e?.error?.message);
+            setIsCancelFetching(false);
+        }
+    };
+
     const handleAddToMetamask = async () => {
         if (tokenData?.address) {
             await window.ethereum.request({
@@ -130,6 +159,13 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     const isDisabledContent =
         !address || tokenData?.to.toLowerCase() !== address.toLowerCase() || tokenData?.chain !== networkName;
 
+    const isReceiver = tokenData && address && tokenData.to.toLowerCase() === address.toLowerCase();
+    const isSender = tokenData && address && tokenData.from.toLowerCase() === address.toLowerCase();
+
+    if (token && !hasAllData) {
+        return <PageNotFound />;
+    }
+
     const renderButton = () => {
         if (isSuccess) {
             return null;
@@ -145,13 +181,24 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         const hasAllowance = !!(allowance && allowance !== "0");
 
         return (
-            <Button
-                onClick={handleTransfer}
-                className="receive-form__button"
-                disabled={!hasAllData || isTransferFetching || isDisabledContent || !hasAllowance}
-            >
-                {isTransferFetching ? "Loading..." : "Receive"}
-            </Button>
+            <>
+                {isSender && (
+                    <Button
+                        onClick={handleCancel}
+                        className="receive-form__button"
+                        disabled={!hasAllData || isCancelFetching || tokenData?.chain !== networkName || !hasAllowance}
+                    >
+                        {isCancelFetching ? "Loading..." : "Cancel"}
+                    </Button>
+                )}
+                <Button
+                    onClick={handleTransfer}
+                    className="receive-form__button"
+                    disabled={!hasAllData || isTransferFetching || isDisabledContent || !hasAllowance}
+                >
+                    {isTransferFetching ? "Loading..." : "Receive"}
+                </Button>
+            </>
         );
     };
 
@@ -167,13 +214,21 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                                 <div>&nbsp;&nbsp;{networkNames[tokenData.chain]}</div>
                             </InfoCell>
                             <div className="receive-form__line">
-                                <InfoCell className="receive-form__copy-container" title="From:">
+                                <InfoCell
+                                    className="receive-form__copy-container"
+                                    title="From:"
+                                    bubble={isSender ? "You" : undefined}
+                                >
                                     <div id="from">{getShortHash(tokenData.from)}</div>
                                     <div onClick={handleCopyUrl(tokenData.from)}>
                                         <ContentCopyIcon />
                                     </div>
                                 </InfoCell>
-                                <InfoCell className="receive-form__copy-container" title="To:">
+                                <InfoCell
+                                    className="receive-form__copy-container"
+                                    title="To:"
+                                    bubble={isReceiver ? "You" : undefined}
+                                >
                                     <div id="to">
                                         {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to}
                                     </div>
@@ -201,11 +256,11 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                                 </div>
                             </InfoCell>
                             <div className="receive-form__line">
-                                <InfoCell title="Value:">
+                                <InfoCell title="Approved value:">
                                     <div id="value">{getValue(tokenMetadata, tokenData)}</div>
                                 </InfoCell>
                                 {allowance && tokenMetadata && (
-                                    <InfoCell title="Allowance:">
+                                    <InfoCell title="Current allowance:">
                                         <div id="allowance">
                                             {`${beautifyTokenBalance(allowance, +tokenMetadata.decimals)} ${
                                                 tokenMetadata?.symbol
@@ -214,16 +269,17 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                                     </InfoCell>
                                 )}
                             </div>
+                            {renderButton()}
                             {address && tokenData.to.toLowerCase() !== address?.toLowerCase() && (
                                 <div className="receive-form__error">
-                                    Please change account to{" "}
-                                    {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to}
+                                    Only account{" "}
+                                    {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to} can
+                                    receive the transfer.
                                 </div>
                             )}
                             {address && tokenData.chain !== networkName && (
                                 <div className="receive-form__error">Please change network to {tokenData.chain}</div>
                             )}
-                            {renderButton()}
                         </>
                     )}
                 </div>
@@ -243,7 +299,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                     </IconButton>
                 </div>
             )}
-            <RestoreForm />
+            {!tokenData && <RestoreForm />}
         </div>
     );
 });

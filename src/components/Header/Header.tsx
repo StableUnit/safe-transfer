@@ -1,10 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useLocation } from "react-router-dom";
 import cn from "classnames";
 
 import { getShortAddress } from "../../utils/wallet";
 import { StateContext } from "../../reducer/constants";
 import { GradientHref } from "../../ui-kit/components/GradientHref";
+import { useDevice } from "../../hooks/useDimensions";
+import { BurgerIcon } from "../../ui-kit/images/icons";
+import { LinkType, MenuModal } from "./supportComponents/MenuModal";
+import { HeaderInfo } from "./supportComponents/HeaderInfo";
 
 import "./Header.scss";
 
@@ -27,47 +31,51 @@ const LINKS = [
         href: "/receive",
         text: "Receive",
     },
-];
+    {
+        isExternal: true,
+        href: "https://revoke.cash/",
+        text: "Revoke",
+    },
+] as LinkType[];
 
 const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
     const { address } = useContext(StateContext);
+    const [isMenuModalVisible, setIsMenuModalVisible] = useState(false);
+    const { isMobile } = useDevice();
     const location = useLocation();
 
-    const totalTransferred = 1_250_500;
+    const openMenuModal = () => {
+        setIsMenuModalVisible(true);
+    };
+    const closeMenuModal = () => {
+        setIsMenuModalVisible(false);
+    };
 
     return (
         <div className="header">
-            <div className="header__logo-info">
-                <div className="header__logo">
-                    <a href="https://stableunit.org/" target="_blank" rel="noreferrer">
-                        <img src="https://stableunit.org/assets/img/logo.svg" />
-                    </a>
-                </div>
-                <div>
-                    <GradientHref>Total transferred: </GradientHref>
-                    <span className="header__transferred">${totalTransferred.toLocaleString()}+</span>
-                </div>
-            </div>
+            <HeaderInfo />
 
             <div className="header__navbar">
-                <div className="header__links">
-                    {LINKS.map(({ href, text, isExternal }) => {
-                        const isSelected = location.pathname.includes(href);
-                        return (
-                            <GradientHref
-                                id={`links-${text.toLowerCase()}`}
-                                className={cn("header__link", { "header__link--selected": isSelected })}
-                                key={text}
-                                href={href}
-                                isExternal={isExternal}
-                                target={isExternal ? "_blank" : undefined}
-                                disabled={isSelected}
-                            >
-                                {text}
-                            </GradientHref>
-                        );
-                    })}
-                </div>
+                {!isMobile && (
+                    <div className="header__links">
+                        {LINKS.map(({ href, text, isExternal }) => {
+                            const isSelected = location.pathname.includes(href);
+                            return (
+                                <GradientHref
+                                    id={`links-${text.toLowerCase()}`}
+                                    className={cn("header__link", { "header__link--selected": isSelected })}
+                                    key={text}
+                                    href={href}
+                                    isExternal={isExternal}
+                                    target={isExternal ? "_blank" : undefined}
+                                    disabled={isSelected}
+                                >
+                                    {text}
+                                </GradientHref>
+                            );
+                        })}
+                    </div>
+                )}
                 {address ? (
                     <div className="header__address" onClick={onDisconnect}>
                         {getShortAddress(address)}
@@ -77,7 +85,9 @@ const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
                         Connect wallet
                     </div>
                 )}
+                {isMobile && <BurgerIcon className="header__menu" onClick={openMenuModal} />}
             </div>
+            <MenuModal visible={isMenuModalVisible} onClose={closeMenuModal} links={LINKS} />
         </div>
     );
 };

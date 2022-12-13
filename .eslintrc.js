@@ -35,6 +35,7 @@ module.exports = {
         "import/extensions": "off",
         "import/no-unresolved": "off",
         "arrow-body-style": "off",
+        "prefer-destructuring": "warn",
         "import/no-extraneous-dependencies": "warn",
         "jsx-a11y/click-events-have-key-events": "off",
         "jsx-a11y/no-static-element-interactions": "off",

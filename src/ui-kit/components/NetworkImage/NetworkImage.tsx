@@ -14,7 +14,7 @@ import CronosImage from "../../images/cronos.png";
 
 export type NetworkType =
     | "eth"
-    | "rinkeby"
+    | "goerli"
     | "polygon"
     | "bsc"
     | "fantom"
@@ -35,7 +35,7 @@ const getNetworkImage = (network?: NetworkType) => {
     switch (network) {
         case "eth":
             return EthImage;
-        case "rinkeby":
+        case "goerli":
             return EthImage;
         case "polygon":
             return PolygonImage;

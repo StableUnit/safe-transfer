@@ -19,5 +19,6 @@ export const Footer = () => (
             </a>{" "}
             core team
         </div>
+        <div className="footer__version">(v{process.env.REACT_APP_VERSION})</div>
     </div>
 );

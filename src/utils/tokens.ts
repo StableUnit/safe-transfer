@@ -27,7 +27,7 @@ interface TokenInfo {
 }
 export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
     eth: [],
-    rinkeby: [],
+    goerli: [],
     polygon: [],
     bsc: [],
     fantom: [],
@@ -153,3 +153,7 @@ export const getTokenContractFactory = (web3?: Web3) => (address: string) => {
 
     return new web3.eth.Contract(CONTRACT_ERC20 as any, address);
 };
+
+export const getCovalentUrl = (chainId: number, address: string) =>
+    // eslint-disable-next-line max-len
+    `https://api.covalenthq.com/v1/${chainId}/address/${address}/balances_v2/?quote-currency=USD&format=JSON&nft=false&no-nft-fetch=true&key=${process.env.REACT_APP_COVALENT_KEY}`;

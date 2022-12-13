@@ -247,6 +247,14 @@
 
         &__text {
             display: flex;
+
+            &--title {
+                margin-right: 4px;
+
+                @media screen and (max-width: 600px) {
+                    width: 110px;
+                }
+            }
         }
     }
 
