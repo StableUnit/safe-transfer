@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.2](https://github.com/StableUnit/safe-transfer/compare/v0.4.1...v0.4.2) (2022-12-13)
+
+
+### Features
+
+* add bug button ([96153d6](https://github.com/StableUnit/safe-transfer/commit/96153d68fd959b3345985fb08c2510be9d41ffd3))
+* add sentry capture message ([c7d7180](https://github.com/StableUnit/safe-transfer/commit/c7d71805eb5940aa148c5cb9c8e7d85dd38267d7))
+
+
+### Bug Fixes
+
+* small fix ([9cc5dbf](https://github.com/StableUnit/safe-transfer/commit/9cc5dbf5632ed191e2e327e15b62f09a088a1735))
+* update sentry version ([56bce67](https://github.com/StableUnit/safe-transfer/commit/56bce67cc7683930d56eab9c0f15b63a15ab7eb6))
+
 ### [0.4.1](https://github.com/StableUnit/safe-transfer/compare/v0.4.0...v0.4.1) (2022-12-09)
 
 
