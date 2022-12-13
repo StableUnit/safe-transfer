@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import * as Sentry from "@sentry/browser";
 // import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
 
 import Header from "../Header/Header";
@@ -10,6 +11,7 @@ import { Routes } from "../Routes";
 import { DEFAULT_NETWORK, NETWORK, networkInfo, networkToId, NetworkType } from "../../utils/network";
 import { DispatchContext } from "../../reducer/constants";
 import { Actions } from "../../reducer";
+import { BugIcon } from "../../ui-kit/images/icons";
 
 import "./App.scss";
 
@@ -99,6 +101,14 @@ const App = () => {
         // console.log("Is connected to safe app:", loadedAsSafeApp);
     };
 
+    const onBugClick = () => {
+        Sentry.captureMessage("Bug button clicked");
+        window.open(
+            "https://docs.google.com/forms/d/e/1FAIpQLSf1Tqq8TwjOtgK8_tFndM3QDJW2XTy8oCs6zoPLUWey1nBvwA/viewform",
+            "_blank"
+        );
+    };
+
     useEffect(() => {
         onConnect();
     }, []);
@@ -109,6 +119,7 @@ const App = () => {
             <div className="App__container">
                 <Routes onConnect={onConnect} />
             </div>
+            <BugIcon className="bug-icon" onClick={onBugClick} />
             <Footer />
         </div>
     );
