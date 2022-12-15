@@ -102,7 +102,6 @@ const App = () => {
     };
 
     const onBugClick = () => {
-        Sentry.captureMessage("Bug button clicked");
         window.open(
             "https://docs.google.com/forms/d/e/1FAIpQLSf1Tqq8TwjOtgK8_tFndM3QDJW2XTy8oCs6zoPLUWey1nBvwA/viewform",
             "_blank"
