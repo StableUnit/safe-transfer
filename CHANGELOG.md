@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.3](https://github.com/StableUnit/safe-transfer/compare/v0.4.2...v0.4.3) (2022-12-15)
+
+
+### Features
+
+* remove sentry event on BugClick ([9255564](https://github.com/StableUnit/safe-transfer/commit/9255564490e15af21fe0bfa71ce3bd99d21974db))
+
 ### [0.4.2](https://github.com/StableUnit/safe-transfer/compare/v0.4.1...v0.4.2) (2022-12-13)
 
 
