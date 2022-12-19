@@ -84,7 +84,7 @@ export const networkInfo = {
         chainName: "Goerli",
         chainId: Web3.utils.toHex(networkToId[NETWORK.goerli]),
         blockExplorerUrls: ["https://goerli.etherscan.io"],
-        rpcUrls: ["https://goerli.infura.io/v3"],
+        rpcUrls: ["https://eth-goerli.public.blastapi.io"],
         nativeCurrency: {
             name: "GoerliETH",
             symbol: "GoerliETH",

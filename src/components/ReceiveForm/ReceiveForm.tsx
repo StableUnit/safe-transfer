@@ -24,6 +24,7 @@ import { ensToAddress } from "../../utils/wallet";
 import "../PageNotFound/styles.scss";
 import "./ReceiveForm.scss";
 import { PageNotFound } from "../PageNotFound";
+import { trackEvent } from "../../utils/events";
 
 interface TransferFormProps {
     onConnect: () => void;
@@ -95,6 +96,14 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                     addSuccessNotification("Success", "Transfer from transaction completed");
                     setIsSuccess(true);
                     setIsTransferFetching(false);
+
+                    const symbol = await tokenContract.methods.symbol().call();
+                    trackEvent("RECEIVE_SUCCESS", {
+                        from: tokenData.from,
+                        to: tokenData.to,
+                        value: tokenData.value.toString(),
+                        symbol,
+                    });
                 }
             }
         } catch (e) {
@@ -120,6 +129,14 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                     addSuccessNotification("Success", "Cancel allowance completed");
                     setIsCancelFetching(false);
                     await updateAllowance();
+
+                    const symbol = await tokenContract.methods.symbol().call();
+                    trackEvent("CANCEL_ALLOWANCE", {
+                        source: "Receive Page",
+                        symbol,
+                        to: tokenData.to,
+                        from: tokenData.from,
+                    });
                 }
             }
         } catch (e) {
@@ -144,6 +161,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                     },
                 },
             });
+            trackEvent("ADD_TO_METAMASK", { source: "Receive Page", symbol: tokenMetadata?.symbol });
         }
     };
 

@@ -15,7 +15,6 @@ import {
     getTokenContractFactory,
     toHRNumberFloat,
 } from "../../utils/tokens";
-import ERC20_ABI from "../../contracts/ERC20.json";
 import { generateUrl, getShortHash, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
@@ -25,14 +24,12 @@ import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage"
 import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
 import { StateContext } from "../../reducer/constants";
 import { arrayUniqueByKey, sortByBalance, sortBySymbol } from "../../utils/array";
-import { rpcList } from "../../utils/rpc";
 import { getTokens } from "../../utils/storage";
 import { trackEvent } from "../../utils/events";
 
 import "./SendForm.scss";
 import { TwitterPosts } from "../TwitterPosts";
 import { LoaderLine } from "../../ui-kit/components/LoaderLine";
-import { useDevice } from "../../hooks/useDimensions";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -73,7 +70,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const getTokenContract = getTokenContractFactory(web3);
 
     const onMount = async () => {
-        if (chainId && address) {
+        if (chainId && address && web3) {
             try {
                 const response = await axios.get(getCovalentUrl(chainId, address));
                 const result = response.data.data.items
@@ -97,33 +94,37 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     address: token.address,
                     id: token.name,
                     symbol: token.symbol,
+                    decimals: token.decimals,
                 })),
             ];
             for (const token of tokens) {
-                const tokenContract = new rpcList[networkName as NetworkType].eth.Contract(
-                    ERC20_ABI as any,
-                    token.address
-                );
-                const decimals = await tokenContract.methods.decimals().call();
-                const balance = await tokenContract.methods.balanceOf(address).call();
+                const tokenContract = getTokenContract(token.address);
+                if (!tokenContract) {
+                    return;
+                }
 
-                const newTokenBalance = {
-                    token_address: token.address,
-                    name: token.id,
-                    symbol: token.symbol,
-                    decimals,
-                    balance,
-                } as BalanceType;
-                setBalances((oldBalances) => {
-                    const newBalances = arrayUniqueByKey(
-                        [...oldBalances, newTokenBalance].map((v) => ({
-                            ...v,
-                            token_address: v.token_address.toLowerCase(),
-                        })),
-                        "token_address"
-                    );
-                    return sortByBalance(newBalances);
-                });
+                try {
+                    const balance = await tokenContract.methods.balanceOf(address.toLowerCase()).call();
+
+                    const newTokenBalance = {
+                        token_address: token.address,
+                        name: token.id,
+                        symbol: token.symbol,
+                        decimals: token.decimals,
+                        balance,
+                    } as BalanceType;
+                    setBalances((oldBalances) => {
+                        const newBalances = arrayUniqueByKey(
+                            [...oldBalances, newTokenBalance].map((v) => ({
+                                ...v,
+                                token_address: v.token_address.toLowerCase(),
+                            })),
+                            "token_address"
+                        );
+                        return sortByBalance(newBalances);
+                    });
+                    // eslint-disable-next-line no-empty
+                } catch (e: any) {}
             }
         }
     };
@@ -149,7 +150,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     useEffect(() => {
         onMount();
-    }, [chainId, address]);
+    }, [chainId, address, web3]);
 
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);
@@ -210,6 +211,14 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                 .approve(await ensToAddress(toAddress), "0")
                 .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null });
             setAllowance(undefined);
+
+            const symbol = await tokenContract.methods.symbol().call();
+            trackEvent("CANCEL_ALLOWANCE", {
+                source: "Send Page",
+                symbol,
+                to: toAddress,
+                from: address,
+            });
         } catch (error) {
             // @ts-ignore
             const replacedHash = error?.replacement?.hash;
@@ -289,6 +298,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     const handleMaxClick = () => {
         setValue(+currentTokenBalance);
+        trackEvent("MAX_CLICK", {});
     };
 
     const setAllowanceAsync = async () => {

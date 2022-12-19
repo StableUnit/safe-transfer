@@ -24,6 +24,7 @@ interface TokenInfo {
     id: string;
     symbol: string;
     address: string;
+    decimals?: string;
 }
 export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
     eth: [],
