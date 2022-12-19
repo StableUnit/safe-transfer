@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.4](https://github.com/StableUnit/safe-transfer/compare/v0.4.3...v0.4.4) (2022-12-19)
+
+
+### Bug Fixes
+
+* goerli rpc and custom tokens data ([27b3dc4](https://github.com/StableUnit/safe-transfer/commit/27b3dc42faf2e13e22c396939e2cbd6e53dcaa82))
+
 ### [0.4.3](https://github.com/StableUnit/safe-transfer/compare/v0.4.2...v0.4.3) (2022-12-15)
 
 
