@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.5](https://github.com/StableUnit/safe-transfer/compare/v0.4.4...v0.4.5) (2022-12-20)
+
+
+### Features
+
+* add loader for balance request ([af5d42a](https://github.com/StableUnit/safe-transfer/commit/af5d42af3ba98dfeb15a949f4bf8d350c066554d))
+* add tracker for long errors ([f66163d](https://github.com/StableUnit/safe-transfer/commit/f66163d4f42e42873458fbce20a6f6ba032a123c))
+* change google analytics ([35d163b](https://github.com/StableUnit/safe-transfer/commit/35d163bda8031380d139ada11ed61077922774c6))
+
 ### [0.4.4](https://github.com/StableUnit/safe-transfer/compare/v0.4.3...v0.4.4) (2022-12-19)
 
 
