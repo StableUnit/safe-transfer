@@ -436,7 +436,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                         Select token
                                     </MenuItem>
                                     {isBalanceRequestLoading && (
-                                        <LoaderLine className="send-form__token-form__loader" width={250} height={24} />
+                                        <LoaderLine className="send-form__token-form__loader" width={150} height={24} />
                                     )}
                                     {balances.map((token) => (
                                         <MenuItem key={token.token_address} value={token.token_address}>
