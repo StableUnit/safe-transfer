@@ -3,6 +3,7 @@ import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField
 import cn from "classnames";
 import BN from "bn.js";
 import axios from "axios";
+import * as Sentry from "@sentry/browser";
 
 import { TwitterShareButton } from "react-twitter-embed";
 import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
@@ -54,6 +55,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [selectedToken, setSelectedToken] = useState<undefined | string>(undefined); // address
     const [isApproveLoading, setIsApproveLoading] = useState(false);
     const [isCancelApproveLoading, setIsCancelApproveLoading] = useState(false);
+    const [isBalanceRequestLoading, setIsBalanceRequestLoading] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [trxLink, setTrxLink] = useState("");
     const [balances, setBalances] = useState<BalanceType[]>([]);
@@ -71,8 +73,17 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     const onMount = async () => {
         if (chainId && address && web3) {
+            let longRequestTimeoutId;
             try {
+                setIsBalanceRequestLoading(true);
+                longRequestTimeoutId = setTimeout(() => {
+                    Sentry.captureMessage("Long Covalent request");
+                }, 10000);
+
                 const response = await axios.get(getCovalentUrl(chainId, address));
+                clearTimeout(longRequestTimeoutId);
+                setIsBalanceRequestLoading(false);
+
                 const result = response.data.data.items
                     .map((v: Record<string, string>) => ({
                         token_address: v.contract_address,
@@ -84,8 +95,11 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     }))
                     .filter((v: BalanceType) => v.balance !== "0") as BalanceType[];
                 setBalances(sortBySymbol(result));
-            } catch (e) {
+            } catch (e: any) {
+                setIsBalanceRequestLoading(false);
+                clearTimeout(longRequestTimeoutId);
                 setBalances([]);
+                Sentry.captureMessage(`Catch Covalent error: ${e?.message?.toString()}`);
             }
 
             const tokens = [
@@ -421,6 +435,9 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                     <MenuItem disabled value="placeholder-value">
                                         Select token
                                     </MenuItem>
+                                    {isBalanceRequestLoading && (
+                                        <LoaderLine className="send-form__token-form__loader" width={250} height={24} />
+                                    )}
                                     {balances.map((token) => (
                                         <MenuItem key={token.token_address} value={token.token_address}>
                                             <div className="send-form__token-form__symbol">{token.symbol}</div>
