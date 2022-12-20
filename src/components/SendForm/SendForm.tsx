@@ -3,6 +3,7 @@ import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField
 import cn from "classnames";
 import BN from "bn.js";
 import axios from "axios";
+import * as Sentry from "@sentry/browser";
 
 import { TwitterShareButton } from "react-twitter-embed";
 import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
@@ -71,8 +72,13 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     const onMount = async () => {
         if (chainId && address && web3) {
+            let longRequestTimeoutId;
             try {
+                longRequestTimeoutId = setTimeout(() => {
+                    Sentry.captureMessage("Long Covalent request");
+                }, 10000);
                 const response = await axios.get(getCovalentUrl(chainId, address));
+                clearTimeout(longRequestTimeoutId);
                 const result = response.data.data.items
                     .map((v: Record<string, string>) => ({
                         token_address: v.contract_address,
@@ -84,8 +90,10 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     }))
                     .filter((v: BalanceType) => v.balance !== "0") as BalanceType[];
                 setBalances(sortBySymbol(result));
-            } catch (e) {
+            } catch (e: any) {
+                clearTimeout(longRequestTimeoutId);
                 setBalances([]);
+                Sentry.captureMessage(`Catch Covalent error: ${e?.message?.toString()}`);
             }
 
             const tokens = [
