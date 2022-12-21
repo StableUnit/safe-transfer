@@ -3,6 +3,7 @@ import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField
 import cn from "classnames";
 import BN from "bn.js";
 import axios from "axios";
+import * as Sentry from "@sentry/browser";
 
 import { TwitterShareButton } from "react-twitter-embed";
 import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
@@ -15,7 +16,6 @@ import {
     getTokenContractFactory,
     toHRNumberFloat,
 } from "../../utils/tokens";
-import ERC20_ABI from "../../contracts/ERC20.json";
 import { generateUrl, getShortHash, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
@@ -25,14 +25,12 @@ import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage"
 import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
 import { StateContext } from "../../reducer/constants";
 import { arrayUniqueByKey, sortByBalance, sortBySymbol } from "../../utils/array";
-import { rpcList } from "../../utils/rpc";
 import { getTokens } from "../../utils/storage";
 import { trackEvent } from "../../utils/events";
 
 import "./SendForm.scss";
 import { TwitterPosts } from "../TwitterPosts";
 import { LoaderLine } from "../../ui-kit/components/LoaderLine";
-import { useDevice } from "../../hooks/useDimensions";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -57,6 +55,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [selectedToken, setSelectedToken] = useState<undefined | string>(undefined); // address
     const [isApproveLoading, setIsApproveLoading] = useState(false);
     const [isCancelApproveLoading, setIsCancelApproveLoading] = useState(false);
+    const [isBalanceRequestLoading, setIsBalanceRequestLoading] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [trxLink, setTrxLink] = useState("");
     const [balances, setBalances] = useState<BalanceType[]>([]);
@@ -73,9 +72,18 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const getTokenContract = getTokenContractFactory(web3);
 
     const onMount = async () => {
-        if (chainId && address) {
+        if (chainId && address && web3) {
+            let longRequestTimeoutId;
             try {
+                setIsBalanceRequestLoading(true);
+                longRequestTimeoutId = setTimeout(() => {
+                    Sentry.captureMessage("Long Covalent request");
+                }, 10000);
+
                 const response = await axios.get(getCovalentUrl(chainId, address));
+                clearTimeout(longRequestTimeoutId);
+                setIsBalanceRequestLoading(false);
+
                 const result = response.data.data.items
                     .map((v: Record<string, string>) => ({
                         token_address: v.contract_address,
@@ -87,8 +95,11 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     }))
                     .filter((v: BalanceType) => v.balance !== "0") as BalanceType[];
                 setBalances(sortBySymbol(result));
-            } catch (e) {
+            } catch (e: any) {
+                setIsBalanceRequestLoading(false);
+                clearTimeout(longRequestTimeoutId);
                 setBalances([]);
+                Sentry.captureMessage(`Catch Covalent error: ${e?.message?.toString()}`);
             }
 
             const tokens = [
@@ -97,33 +108,37 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     address: token.address,
                     id: token.name,
                     symbol: token.symbol,
+                    decimals: token.decimals,
                 })),
             ];
             for (const token of tokens) {
-                const tokenContract = new rpcList[networkName as NetworkType].eth.Contract(
-                    ERC20_ABI as any,
-                    token.address
-                );
-                const decimals = await tokenContract.methods.decimals().call();
-                const balance = await tokenContract.methods.balanceOf(address).call();
+                const tokenContract = getTokenContract(token.address);
+                if (!tokenContract) {
+                    return;
+                }
 
-                const newTokenBalance = {
-                    token_address: token.address,
-                    name: token.id,
-                    symbol: token.symbol,
-                    decimals,
-                    balance,
-                } as BalanceType;
-                setBalances((oldBalances) => {
-                    const newBalances = arrayUniqueByKey(
-                        [...oldBalances, newTokenBalance].map((v) => ({
-                            ...v,
-                            token_address: v.token_address.toLowerCase(),
-                        })),
-                        "token_address"
-                    );
-                    return sortByBalance(newBalances);
-                });
+                try {
+                    const balance = await tokenContract.methods.balanceOf(address.toLowerCase()).call();
+
+                    const newTokenBalance = {
+                        token_address: token.address,
+                        name: token.id,
+                        symbol: token.symbol,
+                        decimals: token.decimals,
+                        balance,
+                    } as BalanceType;
+                    setBalances((oldBalances) => {
+                        const newBalances = arrayUniqueByKey(
+                            [...oldBalances, newTokenBalance].map((v) => ({
+                                ...v,
+                                token_address: v.token_address.toLowerCase(),
+                            })),
+                            "token_address"
+                        );
+                        return sortByBalance(newBalances);
+                    });
+                    // eslint-disable-next-line no-empty
+                } catch (e: any) {}
             }
         }
     };
@@ -149,7 +164,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     useEffect(() => {
         onMount();
-    }, [chainId, address]);
+    }, [chainId, address, web3]);
 
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);
@@ -210,6 +225,14 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                 .approve(await ensToAddress(toAddress), "0")
                 .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null });
             setAllowance(undefined);
+
+            const symbol = await tokenContract.methods.symbol().call();
+            trackEvent("CANCEL_ALLOWANCE", {
+                source: "Send Page",
+                symbol,
+                to: toAddress,
+                from: address,
+            });
         } catch (error) {
             // @ts-ignore
             const replacedHash = error?.replacement?.hash;
@@ -289,6 +312,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     const handleMaxClick = () => {
         setValue(+currentTokenBalance);
+        trackEvent("MAX_CLICK", {});
     };
 
     const setAllowanceAsync = async () => {
@@ -411,6 +435,9 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                     <MenuItem disabled value="placeholder-value">
                                         Select token
                                     </MenuItem>
+                                    {isBalanceRequestLoading && (
+                                        <LoaderLine className="send-form__token-form__loader" width={150} height={24} />
+                                    )}
                                     {balances.map((token) => (
                                         <MenuItem key={token.token_address} value={token.token_address}>
                                             <div className="send-form__token-form__symbol">{token.symbol}</div>

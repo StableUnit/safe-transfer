@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import * as Sentry from "@sentry/browser";
 // import { SafeAppWeb3Modal } from "@gnosis.pm/safe-apps-web3modal";
 
 import Header from "../Header/Header";
@@ -12,6 +11,7 @@ import { DEFAULT_NETWORK, NETWORK, networkInfo, networkToId, NetworkType } from 
 import { DispatchContext } from "../../reducer/constants";
 import { Actions } from "../../reducer";
 import { BugIcon } from "../../ui-kit/images/icons";
+import { trackEvent } from "../../utils/events";
 
 import "./App.scss";
 
@@ -96,6 +96,8 @@ const App = () => {
 
         const newChainId = await web3.eth.getChainId();
         dispatch({ type: Actions.SetChainId, payload: newChainId });
+
+        trackEvent("WALLET_CONNECTED", { address: accounts[0], chainId: newChainId });
 
         // const loadedAsSafeApp = await web3Modal.isSafeApp();
         // console.log("Is connected to safe app:", loadedAsSafeApp);
