@@ -47,6 +47,17 @@ interface ApproveFormProps {
     onConnect: () => void;
 }
 
+const twitterPosts = [
+    "1595062904679956482",
+    "1594459327674425346",
+    "1543956221614489601",
+    "1511317628576362502",
+    "1613088718797295617",
+    "1613201006312947712",
+    "1614328400071491585",
+    "1614569695918841856",
+];
+
 const SendForm = ({ onConnect }: ApproveFormProps) => {
     const { address, chainId, web3, newCustomToken } = useContext(StateContext);
     const networkName = chainId ? idToNetwork[chainId] : undefined;
@@ -507,9 +518,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         options={{ text: "#safetransfer is awesome", via: "stableUnit", size: "large" }}
                     />
                 </div>
-                <TwitterPosts
-                    ids={["1595062904679956482", "1594459327674425346", "1543956221614489601", "1511317628576362502"]}
-                />
+                <TwitterPosts ids={twitterPosts} />
             </div>
         </>
     );
