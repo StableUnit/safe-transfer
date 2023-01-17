@@ -253,6 +253,24 @@
         }
     }
 
+    .Mui-disabled {
+        opacity: 0.3 !important;
+        -webkit-text-fill-color: white !important;
+    }
+
+    &__error {
+        font-weight: 700;
+        font-size: 12px;
+        line-height: 16px;
+        color: #FC7557;
+        text-align: center;
+        padding-bottom: 8px;
+
+        &:last-child {
+            padding-bottom: 0;
+        }
+    }
+
     @media screen and (max-width: 600px) {
         width: 330px;
     }

@@ -71,6 +71,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [genUrl, setGenUrl] = useState<string>();
     const [allowance, setAllowance] = useState<string>();
     const { requestTokenData, requestToken } = useRequestToken();
+    const isDisabledByToken = requestTokenData && networkName !== requestTokenData.networkName;
+    const hasRequestToken = !!requestTokenData;
 
     useEffect(() => {
         if (requestTokenData) {
@@ -330,6 +332,9 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const handleMaxClick = () => {
+        if (hasRequestToken) {
+            return;
+        }
         setValue(+currentTokenBalance);
         trackEvent("MAX_CLICK", {});
     };
@@ -404,6 +409,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         <div className="send-form__label">Recipient address</div>
                         <TextField
                             value={toAddress}
+                            disabled={hasRequestToken}
                             id="address"
                             className="send-form__address"
                             placeholder="Paste address here ..."
@@ -452,6 +458,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                             </FormControl>
 
                             <TextField
+                                disabled={hasRequestToken}
                                 id="value"
                                 className="send-form__value"
                                 placeholder="0.00"
@@ -489,7 +496,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         <Button
                             onClick={handleApprove}
                             className="send-form__button"
-                            disabled={!isCorrectData || isApproveLoading || hasAllowance}
+                            disabled={!isCorrectData || isApproveLoading || hasAllowance || isDisabledByToken}
                         >
                             {isApproveLoading ? "Loading..." : "Approve"}
                         </Button>
@@ -497,6 +504,9 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         <Button onClick={onConnect} className="send-form__button">
                             CONNECT WALLET
                         </Button>
+                    )}
+                    {requestTokenData && requestTokenData.networkName !== networkName && (
+                        <div className="send-form__error">Please change network to {requestTokenData.networkName}</div>
                     )}
                 </div>
             </div>
