@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.7](https://github.com/StableUnit/safe-transfer/compare/v0.4.6...v0.4.7) (2023-01-17)
+
+
+### Features
+
+* add new twitter posts ([1c6297d](https://github.com/StableUnit/safe-transfer/commit/1c6297d84ec9f8c23c9d671d4dc2023f0f5b74b7))
+
 ### [0.4.6](https://github.com/StableUnit/safe-transfer/compare/v0.4.5...v0.4.6) (2022-12-20)
 
 
