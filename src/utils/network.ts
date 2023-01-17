@@ -188,7 +188,7 @@ export const networkInfo = {
     [NETWORK.polygon]: {
         chainName: "Polygon Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.polygon]),
-        rpcUrls: ["https://polygon-rpc.com/"],
+        rpcUrls: ["https://rpc.ankr.com/polygon"],
         blockExplorerUrls: ["https://polygonscan.com/"],
         nativeCurrency: {
             name: "MATIC Token",

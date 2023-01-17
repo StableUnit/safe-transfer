@@ -1,18 +1,11 @@
-import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from "react";
+import React, { ChangeEvent, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import cn from "classnames";
 import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 
-import {
-    changeNetworkAtMetamask,
-    NetworkType,
-    getTrxHashLink,
-    idToNetwork,
-    networkNames,
-    networkToId,
-} from "../../utils/network";
+import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
 import { ensToAddress, isAddress } from "../../utils/wallet";
 import {
     beautifyTokenBalance,
@@ -36,12 +29,13 @@ import { trackEvent } from "../../utils/events";
 import { LoaderLine } from "../../ui-kit/components/LoaderLine";
 import Twitter from "../Twitter";
 import GenUrl from "../GenUrl";
-
-import "./SendForm.scss";
 import { useRequestToken } from "../../hooks/useRequestToken";
 import { PageNotFound } from "../PageNotFound";
+import { useCurrentTokenData } from "../../hooks/useCurrentTokenData";
 
-type BalanceType = {
+import "./SendForm.scss";
+
+export type BalanceType = {
     // eslint-disable-next-line camelcase
     token_address: string;
     name: string;
@@ -70,21 +64,29 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<string>();
     const [allowance, setAllowance] = useState<string>();
+
     const { requestTokenData, requestToken } = useRequestToken();
     const isDisabledByToken = requestTokenData && networkName !== requestTokenData.networkName;
     const hasRequestToken = !!requestTokenData;
 
+    const currentToken = useCurrentTokenData(balances, selectedToken, requestTokenData);
+
+    useEffect(() => {
+        if (hasRequestToken && currentToken) {
+            setBalances([currentToken]);
+        }
+    }, [hasRequestToken, currentToken]);
+
     useEffect(() => {
         if (requestTokenData) {
-            console.log(requestTokenData);
+            changeNetworkAtMetamask(requestTokenData.networkName);
             setValue(requestTokenData.value);
             setToAddress(requestTokenData.to);
-            changeNetworkAtMetamask(requestTokenData.networkName);
+            setSelectedToken(requestTokenData.token);
         }
     }, [requestToken]);
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
-    const currentToken = balances.find((v) => v.token_address === selectedToken);
     const currentTokenBalance = currentToken
         ? toHRNumberFloat(new BN(currentToken.balance), +currentToken.decimals)
         : 0;
@@ -93,7 +95,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const getTokenContract = getTokenContractFactory(web3);
 
     const onMount = async () => {
-        if (chainId && address && web3) {
+        if (chainId && address && web3 && !requestTokenData) {
             let longRequestTimeoutId;
             try {
                 setIsBalanceRequestLoading(true);
@@ -185,7 +187,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     useEffect(() => {
         onMount();
-    }, [chainId, address, web3]);
+    }, [chainId, address, web3, requestTokenData]);
 
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);
@@ -427,6 +429,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         <div className="send-form__content__line">
                             <FormControl className="send-form__token-form">
                                 <Select
+                                    disabled={hasRequestToken}
                                     value={selectedToken || "placeholder-value" || "custom-value"}
                                     onChange={handleTokenChange}
                                     inputProps={{ "aria-label": "Without label" }}
