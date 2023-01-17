@@ -36,9 +36,9 @@ export const generateRequestUrl = ({ token, to, value, networkName }: RequestUrl
 // @ts-ignore
 window.generateUrl = generateUrl;
 
-export const decodeToken = (token: string) => {
+export const decodeToken = <T>(token: string) => {
     try {
-        return jwt.verify(token, SECRET_KEY) as TokenInfoType;
+        return jwt.verify(token, SECRET_KEY) as T;
     } catch (e) {
         return undefined;
     }

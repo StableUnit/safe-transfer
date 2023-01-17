@@ -5,7 +5,14 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 
-import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
+import {
+    changeNetworkAtMetamask,
+    NetworkType,
+    getTrxHashLink,
+    idToNetwork,
+    networkNames,
+    networkToId,
+} from "../../utils/network";
 import { ensToAddress, isAddress } from "../../utils/wallet";
 import {
     beautifyTokenBalance,
@@ -31,6 +38,8 @@ import Twitter from "../Twitter";
 import GenUrl from "../GenUrl";
 
 import "./SendForm.scss";
+import { useRequestToken } from "../../hooks/useRequestToken";
+import { PageNotFound } from "../PageNotFound";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -50,17 +59,27 @@ interface ApproveFormProps {
 const SendForm = ({ onConnect }: ApproveFormProps) => {
     const { address, chainId, web3, newCustomToken } = useContext(StateContext);
     const networkName = chainId ? idToNetwork[chainId] : undefined;
-    const [toAddress, setToAddress] = useState<undefined | string>(undefined);
-    const [value, setValue] = useState<undefined | number>(undefined);
-    const [selectedToken, setSelectedToken] = useState<undefined | string>(undefined); // address
+    const [toAddress, setToAddress] = useState<string>();
+    const [value, setValue] = useState<number>();
+    const [selectedToken, setSelectedToken] = useState<string>(); // address
     const [isApproveLoading, setIsApproveLoading] = useState(false);
     const [isCancelApproveLoading, setIsCancelApproveLoading] = useState(false);
     const [isBalanceRequestLoading, setIsBalanceRequestLoading] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [trxLink, setTrxLink] = useState("");
     const [balances, setBalances] = useState<BalanceType[]>([]);
-    const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
-    const [allowance, setAllowance] = useState<undefined | string>(undefined);
+    const [genUrl, setGenUrl] = useState<string>();
+    const [allowance, setAllowance] = useState<string>();
+    const { requestTokenData, requestToken } = useRequestToken();
+
+    useEffect(() => {
+        if (requestTokenData) {
+            console.log(requestTokenData);
+            setValue(requestTokenData.value);
+            setToAddress(requestTokenData.to);
+            changeNetworkAtMetamask(requestTokenData.networkName);
+        }
+    }, [requestToken]);
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
     const currentToken = balances.find((v) => v.token_address === selectedToken);
@@ -333,6 +352,10 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         setAllowanceAsync();
     }, [isCorrectData]);
 
+    if (requestToken && !requestTokenData) {
+        return <PageNotFound />;
+    }
+
     return (
         <>
             <div className="send-form__container">
@@ -380,6 +403,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
                         <div className="send-form__label">Recipient address</div>
                         <TextField
+                            value={toAddress}
                             id="address"
                             className="send-form__address"
                             placeholder="Paste address here ..."

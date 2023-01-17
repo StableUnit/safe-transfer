@@ -26,6 +26,7 @@ import Twitter from "../Twitter";
 
 import "../PageNotFound/styles.scss";
 import "./ReceiveForm.scss";
+import { useReceiveToken } from "../../hooks/useReceiveToken";
 
 interface TransferFormProps {
     onConnect: () => void;
@@ -46,13 +47,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
     const networkName = chainId ? idToNetwork[chainId] : undefined;
 
-    const [token, setToken] = useState<string | null>(null);
-    const tokenData = token ? decodeToken(token) : undefined;
-
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        setToken(urlParams.get("token"));
-    }, []);
+    const { tokenData, token } = useReceiveToken();
 
     const updateTokenMetadata = async () => {
         if (tokenData) {
