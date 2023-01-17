@@ -4,6 +4,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import SendForm from "../SendForm/SendForm";
 import ReceiveForm from "../ReceiveForm/ReceiveForm";
 import { PageNotFound } from "../PageNotFound";
+import RequestForm from "../RequestForm";
 
 interface Props {
     onConnect: () => void;
@@ -19,6 +20,11 @@ export const Routes = ({ onConnect }: Props) => (
         {/* @ts-ignore */}
         <Route exact path="/receive">
             <ReceiveForm onConnect={onConnect} />
+        </Route>
+
+        {/* @ts-ignore */}
+        <Route exact path="/request">
+            <RequestForm />
         </Route>
 
         {/* @ts-ignore */}

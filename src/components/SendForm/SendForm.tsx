@@ -5,7 +5,6 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 
-import { TwitterShareButton } from "react-twitter-embed";
 import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
 import { ensToAddress, isAddress } from "../../utils/wallet";
 import {
@@ -16,7 +15,7 @@ import {
     getTokenContractFactory,
     toHRNumberFloat,
 } from "../../utils/tokens";
-import { generateUrl, getShortHash, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
+import { generateUrl, getShortHash, handleCopyUrl } from "../../utils/urlGenerator";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
@@ -27,10 +26,11 @@ import { StateContext } from "../../reducer/constants";
 import { arrayUniqueByKey, sortByBalance, sortBySymbol } from "../../utils/array";
 import { getTokens } from "../../utils/storage";
 import { trackEvent } from "../../utils/events";
+import { LoaderLine } from "../../ui-kit/components/LoaderLine";
+import Twitter from "../Twitter";
+import GenUrl from "../GenUrl";
 
 import "./SendForm.scss";
-import { TwitterPosts } from "../TwitterPosts";
-import { LoaderLine } from "../../ui-kit/components/LoaderLine";
 
 type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -46,17 +46,6 @@ type BalanceType = {
 interface ApproveFormProps {
     onConnect: () => void;
 }
-
-const twitterPosts = [
-    "1595062904679956482",
-    "1594459327674425346",
-    "1543956221614489601",
-    "1511317628576362502",
-    "1613088718797295617",
-    "1613201006312947712",
-    "1614328400071491585",
-    "1614569695918841856",
-];
 
 const SendForm = ({ onConnect }: ApproveFormProps) => {
     const { address, chainId, web3, newCustomToken } = useContext(StateContext);
@@ -373,19 +362,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         </IconButton>
                     </div>
                 )}
-                {genUrl && (
-                    <div className="send-form__url">
-                        <div className="send-form__url__text">
-                            <div className="send-form__url__text--title">Link to receive:&nbsp;&nbsp;</div>
-                            <a href={genUrl} target="_blank" rel="noreferrer">
-                                {getShortUrl(genUrl)}
-                            </a>
-                        </div>
-                        <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
-                            <ContentCopyIcon />
-                        </IconButton>
-                    </div>
-                )}
+                <GenUrl genUrl={genUrl} text="Link to receive:" />
                 <div className={cn("send-form", { "send-form--disabled": !address })}>
                     <div className="send-form__title">Send</div>
 
@@ -510,16 +487,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     )}
                 </div>
             </div>
-            <div className="send-form__twitter">
-                <div className="send-form__twitter__header">
-                    <div className="send-form__twitter__title">Tell us how you feel about Safe Transfer</div>
-                    <TwitterShareButton
-                        url="https://safe-transfer.stableunit.org/"
-                        options={{ text: "#safetransfer is awesome", via: "stableUnit", size: "large" }}
-                    />
-                </div>
-                <TwitterPosts ids={twitterPosts} />
-            </div>
+            <Twitter />
         </>
     );
 };

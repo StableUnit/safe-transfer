@@ -32,6 +32,10 @@ const LINKS = [
         text: "Receive",
     },
     {
+        href: "/request",
+        text: "Request",
+    },
+    {
         isExternal: true,
         href: "https://revoke.cash/",
         text: "Revoke",
