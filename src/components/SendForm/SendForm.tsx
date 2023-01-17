@@ -351,18 +351,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         </IconButton>
                     </div>
                 )}
-                {trxHash && !genUrl && (
-                    <div className="send-form__url">
-                        <div className="send-form__url__text">
-                            <div className="send-form__url__text--title">Link to receive:&nbsp;&nbsp;</div>
-                            <LoaderLine width={155} height={18} />
-                        </div>
-                        <IconButton aria-label="copy" onClick={handleCopyUrl("")}>
-                            <ContentCopyIcon />
-                        </IconButton>
-                    </div>
-                )}
-                <GenUrl genUrl={genUrl} text="Link to receive:" />
+                <GenUrl isLoading={Boolean(trxHash && !genUrl)} genUrl={genUrl} text="Link to receive:" />
                 <div className={cn("send-form", { "send-form--disabled": !address })}>
                     <div className="send-form__title">Send</div>
 
