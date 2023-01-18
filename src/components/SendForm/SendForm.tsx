@@ -84,7 +84,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             setToAddress(requestTokenData.to);
             setSelectedToken(requestTokenData.token);
         }
-    }, [requestToken]);
+    }, [requestTokenData]);
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
     const currentTokenBalance = currentToken
@@ -209,7 +209,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         }
     };
 
-    const onSuccessApprove = (selectedTokenInfo: BalanceType) => {
+    const onSuccessApprove = () => {
         if (genUrl) {
             return;
         }
@@ -220,19 +220,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             return;
         }
 
-        const valueBN = fromHRToBN(value ?? 0, +selectedTokenInfo.decimals).toString();
-
         addSuccessNotification("Success", "Approve transaction completed");
         setIsApproveLoading(false);
-        setGenUrl(
-            generateUrl({
-                address: selectedTokenInfo?.token_address,
-                from: address ?? "",
-                to: toAddress ?? "",
-                value: valueBN,
-                chain: networkName,
-            })
-        );
     };
 
     const cancelApprove = async () => {
@@ -298,6 +287,15 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     .on("transactionHash", (hash: string) => {
                         setTrxHash(hash);
                         setTrxLink(getTrxHashLink(hash, networkName));
+                        setGenUrl(
+                            generateUrl({
+                                address: currentToken?.token_address,
+                                from: address ?? "",
+                                to: toAddress ?? "",
+                                value: fromHRToBN(value ?? 0, +currentToken.decimals).toString(),
+                                chain: networkName,
+                            })
+                        );
                         timeoutId = setTimeout(() => {
                             trackEvent("APPROVE_FINISHED", {
                                 fromAddress: address,
@@ -305,7 +303,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                 value,
                                 currency: getTokenName(selectedToken),
                             });
-                            onSuccessApprove(currentToken);
+                            onSuccessApprove();
                         }, 20000);
                     });
                 trackEvent("APPROVE_FINISHED", {
@@ -314,7 +312,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     value,
                     currency: getTokenName(selectedToken),
                 });
-                onSuccessApprove(currentToken);
+                onSuccessApprove();
                 clearTimeout(timeoutId);
             } catch (error) {
                 clearTimeout(timeoutId);
@@ -381,7 +379,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         </IconButton>
                     </div>
                 )}
-                <GenUrl isLoading={Boolean(trxHash && !genUrl)} genUrl={genUrl} text="Link to receive:" />
+                <GenUrl isLoading={isApproveLoading} genUrl={genUrl} text="Link to receive:" />
                 <div className={cn("send-form", { "send-form--disabled": !address })}>
                     <div className="send-form__title">Send</div>
 

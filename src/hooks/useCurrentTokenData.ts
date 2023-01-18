@@ -37,7 +37,7 @@ export const useCurrentTokenData = (
         if (!requestTokenData) {
             setTokenData(balances.find((v) => v.token_address === selectedToken));
         }
-    }, [balances, requestTokenData]);
+    }, [balances, requestTokenData, selectedToken]);
 
     return tokenData;
 };

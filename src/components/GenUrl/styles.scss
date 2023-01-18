@@ -36,4 +36,16 @@
             }
         }
     }
+
+    &-container {
+        max-width: 400px;
+    }
+
+    &__loading {
+        margin: 0 25px;
+        font-size: 11px;
+        text-align: center;
+        padding-top: 4px;
+        color: $gray1;
+    }
 }
