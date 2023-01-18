@@ -94,11 +94,14 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                     setIsTransferFetching(false);
 
                     const symbol = await tokenContract.methods.symbol().call();
+                    // eslint-disable-next-line max-len
+                    // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
                     trackEvent("RECEIVE_SUCCESS", {
                         from: tokenData.from,
                         to: tokenData.to,
                         value: tokenData.value.toString(),
                         symbol,
+                        networkName,
                     });
                 }
             }
@@ -127,11 +130,14 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                     await updateAllowance();
 
                     const symbol = await tokenContract.methods.symbol().call();
+                    // eslint-disable-next-line max-len
+                    // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
                     trackEvent("CANCEL_ALLOWANCE", {
                         source: "Receive Page",
                         symbol,
                         to: tokenData.to,
                         from: tokenData.from,
+                        networkName,
                     });
                 }
             }

@@ -239,11 +239,14 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             setAllowance(undefined);
 
             const symbol = await tokenContract.methods.symbol().call();
+            // eslint-disable-next-line max-len
+            // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
             trackEvent("CANCEL_ALLOWANCE", {
                 source: "Send Page",
                 symbol,
                 to: toAddress,
                 from: address,
+                networkName,
             });
         } catch (error) {
             // @ts-ignore
@@ -275,12 +278,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             let timeoutId;
 
             try {
-                trackEvent("APPROVE_CREATED", {
-                    fromAddress: address,
-                    networkName,
-                    value,
-                    currency: getTokenName(selectedToken),
-                });
                 await tokenContract?.methods
                     .approve(ensAddress, valueBN)
                     .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
@@ -297,6 +294,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                             })
                         );
                         timeoutId = setTimeout(() => {
+                            // eslint-disable-next-line max-len
+                            // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
                             trackEvent("APPROVE_FINISHED", {
                                 fromAddress: address,
                                 networkName,
@@ -306,6 +305,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                             onSuccessApprove();
                         }, 20000);
                     });
+                // eslint-disable-next-line max-len
+                // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
                 trackEvent("APPROVE_FINISHED", {
                     fromAddress: address,
                     networkName,
