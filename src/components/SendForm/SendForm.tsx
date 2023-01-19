@@ -84,7 +84,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             setToAddress(requestTokenData.to);
             setSelectedToken(requestTokenData.token);
         }
-    }, [requestTokenData]);
+    }, [requestToken]);
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
     const currentTokenBalance = currentToken
@@ -95,7 +95,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const getTokenContract = getTokenContractFactory(web3);
 
     const onMount = async () => {
-        if (chainId && address && web3 && !requestTokenData) {
+        if (chainId && address && web3 && !requestTokenData?.token) {
             let longRequestTimeoutId;
             try {
                 setIsBalanceRequestLoading(true);
@@ -187,7 +187,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     useEffect(() => {
         onMount();
-    }, [chainId, address, web3, requestTokenData]);
+    }, [chainId, address, web3, requestToken]);
 
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);
@@ -321,7 +321,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                 if (replacedHash) {
                     setTrxHash(replacedHash);
                     setTrxLink(getTrxHashLink(replacedHash, networkName));
-                    onSuccessApprove(currentToken);
+                    onSuccessApprove();
                 } else {
                     console.error(error);
                     addErrorNotification("Error", "Approve transaction failed");
@@ -332,7 +332,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const handleMaxClick = () => {
-        if (hasRequestToken) {
+        if (requestTokenData?.value) {
             return;
         }
         setValue(+currentTokenBalance);
@@ -427,7 +427,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         <div className="send-form__content__line">
                             <FormControl className="send-form__token-form">
                                 <Select
-                                    disabled={hasRequestToken}
+                                    disabled={!!requestTokenData?.token}
                                     value={selectedToken || "placeholder-value" || "custom-value"}
                                     onChange={handleTokenChange}
                                     inputProps={{ "aria-label": "Without label" }}
@@ -459,7 +459,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                             </FormControl>
 
                             <TextField
-                                disabled={hasRequestToken}
+                                disabled={!!requestTokenData?.value}
                                 id="value"
                                 className="send-form__value"
                                 placeholder="0.00"

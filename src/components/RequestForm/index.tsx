@@ -7,9 +7,10 @@ import Button from "../../ui-kit/components/Button/Button";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
 import GenUrl from "../GenUrl";
 import Twitter from "../Twitter";
+import { generateRequestUrl } from "../../utils/urlGenerator";
+import { isAddress } from "../../utils/wallet";
 
 import "./styles.scss";
-import { generateRequestUrl, generateUrl } from "../../utils/urlGenerator";
 
 const RequestPage = React.memo(() => {
     const [genUrl, setGenUrl] = useState<string>();
@@ -18,10 +19,10 @@ const RequestPage = React.memo(() => {
     const [token, setToken] = useState<string>();
     const [value, setValue] = useState<number>();
 
-    const hasAllData = token && toAddress && value && networkName;
+    const hasAllRequiredData = networkName && isAddress(toAddress);
 
     const onGenerate = () => {
-        if (hasAllData) {
+        if (hasAllRequiredData && toAddress) {
             setGenUrl(
                 generateRequestUrl({
                     token,
@@ -60,7 +61,7 @@ const RequestPage = React.memo(() => {
                     <div className="request-form__title">Request</div>
 
                     <div className="request-form__content">
-                        <div className="request-form__label">Network</div>
+                        <div className="request-form__label required">Network</div>
                         <FormControl className="request-form__network-form">
                             <Select
                                 value={networkName || "placeholder-value"}
@@ -82,7 +83,7 @@ const RequestPage = React.memo(() => {
                             </Select>
                         </FormControl>
 
-                        <div className="request-form__label">Recipient address</div>
+                        <div className="request-form__label required">Recipient address</div>
                         <TextField
                             value={toAddress}
                             id="address"
@@ -116,7 +117,7 @@ const RequestPage = React.memo(() => {
                         />
                     </div>
 
-                    <Button onClick={onGenerate} className="request-form__button" disabled={!hasAllData}>
+                    <Button onClick={onGenerate} className="request-form__button" disabled={!hasAllRequiredData}>
                         Generate request link
                     </Button>
                 </div>

@@ -13,9 +13,9 @@ export type TokenInfoType = {
 };
 
 export type RequestUrlType = {
-    token: string;
+    token?: string;
     to: string;
-    value: number;
+    value?: number;
     networkName: NetworkType;
 };
 

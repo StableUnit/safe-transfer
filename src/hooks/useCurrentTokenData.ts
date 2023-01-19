@@ -34,7 +34,7 @@ export const useCurrentTokenData = (
     }, [networkName, tokenName, address]);
 
     useEffect(() => {
-        if (!requestTokenData) {
+        if (!requestTokenData?.token) {
             setTokenData(balances.find((v) => v.token_address === selectedToken));
         }
     }, [balances, requestTokenData, selectedToken]);
