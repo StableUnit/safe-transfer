@@ -1,14 +1,15 @@
-import React, { ChangeEvent, useState } from "react";
-import { FormControl, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import React, { ChangeEvent, useMemo, useState } from "react";
+import { Autocomplete, FormControl, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
-import { networkNames, NetworkType } from "../../utils/network";
+import { networkNames, networkToId, NetworkType } from "../../utils/network";
 import Button from "../../ui-kit/components/Button/Button";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
 import GenUrl from "../GenUrl";
 import Twitter from "../Twitter";
 import { generateRequestUrl } from "../../utils/urlGenerator";
 import { isAddress } from "../../utils/wallet";
+import TOKEN_LIST from "../../contracts/tokenlist.json";
 
 import "./styles.scss";
 
@@ -20,6 +21,20 @@ const RequestPage = React.memo(() => {
     const [value, setValue] = useState<number>();
 
     const hasAllRequiredData = networkName && isAddress(toAddress);
+
+    const availableTokens = useMemo(() => {
+        if (networkName) {
+            // @ts-ignore
+            return TOKEN_LIST[networkToId[networkName]]
+                ?.map((v: any) => ({
+                    label: v.symbol,
+                    address: v.address,
+                }))
+                .sort((a: any, b: any) => a.label.localeCompare(b.label));
+        }
+
+        return [];
+    }, [networkName]);
 
     const onGenerate = () => {
         if (hasAllRequiredData && toAddress) {
@@ -38,8 +53,8 @@ const RequestPage = React.memo(() => {
         setNetworkName(event.target.value as NetworkType);
     };
 
-    const handleTokenChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setToken(event.target.value);
+    const handleTokenChange = (event: any, newValue: any) => {
+        setToken(newValue?.address);
     };
 
     const handleAddressChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -94,13 +109,19 @@ const RequestPage = React.memo(() => {
                         />
 
                         <div className="request-form__label">Token address</div>
-                        <TextField
-                            value={token}
-                            id="address"
+                        <Autocomplete
+                            id="token-address"
                             className="request-form__address"
-                            placeholder="Paste token address here ..."
-                            variant="outlined"
+                            placeholder="Select token"
+                            options={availableTokens}
+                            sx={{ width: 300 }}
                             onChange={handleTokenChange}
+                            filterOptions={(options, state) => {
+                                return options.filter((v) =>
+                                    (v as any).label.toLowerCase().includes(state.inputValue.toLowerCase())
+                                );
+                            }}
+                            renderInput={(params) => <TextField {...params} />}
                         />
 
                         <div className="request-form__label">Requested value</div>

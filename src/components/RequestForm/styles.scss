@@ -89,6 +89,10 @@
       display: none;
     }
 
+    button {
+      color: $gray1;
+    }
+
     @media screen and (max-width: 600px) {
       width: 340px;
     }
@@ -122,5 +126,14 @@
     width: 100%;
     height: 58px;
     margin: 20px auto 0 auto;
+  }
+}
+
+.MuiAutocomplete-paper {
+  color: $gray1 !important;
+  background: $dark-gray !important;
+
+  .MuiAutocomplete-noOptions {
+    color: $gray1 !important;
   }
 }

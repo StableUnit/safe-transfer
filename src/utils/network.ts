@@ -71,7 +71,7 @@ export const idToNetwork: Record<number, NetworkType> = {
     // 1666700000: NETWORK.harmony, // testnet
 };
 
-export const networkToId = inverse(idToNetwork);
+export const networkToId: Record<NetworkType, number> = inverse(idToNetwork);
 
 export const networkInfo = {
     [NETWORK.eth]: {
