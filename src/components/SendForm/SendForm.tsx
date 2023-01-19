@@ -293,6 +293,14 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                 chain: networkName,
                             })
                         );
+                        // eslint-disable-next-line max-len
+                        // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                        trackEvent("APPROVE_LINK_GENERATED", {
+                            fromAddress: address,
+                            networkName,
+                            value,
+                            currency: getTokenName(selectedToken),
+                        });
                         timeoutId = setTimeout(() => {
                             // eslint-disable-next-line max-len
                             // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
