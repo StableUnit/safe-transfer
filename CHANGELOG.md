@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.9](https://github.com/StableUnit/safe-transfer/compare/v0.4.8...v0.4.9) (2023-01-20)
+
+
+### Features
+
+* add Autocomplete ([a5ccda9](https://github.com/StableUnit/safe-transfer/commit/a5ccda9b4f309f4a47f4c4da82e346e723bd1c2e))
+* add isLoading for GenUrl ([ec6b146](https://github.com/StableUnit/safe-transfer/commit/ec6b146e3e8fbfd6591a2e3054422c217435d705))
+* add logic in RequestPage ([41bd440](https://github.com/StableUnit/safe-transfer/commit/41bd440caeaac39afad3f528e1e8da0c2475162c))
+* add required fields ([931c45c](https://github.com/StableUnit/safe-transfer/commit/931c45c8a56242711f5cd357a0a32b2a7e33c22d))
+* add token logic ([7a3e5ac](https://github.com/StableUnit/safe-transfer/commit/7a3e5acbfd2030c237009c2fb979fd2679b03f88))
+* add twitter to receive page + separate gen-url + add request form tab ([f17c89e](https://github.com/StableUnit/safe-transfer/commit/f17c89e01d4a81fc754e7e13c196c35b22a523e0))
+* disable fields + check network ([09d389e](https://github.com/StableUnit/safe-transfer/commit/09d389e16b76806b27b60a15bddc04394b897428))
+* hooks for token ([f25add4](https://github.com/StableUnit/safe-transfer/commit/f25add4ace5617f695ce58fc7b32202be419b6e5))
+* remove filteredOptions ([4dbad42](https://github.com/StableUnit/safe-transfer/commit/4dbad42dfe887801840cd306190b17924f93bbd8))
+* show genUrl with no trx wait + fix approve ([669a585](https://github.com/StableUnit/safe-transfer/commit/669a585def31e879a40548b15868b64e4db9ba10))
+* use some mainnets + add tokenlist.json ([bc033ca](https://github.com/StableUnit/safe-transfer/commit/bc033ca5a5e0e2dd35dde8c8ddefd275b9ee9ef7))
+
+
+### Bug Fixes
+
+* metamask symbol length ([15ffd42](https://github.com/StableUnit/safe-transfer/commit/15ffd42cc0b98bcb1582292dcf7d2cb85b36bf0b))
+* small ui fixes ([a0897af](https://github.com/StableUnit/safe-transfer/commit/a0897af114d4256994f444249378cafd5ee9a73d))
+
 ### [0.4.8](https://github.com/StableUnit/safe-transfer/compare/v0.4.7...v0.4.8) (2023-01-20)
 
 
