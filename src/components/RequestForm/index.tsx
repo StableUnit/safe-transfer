@@ -116,11 +116,6 @@ const RequestPage = React.memo(() => {
                             options={availableTokens}
                             sx={{ width: 300 }}
                             onChange={handleTokenChange}
-                            filterOptions={(options, state) => {
-                                return options.filter((v) =>
-                                    (v as any).label.toLowerCase().includes(state.inputValue.toLowerCase())
-                                );
-                            }}
                             renderInput={(params) => <TextField {...params} />}
                         />
 
