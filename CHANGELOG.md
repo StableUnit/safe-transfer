@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.10](https://github.com/StableUnit/safe-transfer/compare/v0.4.9...v0.4.10) (2023-01-20)
+
+
+### Features
+
+* add approve link generated event ([dbe56da](https://github.com/StableUnit/safe-transfer/commit/dbe56dabf0f2eb2c72483f2067b573ce2853100c))
+* add disclaimer ([c413473](https://github.com/StableUnit/safe-transfer/commit/c4134737a5479e22db5288a7633d1442f5ecba84))
+* update events ([4156aca](https://github.com/StableUnit/safe-transfer/commit/4156aca890c7912cfa054ccc83b56d2da9e362d9))
+
+
+### Bug Fixes
+
+* fix some events + add disclaimers ([b318031](https://github.com/StableUnit/safe-transfer/commit/b318031f444a0cbd2c05d9f1512f2807ac87f94b))
+
 ### [0.4.9](https://github.com/StableUnit/safe-transfer/compare/v0.4.8...v0.4.9) (2023-01-20)
 
 
