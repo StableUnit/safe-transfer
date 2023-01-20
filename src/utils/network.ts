@@ -53,14 +53,14 @@ const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj
 export const idToNetwork: Record<number, NetworkType> = {
     1: NETWORK.eth,
     5: NETWORK.goerli,
-    // 10: NETWORK.optimism, // mainnet
+    10: NETWORK.optimism, // mainnet
     25: NETWORK.cronos, // mainnet
-    28: NETWORK.boba, // testnet
+    // 28: NETWORK.boba, // testnet
     56: NETWORK.bsc,
-    69: NETWORK.optimism, // testnet
+    // 69: NETWORK.optimism, // testnet
     137: NETWORK.polygon,
     250: NETWORK.fantom,
-    // 288: NETWORK.boba, // mainnet
+    288: NETWORK.boba, // mainnet
     // 338: NETWORK.cronos, // testnet
     // 42161: NETWORK.arbitrum,
     43114: NETWORK.avalanche,
@@ -71,7 +71,7 @@ export const idToNetwork: Record<number, NetworkType> = {
     // 1666700000: NETWORK.harmony, // testnet
 };
 
-export const networkToId = inverse(idToNetwork);
+export const networkToId: Record<NetworkType, number> = inverse(idToNetwork);
 
 export const networkInfo = {
     [NETWORK.eth]: {
@@ -92,53 +92,53 @@ export const networkInfo = {
         },
     },
     // mainnet
-    // [NETWORK.optimism]: {
-    //     chainName: "Optimism",
-    //     chainId: Web3.utils.toHex(networkToId[NETWORK.optimism]),
-    //     rpcUrls: ["https://mainnet.optimism.io/"],
-    //     blockExplorerUrls: ["https://optimistic.etherscan.io"],
-    //     nativeCurrency: {
-    //         name: "KOR",
-    //         symbol: "KOR",
-    //         decimals: 18,
-    //     },
-    // },
-    // testnet
     [NETWORK.optimism]: {
         chainName: "Optimism",
         chainId: Web3.utils.toHex(networkToId[NETWORK.optimism]),
-        rpcUrls: ["https://kovan.optimism.io/"],
-        blockExplorerUrls: ["https://kovan-optimistic.etherscan.io/"],
+        rpcUrls: ["https://mainnet.optimism.io/"],
+        blockExplorerUrls: ["https://optimistic.etherscan.io"],
         nativeCurrency: {
             name: "KOR",
             symbol: "KOR",
             decimals: 18,
         },
     },
-    // mainnet
-    // [NETWORK.boba]: {
-    //     chainName: "Boba",
-    //     chainId: Web3.utils.toHex(networkToId[NETWORK.boba]),
-    //     rpcUrls: ["https://mainnet.boba.network"],
-    //     blockExplorerUrls: ["https://blockexplorer.boba.network/"],
+    // testnet
+    // [NETWORK.optimism]: {
+    //     chainName: "Optimism",
+    //     chainId: Web3.utils.toHex(networkToId[NETWORK.optimism]),
+    //     rpcUrls: ["https://kovan.optimism.io/"],
+    //     blockExplorerUrls: ["https://kovan-optimistic.etherscan.io/"],
     //     nativeCurrency: {
-    //         name: "ETH",
-    //         symbol: "ETH",
+    //         name: "KOR",
+    //         symbol: "KOR",
     //         decimals: 18,
     //     },
     // },
-    // testnet
+    // mainnet
     [NETWORK.boba]: {
         chainName: "Boba",
         chainId: Web3.utils.toHex(networkToId[NETWORK.boba]),
-        rpcUrls: ["https://rinkeby.boba.network/"],
-        blockExplorerUrls: ["https://blockexplorer.rinkeby.boba.network/"],
+        rpcUrls: ["https://mainnet.boba.network"],
+        blockExplorerUrls: ["https://blockexplorer.boba.network/"],
         nativeCurrency: {
             name: "ETH",
             symbol: "ETH",
             decimals: 18,
         },
     },
+    // testnet
+    // [NETWORK.boba]: {
+    //     chainName: "Boba",
+    //     chainId: Web3.utils.toHex(networkToId[NETWORK.boba]),
+    //     rpcUrls: ["https://rinkeby.boba.network/"],
+    //     blockExplorerUrls: ["https://blockexplorer.rinkeby.boba.network/"],
+    //     nativeCurrency: {
+    //         name: "ETH",
+    //         symbol: "ETH",
+    //         decimals: 18,
+    //     },
+    // },
     [NETWORK.skale]: {
         chainName: "Hackathon Skale Chain| downright-royal-saiph",
         chainId: Web3.utils.toHex(networkToId[NETWORK.skale]),
@@ -188,7 +188,7 @@ export const networkInfo = {
     [NETWORK.polygon]: {
         chainName: "Polygon Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.polygon]),
-        rpcUrls: ["https://polygon-rpc.com/"],
+        rpcUrls: ["https://rpc.ankr.com/polygon"],
         blockExplorerUrls: ["https://polygonscan.com/"],
         nativeCurrency: {
             name: "MATIC Token",
@@ -253,7 +253,7 @@ export const networkInfo = {
     },
 };
 
-export const changeNetworkAtMetamask = async (networkName: number) => {
+export const changeNetworkAtMetamask = async (networkName: NetworkType) => {
     try {
         await window.ethereum.request({
             method: "wallet_switchEthereumChain",

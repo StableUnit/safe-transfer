@@ -12,18 +12,33 @@ export type TokenInfoType = {
     chain: NetworkType;
 };
 
+export type RequestUrlType = {
+    token?: string;
+    to: string;
+    value?: number;
+    networkName: NetworkType;
+};
+
 export const generateUrl = ({ address, from, to, value, chain }: TokenInfoType) => {
     const { origin } = window.location;
     const token = jwt.sign({ address, from, to, value, chain }, SECRET_KEY);
 
     return `${origin}/receive?token=${token}`;
 };
+
+export const generateRequestUrl = ({ token, to, value, networkName }: RequestUrlType) => {
+    const { origin } = window.location;
+    const requestToken = jwt.sign({ token, to, value, networkName }, SECRET_KEY);
+
+    return `${origin}/send?requestToken=${requestToken}`;
+};
+
 // @ts-ignore
 window.generateUrl = generateUrl;
 
-export const decodeToken = (token: string) => {
+export const decodeToken = <T>(token: string) => {
     try {
-        return jwt.verify(token, SECRET_KEY) as TokenInfoType;
+        return jwt.verify(token, SECRET_KEY) as T;
     } catch (e) {
         return undefined;
     }

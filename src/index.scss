@@ -39,3 +39,13 @@ input[type=number] {
 body > iframe {
     display: none;
 }
+
+.required {
+    &:after {
+        content: " required";
+        text-align: start;
+        color: red;
+        font-size: 9px;
+        vertical-align: super;
+    }
+}

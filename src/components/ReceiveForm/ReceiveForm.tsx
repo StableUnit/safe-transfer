@@ -20,11 +20,13 @@ import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage"
 import { StateContext } from "../../reducer/constants";
 import RestoreForm from "../RestoreForm/RestoreForm";
 import { ensToAddress } from "../../utils/wallet";
+import { PageNotFound } from "../PageNotFound";
+import { trackEvent } from "../../utils/events";
+import Twitter from "../Twitter";
 
 import "../PageNotFound/styles.scss";
 import "./ReceiveForm.scss";
-import { PageNotFound } from "../PageNotFound";
-import { trackEvent } from "../../utils/events";
+import { useReceiveToken } from "../../hooks/useReceiveToken";
 
 interface TransferFormProps {
     onConnect: () => void;
@@ -45,13 +47,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
     const networkName = chainId ? idToNetwork[chainId] : undefined;
 
-    const [token, setToken] = useState<string | null>(null);
-    const tokenData = token ? decodeToken(token) : undefined;
-
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        setToken(urlParams.get("token"));
-    }, []);
+    const { tokenData, token } = useReceiveToken();
 
     const updateTokenMetadata = async () => {
         if (tokenData) {
@@ -155,7 +151,8 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                     type: "ERC20",
                     options: {
                         address: tokenData.address,
-                        symbol: tokenMetadata?.symbol,
+                        // metamask can't add tokens with symbol longer than 11 characters
+                        symbol: tokenMetadata?.symbol.slice(0, 11),
                         decimals: tokenMetadata?.decimals,
                         image: tokenMetadata?.logo,
                     },
@@ -221,104 +218,109 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     };
 
     return (
-        <div className={cn("receive-form", { "receive-form--disabled": isDisabledContent })}>
-            {token && (
-                <div className="receive-form__content">
-                    <div className="receive-form__title">Receive</div>
-                    {tokenData && (
-                        <>
-                            <InfoCell title="Network:">
-                                <NetworkImage network={tokenData.chain} width={24} height={24} />
-                                <div>&nbsp;&nbsp;{networkNames[tokenData.chain]}</div>
-                            </InfoCell>
-                            <div className="receive-form__line">
-                                <InfoCell
-                                    className="receive-form__copy-container"
-                                    title="From:"
-                                    bubble={isSender ? "You" : undefined}
-                                >
-                                    <div id="from">{getShortHash(tokenData.from)}</div>
-                                    <div onClick={handleCopyUrl(tokenData.from)}>
-                                        <ContentCopyIcon />
-                                    </div>
+        <>
+            <div className={cn("receive-form", { "receive-form--disabled": isDisabledContent })}>
+                {token && (
+                    <div className="receive-form__content">
+                        <div className="receive-form__title">Receive</div>
+                        {tokenData && (
+                            <>
+                                <InfoCell title="Network:">
+                                    <NetworkImage network={tokenData.chain} width={24} height={24} />
+                                    <div>&nbsp;&nbsp;{networkNames[tokenData.chain]}</div>
                                 </InfoCell>
-                                <InfoCell
-                                    className="receive-form__copy-container"
-                                    title="To:"
-                                    bubble={isReceiver ? "You" : undefined}
-                                >
-                                    <div id="to">
-                                        {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to}
-                                    </div>
-                                    <div onClick={handleCopyUrl(tokenData.to)}>
-                                        <ContentCopyIcon />
-                                    </div>
-                                </InfoCell>
-                            </div>
-                            <InfoCell className="receive-form__token-address" title="Token address:">
-                                <a
-                                    href={getAddressLink(tokenData.address, tokenData.chain)}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                >
-                                    <div id="tokenAddress">{getShortHash(tokenData.address)}</div>
-                                </a>
-                                <div className="receive-form__token-address__buttons">
-                                    <div className="receive-form__metamask" onClick={handleAddToMetamask}>
-                                        <div>Add to&nbsp;</div>
-                                        <MetamaskIcon />
-                                    </div>
-                                    <div onClick={handleCopyUrl(tokenData.address)}>
-                                        <ContentCopyIcon />
-                                    </div>
-                                </div>
-                            </InfoCell>
-                            <div className="receive-form__line">
-                                <InfoCell title="Approved value:">
-                                    <div id="value">{getValue(tokenMetadata, tokenData)}</div>
-                                </InfoCell>
-                                {allowance && tokenMetadata && (
-                                    <InfoCell title="Current allowance:">
-                                        <div id="allowance">
-                                            {`${beautifyTokenBalance(allowance, +tokenMetadata.decimals)} ${
-                                                tokenMetadata?.symbol
-                                            }`}
+                                <div className="receive-form__line">
+                                    <InfoCell
+                                        className="receive-form__copy-container"
+                                        title="From:"
+                                        bubble={isSender ? "You" : undefined}
+                                    >
+                                        <div id="from">{getShortHash(tokenData.from)}</div>
+                                        <div onClick={handleCopyUrl(tokenData.from)}>
+                                            <ContentCopyIcon />
                                         </div>
                                     </InfoCell>
-                                )}
-                            </div>
-                            {renderButton()}
-                            {address && tokenData.to.toLowerCase() !== address?.toLowerCase() && (
-                                <div className="receive-form__error">
-                                    Only account{" "}
-                                    {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to} can
-                                    receive the transfer.
+                                    <InfoCell
+                                        className="receive-form__copy-container"
+                                        title="To:"
+                                        bubble={isReceiver ? "You" : undefined}
+                                    >
+                                        <div id="to">
+                                            {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to}
+                                        </div>
+                                        <div onClick={handleCopyUrl(tokenData.to)}>
+                                            <ContentCopyIcon />
+                                        </div>
+                                    </InfoCell>
                                 </div>
-                            )}
-                            {address && tokenData.chain !== networkName && (
-                                <div className="receive-form__error">Please change network to {tokenData.chain}</div>
-                            )}
-                        </>
-                    )}
-                </div>
-            )}
-            {trxHash && networkName && (
-                <div className="receive-form__hash">
-                    <div className="receive-form__hash__text">
-                        <div>Hash:&nbsp;&nbsp;</div>
-                        <div id="generated-url">
-                            <a href={getTrxHashLink(trxHash, networkName)} target="_blank" rel="noreferrer">
-                                {getShortHash(trxHash)}
-                            </a>
-                        </div>
+                                <InfoCell className="receive-form__token-address" title="Token address:">
+                                    <a
+                                        href={getAddressLink(tokenData.address, tokenData.chain)}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        <div id="tokenAddress">{getShortHash(tokenData.address)}</div>
+                                    </a>
+                                    <div className="receive-form__token-address__buttons">
+                                        <div className="receive-form__metamask" onClick={handleAddToMetamask}>
+                                            <div>Add to&nbsp;</div>
+                                            <MetamaskIcon />
+                                        </div>
+                                        <div onClick={handleCopyUrl(tokenData.address)}>
+                                            <ContentCopyIcon />
+                                        </div>
+                                    </div>
+                                </InfoCell>
+                                <div className="receive-form__line">
+                                    <InfoCell title="Approved value:">
+                                        <div id="value">{getValue(tokenMetadata, tokenData)}</div>
+                                    </InfoCell>
+                                    {allowance && tokenMetadata && (
+                                        <InfoCell title="Current allowance:">
+                                            <div id="allowance">
+                                                {`${beautifyTokenBalance(allowance, +tokenMetadata.decimals)} ${
+                                                    tokenMetadata?.symbol
+                                                }`}
+                                            </div>
+                                        </InfoCell>
+                                    )}
+                                </div>
+                                {renderButton()}
+                                {address && tokenData.to.toLowerCase() !== address?.toLowerCase() && (
+                                    <div className="receive-form__error">
+                                        Only account{" "}
+                                        {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to} can
+                                        receive the transfer.
+                                    </div>
+                                )}
+                                {address && tokenData.chain !== networkName && (
+                                    <div className="receive-form__error">
+                                        Please change network to {tokenData.chain}
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
-                    <IconButton aria-label="copy" onClick={handleCopyUrl(trxHash)}>
-                        <ContentCopyIcon />
-                    </IconButton>
-                </div>
-            )}
-            {!tokenData && <RestoreForm />}
-        </div>
+                )}
+                {trxHash && networkName && (
+                    <div className="receive-form__hash">
+                        <div className="receive-form__hash__text">
+                            <div>Hash:&nbsp;&nbsp;</div>
+                            <div id="generated-url">
+                                <a href={getTrxHashLink(trxHash, networkName)} target="_blank" rel="noreferrer">
+                                    {getShortHash(trxHash)}
+                                </a>
+                            </div>
+                        </div>
+                        <IconButton aria-label="copy" onClick={handleCopyUrl(trxHash)}>
+                            <ContentCopyIcon />
+                        </IconButton>
+                    </div>
+                )}
+                {!tokenData && <RestoreForm />}
+            </div>
+            <Twitter />
+        </>
     );
 });
 

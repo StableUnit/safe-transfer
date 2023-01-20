@@ -1,11 +1,10 @@
-import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from "react";
+import React, { ChangeEvent, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import cn from "classnames";
 import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 
-import { TwitterShareButton } from "react-twitter-embed";
 import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
 import { ensToAddress, isAddress } from "../../utils/wallet";
 import {
@@ -16,7 +15,7 @@ import {
     getTokenContractFactory,
     toHRNumberFloat,
 } from "../../utils/tokens";
-import { generateUrl, getShortHash, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
+import { generateUrl, getShortHash, handleCopyUrl } from "../../utils/urlGenerator";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
@@ -27,12 +26,16 @@ import { StateContext } from "../../reducer/constants";
 import { arrayUniqueByKey, sortByBalance, sortBySymbol } from "../../utils/array";
 import { getTokens } from "../../utils/storage";
 import { trackEvent } from "../../utils/events";
+import { LoaderLine } from "../../ui-kit/components/LoaderLine";
+import Twitter from "../Twitter";
+import GenUrl from "../GenUrl";
+import { useRequestToken } from "../../hooks/useRequestToken";
+import { PageNotFound } from "../PageNotFound";
+import { useCurrentTokenData } from "../../hooks/useCurrentTokenData";
 
 import "./SendForm.scss";
-import { TwitterPosts } from "../TwitterPosts";
-import { LoaderLine } from "../../ui-kit/components/LoaderLine";
 
-type BalanceType = {
+export type BalanceType = {
     // eslint-disable-next-line camelcase
     token_address: string;
     name: string;
@@ -47,34 +50,43 @@ interface ApproveFormProps {
     onConnect: () => void;
 }
 
-const twitterPosts = [
-    "1595062904679956482",
-    "1594459327674425346",
-    "1543956221614489601",
-    "1511317628576362502",
-    "1613088718797295617",
-    "1613201006312947712",
-    "1614328400071491585",
-    "1614569695918841856",
-];
-
 const SendForm = ({ onConnect }: ApproveFormProps) => {
     const { address, chainId, web3, newCustomToken } = useContext(StateContext);
     const networkName = chainId ? idToNetwork[chainId] : undefined;
-    const [toAddress, setToAddress] = useState<undefined | string>(undefined);
-    const [value, setValue] = useState<undefined | number>(undefined);
-    const [selectedToken, setSelectedToken] = useState<undefined | string>(undefined); // address
+    const [toAddress, setToAddress] = useState<string>();
+    const [value, setValue] = useState<number>();
+    const [selectedToken, setSelectedToken] = useState<string>(); // address
     const [isApproveLoading, setIsApproveLoading] = useState(false);
     const [isCancelApproveLoading, setIsCancelApproveLoading] = useState(false);
     const [isBalanceRequestLoading, setIsBalanceRequestLoading] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [trxLink, setTrxLink] = useState("");
     const [balances, setBalances] = useState<BalanceType[]>([]);
-    const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
-    const [allowance, setAllowance] = useState<undefined | string>(undefined);
+    const [genUrl, setGenUrl] = useState<string>();
+    const [allowance, setAllowance] = useState<string>();
+
+    const { requestTokenData, requestToken } = useRequestToken();
+    const isDisabledByToken = requestTokenData && networkName !== requestTokenData.networkName;
+    const hasRequestToken = !!requestTokenData;
+
+    const currentToken = useCurrentTokenData(balances, selectedToken, requestTokenData);
+
+    useEffect(() => {
+        if (hasRequestToken && currentToken) {
+            setBalances([currentToken]);
+        }
+    }, [hasRequestToken, currentToken]);
+
+    useEffect(() => {
+        if (requestTokenData) {
+            changeNetworkAtMetamask(requestTokenData.networkName);
+            setValue(requestTokenData.value);
+            setToAddress(requestTokenData.to);
+            setSelectedToken(requestTokenData.token);
+        }
+    }, [requestToken]);
 
     const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
-    const currentToken = balances.find((v) => v.token_address === selectedToken);
     const currentTokenBalance = currentToken
         ? toHRNumberFloat(new BN(currentToken.balance), +currentToken.decimals)
         : 0;
@@ -83,7 +95,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const getTokenContract = getTokenContractFactory(web3);
 
     const onMount = async () => {
-        if (chainId && address && web3) {
+        if (chainId && address && web3 && !requestTokenData?.token) {
             let longRequestTimeoutId;
             try {
                 setIsBalanceRequestLoading(true);
@@ -175,7 +187,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     useEffect(() => {
         onMount();
-    }, [chainId, address, web3]);
+    }, [chainId, address, web3, requestToken]);
 
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);
@@ -197,7 +209,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         }
     };
 
-    const onSuccessApprove = (selectedTokenInfo: BalanceType) => {
+    const onSuccessApprove = () => {
         if (genUrl) {
             return;
         }
@@ -208,19 +220,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             return;
         }
 
-        const valueBN = fromHRToBN(value ?? 0, +selectedTokenInfo.decimals).toString();
-
         addSuccessNotification("Success", "Approve transaction completed");
         setIsApproveLoading(false);
-        setGenUrl(
-            generateUrl({
-                address: selectedTokenInfo?.token_address,
-                from: address ?? "",
-                to: toAddress ?? "",
-                value: valueBN,
-                chain: networkName,
-            })
-        );
     };
 
     const cancelApprove = async () => {
@@ -286,6 +287,15 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     .on("transactionHash", (hash: string) => {
                         setTrxHash(hash);
                         setTrxLink(getTrxHashLink(hash, networkName));
+                        setGenUrl(
+                            generateUrl({
+                                address: currentToken?.token_address,
+                                from: address ?? "",
+                                to: toAddress ?? "",
+                                value: fromHRToBN(value ?? 0, +currentToken.decimals).toString(),
+                                chain: networkName,
+                            })
+                        );
                         timeoutId = setTimeout(() => {
                             trackEvent("APPROVE_FINISHED", {
                                 fromAddress: address,
@@ -293,7 +303,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                 value,
                                 currency: getTokenName(selectedToken),
                             });
-                            onSuccessApprove(currentToken);
+                            onSuccessApprove();
                         }, 20000);
                     });
                 trackEvent("APPROVE_FINISHED", {
@@ -302,7 +312,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     value,
                     currency: getTokenName(selectedToken),
                 });
-                onSuccessApprove(currentToken);
+                onSuccessApprove();
                 clearTimeout(timeoutId);
             } catch (error) {
                 clearTimeout(timeoutId);
@@ -311,7 +321,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                 if (replacedHash) {
                     setTrxHash(replacedHash);
                     setTrxLink(getTrxHashLink(replacedHash, networkName));
-                    onSuccessApprove(currentToken);
+                    onSuccessApprove();
                 } else {
                     console.error(error);
                     addErrorNotification("Error", "Approve transaction failed");
@@ -322,6 +332,9 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const handleMaxClick = () => {
+        if (requestTokenData?.value) {
+            return;
+        }
         setValue(+currentTokenBalance);
         trackEvent("MAX_CLICK", {});
     };
@@ -344,6 +357,10 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         setAllowanceAsync();
     }, [isCorrectData]);
 
+    if (requestToken && !requestTokenData) {
+        return <PageNotFound />;
+    }
+
     return (
         <>
             <div className="send-form__container">
@@ -362,30 +379,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         </IconButton>
                     </div>
                 )}
-                {trxHash && !genUrl && (
-                    <div className="send-form__url">
-                        <div className="send-form__url__text">
-                            <div className="send-form__url__text--title">Link to receive:&nbsp;&nbsp;</div>
-                            <LoaderLine width={155} height={18} />
-                        </div>
-                        <IconButton aria-label="copy" onClick={handleCopyUrl("")}>
-                            <ContentCopyIcon />
-                        </IconButton>
-                    </div>
-                )}
-                {genUrl && (
-                    <div className="send-form__url">
-                        <div className="send-form__url__text">
-                            <div className="send-form__url__text--title">Link to receive:&nbsp;&nbsp;</div>
-                            <a href={genUrl} target="_blank" rel="noreferrer">
-                                {getShortUrl(genUrl)}
-                            </a>
-                        </div>
-                        <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
-                            <ContentCopyIcon />
-                        </IconButton>
-                    </div>
-                )}
+                <GenUrl isLoading={isApproveLoading} genUrl={genUrl} text="Link to receive:" />
                 <div className={cn("send-form", { "send-form--disabled": !address })}>
                     <div className="send-form__title">Send</div>
 
@@ -414,6 +408,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
                         <div className="send-form__label">Recipient address</div>
                         <TextField
+                            value={toAddress}
+                            disabled={hasRequestToken}
                             id="address"
                             className="send-form__address"
                             placeholder="Paste address here ..."
@@ -431,6 +427,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         <div className="send-form__content__line">
                             <FormControl className="send-form__token-form">
                                 <Select
+                                    disabled={!!requestTokenData?.token}
                                     value={selectedToken || "placeholder-value" || "custom-value"}
                                     onChange={handleTokenChange}
                                     inputProps={{ "aria-label": "Without label" }}
@@ -462,6 +459,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                             </FormControl>
 
                             <TextField
+                                disabled={!!requestTokenData?.value}
                                 id="value"
                                 className="send-form__value"
                                 placeholder="0.00"
@@ -499,7 +497,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         <Button
                             onClick={handleApprove}
                             className="send-form__button"
-                            disabled={!isCorrectData || isApproveLoading || hasAllowance}
+                            disabled={!isCorrectData || isApproveLoading || hasAllowance || isDisabledByToken}
                         >
                             {isApproveLoading ? "Loading..." : "Approve"}
                         </Button>
@@ -508,18 +506,12 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                             CONNECT WALLET
                         </Button>
                     )}
+                    {requestTokenData && requestTokenData.networkName !== networkName && (
+                        <div className="send-form__error">Please change network to {requestTokenData.networkName}</div>
+                    )}
                 </div>
             </div>
-            <div className="send-form__twitter">
-                <div className="send-form__twitter__header">
-                    <div className="send-form__twitter__title">Tell us how you feel about Safe Transfer</div>
-                    <TwitterShareButton
-                        url="https://safe-transfer.stableunit.org/"
-                        options={{ text: "#safetransfer is awesome", via: "stableUnit", size: "large" }}
-                    />
-                </div>
-                <TwitterPosts ids={twitterPosts} />
-            </div>
+            <Twitter />
         </>
     );
 };

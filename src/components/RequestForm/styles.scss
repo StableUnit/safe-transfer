@@ -1,0 +1,139 @@
+@import "../../ui-kit/styles/vars";
+
+.request-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 356px;
+
+  &:last-child {
+    margin-top: 24px;
+    margin-bottom: 48px;
+  }
+
+  padding: 32px 24px 32px 24px;
+  margin-bottom: 25px;
+
+  background: $black;
+  background-clip: padding-box;
+  border: solid 1px transparent;
+  position: relative;
+  border-radius: 24px;
+
+  &-container {
+    margin-bottom: 25px;
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    z-index: -1;
+    margin: -1px;
+    border-radius: inherit;
+    background: linear-gradient(74.43deg, #DBB0FF -12.43%, #C2DCFF 24.51%, #B4FFE0 63.46%, #FEFBDA 82.01%, #FECBFF 110.47%);
+  }
+
+  &__title {
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 42px;
+    padding-bottom: 32px;
+  }
+
+  &__content {
+    text-align: left;
+    max-width: 352px;
+
+    .MuiInputBase-input {
+      color: white;
+      display: flex;
+      align-items: center;
+
+      img {
+        padding-right: 8px;
+      }
+    }
+
+    .MuiSelect-icon {
+      right: 17px;
+    }
+  }
+
+  &__label {
+    color: $gray1;
+    padding-left: 16px;
+  }
+
+  & &__network-form,
+  & &__address,
+  & &__value {
+    width: 352px;
+    margin: 8px 0 18px;
+    border: 1px solid #313131;
+    border-radius: 80px;
+
+    & > div {
+      color: $gray1;
+    }
+
+    input {
+      color: $gray1;
+      background-color: $black !important;
+      border-radius: 80px;
+      outline: none;
+    }
+
+    fieldset {
+      display: none;
+    }
+
+    button {
+      color: $gray1;
+    }
+
+    @media screen and (max-width: 600px) {
+      width: 340px;
+    }
+  }
+
+  & &__token-form {
+    .MuiSelect-select {
+      padding: 18px 50px 16px 16px !important;
+    }
+  }
+
+  &__paper {
+    background-color: #313131 !important;
+    border-radius: 8px !important;
+    color: #FFFFFF !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    line-height: 18px !important;
+  }
+
+  &__list {
+    li {
+      padding-bottom: 12px;
+    }
+    img {
+      padding-right: 8px;
+    }
+  }
+
+  &__button  {
+    width: 100%;
+    height: 58px;
+    margin: 20px auto 0 auto;
+  }
+}
+
+.MuiAutocomplete-paper {
+  color: $gray1 !important;
+  background: $dark-gray !important;
+
+  .MuiAutocomplete-noOptions {
+    color: $gray1 !important;
+  }
+}
