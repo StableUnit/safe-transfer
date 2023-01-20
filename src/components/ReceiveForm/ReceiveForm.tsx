@@ -151,7 +151,8 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                     type: "ERC20",
                     options: {
                         address: tokenData.address,
-                        symbol: tokenMetadata?.symbol,
+                        // metamask can't add tokens with symbol longer than 11 characters
+                        symbol: tokenMetadata?.symbol.slice(0, 11),
                         decimals: tokenMetadata?.decimals,
                         image: tokenMetadata?.logo,
                     },

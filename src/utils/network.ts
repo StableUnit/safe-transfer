@@ -253,7 +253,7 @@ export const networkInfo = {
     },
 };
 
-export const changeNetworkAtMetamask = async (networkName: string) => {
+export const changeNetworkAtMetamask = async (networkName: NetworkType) => {
     try {
         await window.ethereum.request({
             method: "wallet_switchEthereumChain",
