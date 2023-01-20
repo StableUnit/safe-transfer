@@ -30,7 +30,8 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     avalanche: "avalanche",
 };
 
-export const DEFAULT_NETWORK = "mainnet"; // Name of NETWORK.eth in web3modal
+export const DEFAULT_NETWORK_WEB3_MODAL = "mainnet"; // Name of NETWORK.eth in web3modal
+export const DEFAULT_NETWORK = NETWORK.eth;
 
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",

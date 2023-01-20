@@ -6,13 +6,18 @@ import { Integrations } from "@sentry/tracing";
 import amplitude from "amplitude-js";
 import { BrowserRouter } from "react-router-dom";
 
+import { configureChains, createClient, WagmiConfig } from "wagmi";
+import { EthereumClient, modalConnectors, walletConnectProvider } from "@web3modal/ethereum";
+import { arbitrum, mainnet, polygon } from "wagmi/chains";
+import { Web3Modal } from "@web3modal/react";
+
 import App from "./components/App/App";
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
+import { initialState, StateContext, DispatchContext } from "./reducer/constants";
+import reducer from "./reducer";
 
 import "./index.scss";
 import "react-notifications-component/dist/theme.css";
-import { initialState, StateContext, DispatchContext } from "./reducer/constants";
-import reducer from "./reducer";
 
 Sentry.init({
     dsn: "https://7a6df39090c749e3a39eb6bce2d5fad8@o922999.ingest.sentry.io/6543522",
@@ -22,15 +27,33 @@ Sentry.init({
 
 amplitude.getInstance().init("33269ec4443fd55fdcb0c426627ec40f");
 
+const PROJECT_ID = "8bc6fb62be86919096fcd7486c9d70ad";
+
 const AppContainer = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
+
+    const chains = [arbitrum, mainnet, polygon];
+    // Wagmi client
+    const { provider } = configureChains(chains, [walletConnectProvider({ projectId: PROJECT_ID })]);
+    const wagmiClient = createClient({
+        autoConnect: true,
+        connectors: modalConnectors({ appName: "web3Modal", chains }),
+        provider,
+    });
+
+    // Web3Modal Ethereum Client
+    const ethereumClient = new EthereumClient(wagmiClient, chains);
+
     return (
         <StateContext.Provider value={state}>
             <DispatchContext.Provider value={dispatch}>
                 <ErrorBoundary>
                     <ReactNotifications />
                     <BrowserRouter>
-                        <App />
+                        <WagmiConfig client={wagmiClient}>
+                            <App />
+                        </WagmiConfig>
+                        <Web3Modal projectId={PROJECT_ID} ethereumClient={ethereumClient} />
                     </BrowserRouter>
                 </ErrorBoundary>
             </DispatchContext.Provider>
