@@ -97,6 +97,8 @@ const App = () => {
         const newChainId = await web3.eth.getChainId();
         dispatch({ type: Actions.SetChainId, payload: newChainId });
 
+        // eslint-disable-next-line max-len
+        // Disclaimer! Beware, that despite we don’t track any data expect wallet address (to calc statistics), underlying infrastructure of your wallets such as metamask and blockchain interaction infrastructure such as Infura does track ip addresses, and more.
         trackEvent("WALLET_CONNECTED", { address: accounts[0], chainId: newChainId });
 
         // const loadedAsSafeApp = await web3Modal.isSafeApp();
