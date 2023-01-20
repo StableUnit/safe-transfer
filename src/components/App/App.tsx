@@ -111,7 +111,9 @@ const App = () => {
     };
 
     useEffect(() => {
-        onConnect();
+        if (web3Modal.cachedProvider) {
+            onConnect();
+        }
     }, []);
 
     return (
