@@ -2,7 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import cn from "classnames";
 
-import { NetworkType, getAddressLink, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
+import {
+    NetworkType,
+    getAddressLink,
+    getTrxHashLink,
+    idToNetwork,
+    networkNames,
+    networkToId,
+} from "../../utils/network";
 import { decodeToken, getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
 import {
     beautifyTokenBalance,
@@ -78,7 +85,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         setIsTransferFetching(true);
 
         try {
-            if (tokenData && web3) {
+            if (tokenData && web3 && networkName) {
                 const getTokenContract = getTokenContractFactory(web3);
                 const tokenContract = getTokenContract(tokenData.address);
                 if (tokenContract) {
@@ -87,22 +94,22 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                         .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
                         .on("transactionHash", (hash: string) => {
                             setTrxHash(hash);
+                            // eslint-disable-next-line max-len
+                            // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                            trackEvent("TRANSFER_FROM_SENT", {
+                                chainId: networkToId[networkName],
+                                txHash: hash,
+                                fromAddress: tokenData.from,
+                                toAddress: tokenData.to,
+                                tokenAddress: tokenData.address,
+                                tokenSymbol: tokenMetadata?.symbol,
+                                tokenAmount: getValue(tokenMetadata, tokenData),
+                            });
                         });
 
                     addSuccessNotification("Success", "Transfer from transaction completed");
                     setIsSuccess(true);
                     setIsTransferFetching(false);
-
-                    const symbol = await tokenContract.methods.symbol().call();
-                    // eslint-disable-next-line max-len
-                    // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
-                    trackEvent("RECEIVE_SUCCESS", {
-                        from: tokenData.from,
-                        to: tokenData.to,
-                        value: tokenData.value.toString(),
-                        symbol,
-                        networkName,
-                    });
                 }
             }
         } catch (e) {
@@ -117,28 +124,32 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         setIsCancelFetching(true);
 
         try {
-            if (tokenData && web3) {
+            if (tokenData && web3 && networkName) {
                 const getTokenContract = getTokenContractFactory(web3);
                 const tokenContract = getTokenContract(tokenData.address);
                 if (tokenContract) {
                     await tokenContract.methods
                         .approve(await ensToAddress(tokenData.to), "0")
-                        .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null });
+                        .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
+                        .on("transactionHash", async (txHash: string) => {
+                            const symbol = await tokenContract.methods.symbol().call();
+
+                            // eslint-disable-next-line max-len
+                            // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                            trackEvent("APPROVED_REVOKE_SENT", {
+                                source: "Receive Page",
+                                chainId: networkToId[networkName],
+                                txHash,
+                                fromAddress: tokenData.from,
+                                toAddress: tokenData.to,
+                                tokenAddress: tokenData.address,
+                                tokenSymbol: symbol,
+                            });
+                        });
 
                     addSuccessNotification("Success", "Cancel allowance completed");
                     setIsCancelFetching(false);
                     await updateAllowance();
-
-                    const symbol = await tokenContract.methods.symbol().call();
-                    // eslint-disable-next-line max-len
-                    // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
-                    trackEvent("CANCEL_ALLOWANCE", {
-                        source: "Receive Page",
-                        symbol,
-                        to: tokenData.to,
-                        from: tokenData.from,
-                        networkName,
-                    });
                 }
             }
         } catch (e) {
@@ -164,7 +175,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                     },
                 },
             });
-            trackEvent("ADD_TO_METAMASK", { source: "Receive Page", symbol: tokenMetadata?.symbol });
+            trackEvent("METAMASK_TOKEN_ADD", { source: "Receive Page", symbol: tokenMetadata?.symbol });
         }
     };
 
