@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.8](https://github.com/StableUnit/safe-transfer/compare/v0.4.7...v0.4.8) (2023-01-20)
+
+
+### Bug Fixes
+
+* remove connect modal if user disconnected ([642bd2e](https://github.com/StableUnit/safe-transfer/commit/642bd2e7def7992d52a356b6f3f0696ae0b6ee28))
+
 ### [0.4.7](https://github.com/StableUnit/safe-transfer/compare/v0.4.6...v0.4.7) (2023-01-17)
 
 
