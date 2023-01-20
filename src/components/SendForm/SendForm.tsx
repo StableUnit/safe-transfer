@@ -5,7 +5,14 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 
-import { changeNetworkAtMetamask, NetworkType, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
+import {
+    changeNetworkAtMetamask,
+    NetworkType,
+    getTrxHashLink,
+    idToNetwork,
+    networkNames,
+    networkToId,
+} from "../../utils/network";
 import { ensToAddress, isAddress } from "../../utils/wallet";
 import {
     beautifyTokenBalance,
@@ -226,7 +233,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     const cancelApprove = async () => {
         const tokenContract = getTokenContract(currentToken?.token_address ?? "");
-        if (!tokenContract || !web3) {
+        if (!tokenContract || !web3 || !networkName) {
             addErrorNotification("Error", "No network");
             return;
         }
@@ -235,16 +242,23 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             setIsCancelApproveLoading(true);
             await tokenContract.methods
                 .approve(await ensToAddress(toAddress), "0")
-                .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null });
-            setAllowance(undefined);
+                .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
+                .on("transactionHash", (txHash: string) => {
+                    const symbol = await tokenContract.methods.symbol().call();
 
-            const symbol = await tokenContract.methods.symbol().call();
-            trackEvent("CANCEL_ALLOWANCE", {
-                source: "Send Page",
-                symbol,
-                to: toAddress,
-                from: address,
-            });
+                    // eslint-disable-next-line max-len
+                    // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                    trackEvent("APPROVED_REVOKE_SENT", {
+                        source: "Send Page",
+                        chainId: networkToId[networkName],
+                        txHash,
+                        fromAddress: address,
+                        toAddress,
+                        tokenAddress: currentToken?.token_address,
+                        tokenSymbol: symbol,
+                    });
+                });
+            setAllowance(undefined);
         } catch (error) {
             // @ts-ignore
             const replacedHash = error?.replacement?.hash;
@@ -272,15 +286,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
             const tokenContract = getTokenContract(currentToken.token_address);
             const ensAddress = await ensToAddress(toAddress);
-            let timeoutId;
 
             try {
-                trackEvent("APPROVE_CREATED", {
-                    fromAddress: address,
-                    networkName,
-                    value,
-                    currency: getTokenName(selectedToken),
-                });
                 await tokenContract?.methods
                     .approve(ensAddress, valueBN)
                     .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
@@ -296,26 +303,20 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                 chain: networkName,
                             })
                         );
-                        timeoutId = setTimeout(() => {
-                            trackEvent("APPROVE_FINISHED", {
-                                fromAddress: address,
-                                networkName,
-                                value,
-                                currency: getTokenName(selectedToken),
-                            });
-                            onSuccessApprove();
-                        }, 20000);
+                        // eslint-disable-next-line max-len
+                        // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                        trackEvent("APPROVE_SENT", {
+                            chainId: networkToId[networkName],
+                            txHash: hash,
+                            fromAddress: address,
+                            toAddress,
+                            tokenAddress: currentToken?.token_address,
+                            tokenSymbol: getTokenName(selectedToken),
+                            tokenAmount: value,
+                        });
                     });
-                trackEvent("APPROVE_FINISHED", {
-                    fromAddress: address,
-                    networkName,
-                    value,
-                    currency: getTokenName(selectedToken),
-                });
                 onSuccessApprove();
-                clearTimeout(timeoutId);
             } catch (error) {
-                clearTimeout(timeoutId);
                 // @ts-ignore
                 const replacedHash = error?.replacement?.hash;
                 if (replacedHash) {
@@ -336,7 +337,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             return;
         }
         setValue(+currentTokenBalance);
-        trackEvent("MAX_CLICK", {});
     };
 
     const setAllowanceAsync = async () => {

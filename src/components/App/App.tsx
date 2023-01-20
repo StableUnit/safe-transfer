@@ -97,8 +97,6 @@ const App = () => {
         const newChainId = await web3.eth.getChainId();
         dispatch({ type: Actions.SetChainId, payload: newChainId });
 
-        trackEvent("WALLET_CONNECTED", { address: accounts[0], chainId: newChainId });
-
         // const loadedAsSafeApp = await web3Modal.isSafeApp();
         // console.log("Is connected to safe app:", loadedAsSafeApp);
     };
