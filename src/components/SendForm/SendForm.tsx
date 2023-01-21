@@ -449,6 +449,16 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                     )}
                                     {balances.map((token) => (
                                         <MenuItem key={token.token_address} value={token.token_address}>
+                                            <img
+                                                className="send-form__token-form__logo"
+                                                src={token.logo}
+                                                onError={({ currentTarget }) => {
+                                                    // eslint-disable-next-line no-param-reassign
+                                                    currentTarget.onerror = null; // prevents looping
+                                                    // eslint-disable-next-line no-param-reassign
+                                                    currentTarget.src = "/default.png";
+                                                }}
+                                            />
                                             <div className="send-form__token-form__symbol">{token.symbol}</div>
                                             <div className="send-form__token-form__balance">
                                                 {beautifyTokenBalance(token.balance, +token.decimals)}
