@@ -12,6 +12,7 @@ import {
     idToNetwork,
     networkNames,
     networkToId,
+    getAddressLink,
 } from "../../utils/network";
 import { ensToAddress, isAddress } from "../../utils/wallet";
 import {
@@ -41,6 +42,7 @@ import { PageNotFound } from "../PageNotFound";
 import { useCurrentTokenData } from "../../hooks/useCurrentTokenData";
 
 import "./SendForm.scss";
+import { GradientHref } from "../../ui-kit/components/GradientHref";
 
 export type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -470,6 +472,16 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                 }}
                             />
                         </div>
+                        {currentToken && networkName && (
+                            <GradientHref
+                                isExternal
+                                target="_blank"
+                                href={getAddressLink(currentToken.token_address, networkName)}
+                                className="send-form__token-name"
+                            >
+                                {currentToken.name}
+                            </GradientHref>
+                        )}
                     </div>
 
                     {hasAllowance && currentToken && (

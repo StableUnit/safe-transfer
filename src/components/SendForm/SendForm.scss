@@ -154,6 +154,13 @@
         padding-top: 5px;
     }
 
+    & &__token-name {
+        position: absolute;
+        left: 40px;
+        margin-top: -14px;
+        font-size: 12px;
+    }
+
     &__paper {
         background-color: #313131 !important;
         border-radius: 8px !important;
