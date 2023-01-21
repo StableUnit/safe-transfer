@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import Web3 from "web3";
 
 import { useWeb3Modal } from "@web3modal/react";
-import { useAccount, useDisconnect, useNetwork } from "wagmi";
+import { useAccount, useConnect, useDisconnect, useNetwork } from "wagmi";
 
 import Header from "../Header/Header";
 import { Footer } from "../Footer/Footer";
@@ -17,8 +17,9 @@ const App = () => {
     const dispatch = useContext(DispatchContext);
     const { open } = useWeb3Modal();
     const { disconnect } = useDisconnect();
+    const { connect } = useConnect();
 
-    const { address } = useAccount();
+    const { address, connector } = useAccount();
     const { chain } = useNetwork();
 
     const syncStore = async () => {
@@ -27,11 +28,16 @@ const App = () => {
         dispatch({ type: Actions.SetWeb3, payload: new Web3(Web3.givenProvider) });
     };
     useEffect(() => {
+        console.log(address, chain);
         syncStore();
     }, [address, chain]);
 
     const onConnect = async () => {
-        await open();
+        if (connector) {
+            await connect();
+        } else {
+            await open();
+        }
     };
 
     const onDisconnect = async () => {
