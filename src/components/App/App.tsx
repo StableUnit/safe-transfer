@@ -2,7 +2,8 @@ import React, { useContext, useEffect } from "react";
 import Web3 from "web3";
 
 import { useWeb3Modal } from "@web3modal/react";
-import { useAccount, useConnect, useDisconnect, useNetwork } from "wagmi";
+import { useAccount, useConnect, useNetwork, useProvider } from "wagmi";
+import { disconnect } from "@wagmi/core";
 
 import Header from "../Header/Header";
 import { Footer } from "../Footer/Footer";
@@ -16,11 +17,31 @@ import "./App.scss";
 const App = () => {
     const dispatch = useContext(DispatchContext);
     const { open } = useWeb3Modal();
-    const { disconnect } = useDisconnect();
     const { connect } = useConnect();
 
-    const { address, connector } = useAccount();
+    const { address, connector, status, isConnected } = useAccount();
     const { chain } = useNetwork();
+    const provider = useProvider();
+
+    const subscribeProvider = async (newProvider: any) => {
+        if (!newProvider.on) {
+            return;
+        }
+        newProvider.on("close", () => {
+            onDisconnect();
+        });
+        newProvider.on("accountsChanged", async (accounts: string[]) => {
+            dispatch({ type: Actions.SetCurrentAddress, payload: accounts[0] });
+        });
+        newProvider.on("chainChanged", async (hexChainId: string) => {
+            const newChainId = Web3.utils.hexToNumber(hexChainId);
+            dispatch({ type: Actions.SetChainId, payload: newChainId });
+        });
+    };
+
+    useEffect(() => {
+        subscribeProvider(provider);
+    }, [provider]);
 
     const syncStore = async () => {
         dispatch({ type: Actions.SetCurrentAddress, payload: address });
@@ -28,22 +49,23 @@ const App = () => {
         dispatch({ type: Actions.SetWeb3, payload: new Web3(Web3.givenProvider) });
     };
     useEffect(() => {
-        console.log(address, chain);
-        syncStore();
-    }, [address, chain]);
+        if (isConnected) {
+            syncStore();
+        }
+    }, [address, chain, isConnected, status]);
 
     const onConnect = async () => {
         if (connector) {
             await connect();
         } else {
-            await open();
+            await open({ route: "ConnectWallet" });
         }
     };
 
     const onDisconnect = async () => {
-        await disconnect();
         dispatch({ type: Actions.SetCurrentAddress, payload: undefined });
         dispatch({ type: Actions.SetChainId, payload: undefined });
+        await disconnect();
     };
 
     const onBugClick = () => {
@@ -52,12 +74,6 @@ const App = () => {
             "_blank"
         );
     };
-
-    // useEffect(() => {
-    //     if (web3Modal.cachedProvider) {
-    //         onConnect();
-    //     }
-    // }, []);
 
     return (
         <div className="App">

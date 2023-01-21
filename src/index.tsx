@@ -66,7 +66,12 @@ const AppContainer = () => {
                         <WagmiConfig client={wagmiClient}>
                             <App />
                         </WagmiConfig>
-                        <Web3Modal projectId={PROJECT_ID} ethereumClient={ethereumClient} />
+                        {/* @ts-ignore */}
+                        <Web3Modal
+                            defaultChain={chains.find((v) => v.id === +window.ethereum.networkVersion)}
+                            projectId={PROJECT_ID}
+                            ethereumClient={ethereumClient}
+                        />
                     </BrowserRouter>
                 </ErrorBoundary>
             </DispatchContext.Provider>
