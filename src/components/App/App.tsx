@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Web3 from "web3";
 
 import { useWeb3Modal } from "@web3modal/react";
-import { useAccount, useDisconnect } from "wagmi";
+import { useAccount, useDisconnect, useChainId, useNetwork, useProvider } from "wagmi";
 
 import Header from "../Header/Header";
 import { Footer } from "../Footer/Footer";
@@ -19,15 +19,19 @@ const App = () => {
     const { open } = useWeb3Modal();
     const { disconnect } = useDisconnect();
 
-    const { address, connector } = useAccount();
+    const { address, status, isConnected } = useAccount();
+    const { chain } = useNetwork();
+    const provider = useProvider();
+
     const syncStore = async () => {
         dispatch({ type: Actions.SetCurrentAddress, payload: address });
-        dispatch({ type: Actions.SetChainId, payload: await connector?.getChainId() });
-        dispatch({ type: Actions.SetWeb3, payload: new Web3(await connector?.getProvider()) });
+        dispatch({ type: Actions.SetChainId, payload: chain?.id });
+        dispatch({ type: Actions.SetWeb3, payload: new Web3(provider) });
     };
     useEffect(() => {
+        console.log(isConnected, status, connector, chain);
         syncStore();
-    }, [address]);
+    }, [address, status, connector, chain, isConnected]);
 
     const onConnect = async () => {
         await open();

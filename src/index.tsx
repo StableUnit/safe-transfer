@@ -8,7 +8,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { EthereumClient, modalConnectors, walletConnectProvider } from "@web3modal/ethereum";
-import { arbitrum, mainnet, polygon } from "wagmi/chains";
+import { arbitrum, mainnet, polygon, goerli, optimism, bsc, fantom, avalanche } from "wagmi/chains";
 import { Web3Modal } from "@web3modal/react";
 
 import App from "./components/App/App";
@@ -18,6 +18,7 @@ import reducer from "./reducer";
 
 import "./index.scss";
 import "react-notifications-component/dist/theme.css";
+import { wagmiCustomNetworks } from "./utils/network";
 
 Sentry.init({
     dsn: "https://7a6df39090c749e3a39eb6bce2d5fad8@o922999.ingest.sentry.io/6543522",
@@ -32,7 +33,19 @@ const PROJECT_ID = "8bc6fb62be86919096fcd7486c9d70ad";
 const AppContainer = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    const chains = [arbitrum, mainnet, polygon];
+    const chains = [
+        mainnet,
+        goerli,
+        optimism,
+        bsc,
+        polygon,
+        fantom,
+        avalanche,
+        wagmiCustomNetworks.cronos,
+        wagmiCustomNetworks.boba,
+        wagmiCustomNetworks.aurora,
+        wagmiCustomNetworks.harmony,
+    ];
     // Wagmi client
     const { provider } = configureChains(chains, [walletConnectProvider({ projectId: PROJECT_ID })]);
     const wagmiClient = createClient({
