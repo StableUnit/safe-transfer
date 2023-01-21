@@ -57,7 +57,7 @@ const App = () => {
         <div className="App">
             <Header onConnect={onConnect} onDisconnect={onDisconnect} />
             <div className="App__container">
-                <Routes onConnect={() => {}} />
+                <Routes onConnect={onConnect} />
             </div>
             <BugIcon className="bug-icon" onClick={onBugClick} />
             <Footer />
