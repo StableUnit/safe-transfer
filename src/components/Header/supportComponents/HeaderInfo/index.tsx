@@ -1,10 +1,11 @@
 import React from "react";
 import { GradientHref } from "../../../../ui-kit/components/GradientHref";
+import { useVolume } from "../../../../hooks/useVolume";
 
 import "./styles.scss";
 
 export const HeaderInfo = () => {
-    const totalTransferred = 1_250_500;
+    const volume = useVolume();
 
     return (
         <div className="header-info">
@@ -15,7 +16,7 @@ export const HeaderInfo = () => {
             </div>
             <div className="header-info__transferred">
                 <GradientHref>Total transferred: </GradientHref>
-                <span className="header-info__transferred__total">${totalTransferred.toLocaleString()}+</span>
+                <span className="header-info__transferred__total">${Math.floor(volume).toLocaleString()}+</span>
             </div>
         </div>
     );

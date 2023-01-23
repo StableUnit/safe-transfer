@@ -243,7 +243,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             await tokenContract.methods
                 .approve(await ensToAddress(toAddress), "0")
                 .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
-                .on("transactionHash", (txHash: string) => {
+                .on("transactionHash", async (txHash: string) => {
                     const symbol = await tokenContract.methods.symbol().call();
 
                     // eslint-disable-next-line max-len
@@ -286,7 +286,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
             const tokenContract = getTokenContract(currentToken.token_address);
             const ensAddress = await ensToAddress(toAddress);
-
             try {
                 await tokenContract?.methods
                     .approve(ensAddress, valueBN)
