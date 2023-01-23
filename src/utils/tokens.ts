@@ -100,7 +100,6 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
         },
     ],
     boba: [],
-    skale: [],
     cronos: [],
 };
 

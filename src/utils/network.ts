@@ -1,4 +1,5 @@
 import Web3 from "web3";
+import { Chain } from "wagmi";
 
 export type NetworkType =
     | "eth"
@@ -11,7 +12,7 @@ export type NetworkType =
     | "harmony"
     | "optimism"
     | "boba"
-    | "skale"
+    // | "skale"
     | "cronos";
 
 export const NETWORK: Record<NetworkType, NetworkType> = {
@@ -23,14 +24,12 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     // arbitrum: "arbitrum",
     optimism: "optimism",
     boba: "boba",
-    skale: "skale",
+    // skale: "skale",
     cronos: "cronos",
     bsc: "bsc",
     fantom: "fantom",
     avalanche: "avalanche",
 };
-
-export const DEFAULT_NETWORK = "mainnet"; // Name of NETWORK.eth in web3modal
 
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",
@@ -41,7 +40,7 @@ export const networkNames = {
     // [NETWORK.arbitrum]: "Arbitrum",
     [NETWORK.optimism]: "Optimism",
     [NETWORK.boba]: "Boba",
-    [NETWORK.skale]: "Skale",
+    // [NETWORK.skale]: "Skale",
     [NETWORK.cronos]: "Cronos",
     [NETWORK.bsc]: "Binance Smart Chain",
     [NETWORK.fantom]: "Fantom",
@@ -60,14 +59,14 @@ export const idToNetwork: Record<number, NetworkType> = {
     // 69: NETWORK.optimism, // testnet
     137: NETWORK.polygon,
     250: NETWORK.fantom,
-    288: NETWORK.boba, // mainnet
+    288: NETWORK.boba, // mainnet !!!
     // 338: NETWORK.cronos, // testnet
     // 42161: NETWORK.arbitrum,
     43114: NETWORK.avalanche,
-    1085866509: NETWORK.skale, // hackathon chainID
-    1313161554: NETWORK.aurora,
+    // 1085866509: NETWORK.skale, // hackathon chainID
+    1313161554: NETWORK.aurora, // !!!
     // 1313161555: NETWORK.aurora, // testnet
-    1666600000: NETWORK.harmony,
+    1666600000: NETWORK.harmony, // !!!
     // 1666700000: NETWORK.harmony, // testnet
 };
 
@@ -79,6 +78,11 @@ export const networkInfo = {
         chainId: Web3.utils.toHex(networkToId[NETWORK.eth]),
         blockExplorerUrls: ["https://etherscan.io"],
         rpcUrls: ["https://rpc.ankr.com/eth"],
+        nativeCurrency: {
+            name: "ETH",
+            symbol: "ETH",
+            decimals: 18,
+        },
     },
     [NETWORK.goerli]: {
         chainName: "Goerli",
@@ -139,17 +143,17 @@ export const networkInfo = {
     //         decimals: 18,
     //     },
     // },
-    [NETWORK.skale]: {
-        chainName: "Hackathon Skale Chain| downright-royal-saiph",
-        chainId: Web3.utils.toHex(networkToId[NETWORK.skale]),
-        rpcUrls: ["https://hackathon.skalenodes.com/v1/downright-royal-saiph"],
-        blockExplorerUrls: ["https://downright-royal-saiph.explorer.hackathon.skalenodes.com/"],
-        nativeCurrency: {
-            name: "sFUEL",
-            symbol: "sFUEL",
-            decimals: 18,
-        },
-    },
+    // [NETWORK.skale]: {
+    //     chainName: "Hackathon Skale Chain| downright-royal-saiph",
+    //     chainId: Web3.utils.toHex(networkToId[NETWORK.skale]),
+    //     rpcUrls: ["https://hackathon.skalenodes.com/v1/downright-royal-saiph"],
+    //     blockExplorerUrls: ["https://downright-royal-saiph.explorer.hackathon.skalenodes.com/"],
+    //     nativeCurrency: {
+    //         name: "sFUEL",
+    //         symbol: "sFUEL",
+    //         decimals: 18,
+    //     },
+    // },
     // mainnet
     [NETWORK.cronos]: {
         chainName: "Cronos",
@@ -251,6 +255,27 @@ export const networkInfo = {
             decimals: 18,
         },
     },
+};
+
+const generateWagmiCustomNetwork = (network: NetworkType) => ({
+    id: networkToId[network],
+    name: networkInfo[network].chainName,
+    network: networkInfo[network].chainName.toLowerCase(),
+    nativeCurrency: networkInfo[network].nativeCurrency,
+    rpcUrls: {
+        default: { http: networkInfo[network].rpcUrls },
+        public: { http: networkInfo[network].rpcUrls },
+    },
+    blockExplorers: {
+        default: { name: `${networkInfo[network].chainName}scan`, url: networkInfo[network].blockExplorerUrls[0] },
+    },
+});
+
+export const wagmiCustomNetworks: Record<string, Chain> = {
+    [NETWORK.cronos]: generateWagmiCustomNetwork(NETWORK.cronos),
+    [NETWORK.boba]: generateWagmiCustomNetwork(NETWORK.boba),
+    [NETWORK.aurora]: generateWagmiCustomNetwork(NETWORK.aurora),
+    [NETWORK.harmony]: generateWagmiCustomNetwork(NETWORK.harmony),
 };
 
 export const changeNetworkAtMetamask = async (networkName: NetworkType) => {
