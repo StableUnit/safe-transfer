@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from "react";
-import { Fade, FormControl, IconButton, MenuItem, Modal, Select, SelectChangeEvent, TextField } from "@mui/material";
+import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import cn from "classnames";
 import BN from "bn.js";
 import axios from "axios";
@@ -23,7 +23,7 @@ import {
     getTokenContractFactory,
     toHRNumberFloat,
 } from "../../utils/tokens";
-import { generateUrl, getLongUrl, getShortHash, handleCopyUrl } from "../../utils/urlGenerator";
+import { generateUrl, getShortHash, handleCopyUrl } from "../../utils/urlGenerator";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
@@ -41,8 +41,7 @@ import { useRequestToken } from "../../hooks/useRequestToken";
 import { PageNotFound } from "../PageNotFound";
 import { useCurrentTokenData } from "../../hooks/useCurrentTokenData";
 import { GradientHref } from "../../ui-kit/components/GradientHref";
-import { useGenUrlPopup } from "../../hooks/useGenUrlPopup";
-import { ReactComponent as CloseIcon } from "../../ui-kit/images/close.svg";
+import GenUrlPopup from "../GenUrlPopup";
 
 import "./SendForm.scss";
 
@@ -75,7 +74,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<string>();
     const [allowance, setAllowance] = useState<string>();
-    const { isGenUrlPopupVisible, closeGenUrlPopup, canCloseGenUrl } = useGenUrlPopup(genUrl);
 
     const { requestTokenData, requestToken } = useRequestToken();
     const isDisabledByToken = requestTokenData && networkName !== requestTokenData.networkName;
@@ -534,31 +532,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         <div className="send-form__error">Please change network to {requestTokenData.networkName}</div>
                     )}
                 </div>
-                <Modal
-                    open={isGenUrlPopupVisible}
-                    onClose={closeGenUrlPopup}
-                    aria-labelledby="Your generated url"
-                    aria-describedby={genUrl}
-                    BackdropProps={{
-                        timeout: 500,
-                        onClick: canCloseGenUrl ? closeGenUrlPopup : () => {},
-                    }}
-                    closeAfterTransition
-                    disableEscapeKeyDown
-                >
-                    <Fade in={isGenUrlPopupVisible}>
-                        <div className="send-form__modal">
-                            {canCloseGenUrl && (
-                                <CloseIcon onClick={closeGenUrlPopup} className="send-form__modal__close" />
-                            )}
-                            <div className="send-form__modal__title">
-                                Transaction is in progress, but you can already share generated link:
-                            </div>
-                            <GenUrl genUrl={genUrl} text="" linkText={getLongUrl(genUrl)} />
-                        </div>
-                    </Fade>
-                </Modal>
             </div>
+            <GenUrlPopup genUrl={genUrl} />
             <Twitter />
         </>
     );
