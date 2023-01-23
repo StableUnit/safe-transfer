@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.11](https://github.com/StableUnit/safe-transfer/compare/v0.4.10...v0.4.11) (2023-01-23)
+
+
+### Features
+
+* add requests for backend ([0455ef1](https://github.com/StableUnit/safe-transfer/commit/0455ef17f8f8734b6faac1a0a18688515e8c872a))
+
 ### [0.4.10](https://github.com/StableUnit/safe-transfer/compare/v0.4.9...v0.4.10) (2023-01-20)
 
 
