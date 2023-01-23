@@ -2,7 +2,7 @@ import React, { ChangeEvent, useMemo, useState } from "react";
 import { Autocomplete, FormControl, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
-import { networkNames, networkToId, NetworkType } from "../../utils/network";
+import { getAddressLink, networkNames, networkToId, NetworkType } from "../../utils/network";
 import Button from "../../ui-kit/components/Button/Button";
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
 import GenUrl from "../GenUrl";
@@ -12,12 +12,20 @@ import { isAddress } from "../../utils/wallet";
 import TOKEN_LIST from "../../contracts/tokenlist.json";
 
 import "./styles.scss";
+import { GradientHref } from "../../ui-kit/components/GradientHref";
+
+type TokenType = {
+    label: string;
+    address: string;
+    logo: string;
+    name: string;
+};
 
 const RequestPage = React.memo(() => {
     const [genUrl, setGenUrl] = useState<string>();
     const [networkName, setNetworkName] = useState<NetworkType>();
     const [toAddress, setToAddress] = useState<string>();
-    const [token, setToken] = useState<string>();
+    const [token, setToken] = useState<TokenType>();
     const [value, setValue] = useState<number>();
 
     const hasAllRequiredData = networkName && isAddress(toAddress);
@@ -29,6 +37,8 @@ const RequestPage = React.memo(() => {
                 ?.map((v: any) => ({
                     label: v.symbol,
                     address: v.address,
+                    name: v.name,
+                    logo: v.logoURI,
                 }))
                 .sort((a: any, b: any) => a.label.localeCompare(b.label));
         }
@@ -40,7 +50,7 @@ const RequestPage = React.memo(() => {
         if (hasAllRequiredData && toAddress) {
             setGenUrl(
                 generateRequestUrl({
-                    token,
+                    token: token?.address,
                     to: toAddress,
                     value,
                     networkName,
@@ -54,7 +64,7 @@ const RequestPage = React.memo(() => {
     };
 
     const handleTokenChange = (event: any, newValue: any) => {
-        setToken(newValue?.address);
+        setToken(newValue);
     };
 
     const handleAddressChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -111,13 +121,60 @@ const RequestPage = React.memo(() => {
                         <div className="request-form__label">Token address</div>
                         <Autocomplete
                             id="token-address"
-                            className="request-form__address"
+                            className="request-form__token-address"
                             placeholder="Select token"
                             options={availableTokens}
                             sx={{ width: 300 }}
                             onChange={handleTokenChange}
-                            renderInput={(params) => <TextField {...params} />}
+                            renderOption={(props, option, state) => {
+                                return (
+                                    <li {...props}>
+                                        <img
+                                            src={option.logo}
+                                            width={20}
+                                            height={20}
+                                            onError={({ currentTarget }) => {
+                                                // eslint-disable-next-line no-param-reassign
+                                                currentTarget.onerror = null; // prevents looping
+                                                // eslint-disable-next-line no-param-reassign
+                                                currentTarget.src = "/default.svg";
+                                            }}
+                                        />
+                                        <div>{option.label}</div>
+                                    </li>
+                                );
+                            }}
+                            renderInput={(params) => {
+                                return (
+                                    <div className="request-form__token-input">
+                                        {token && (
+                                            <img
+                                                src={token.logo}
+                                                width={20}
+                                                height={20}
+                                                onError={({ currentTarget }) => {
+                                                    // eslint-disable-next-line no-param-reassign
+                                                    currentTarget.onerror = null; // prevents looping
+                                                    // eslint-disable-next-line no-param-reassign
+                                                    currentTarget.src = "/default.svg";
+                                                }}
+                                            />
+                                        )}
+                                        <TextField {...params} />
+                                    </div>
+                                );
+                            }}
                         />
+                        {token && networkName && (
+                            <GradientHref
+                                isExternal
+                                target="_blank"
+                                href={getAddressLink(token.address, networkName)}
+                                className="request-form__token-name"
+                            >
+                                {token.name}
+                            </GradientHref>
+                        )}
 
                         <div className="request-form__label">Requested value</div>
                         <TextField
