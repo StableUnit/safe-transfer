@@ -1,7 +1,7 @@
 import amplitude from "amplitude-js";
 import axios from "axios";
 
-const BACKEND_URL = "http://146.190.27.205:4000";
+const BACKEND_URL = "https://146.190.27.205:4000";
 
 export const trackEvent = (event: string, data?: Record<string, any>) => {
     amplitude.getInstance().logEvent(event, data);
