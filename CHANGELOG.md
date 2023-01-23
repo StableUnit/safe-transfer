@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.14](https://github.com/StableUnit/safe-transfer/compare/v0.4.13...v0.4.14) (2023-01-23)
+
+
+### Features
+
+* add popup ([ff37901](https://github.com/StableUnit/safe-transfer/commit/ff37901875cbcad6d14a24c466abe2dff631d73e))
+* change fonts ([cca47c2](https://github.com/StableUnit/safe-transfer/commit/cca47c2af32b779468e25bccdbd488332c165197))
+* fix events ([388d625](https://github.com/StableUnit/safe-transfer/commit/388d625a91df5dae22cafae19426600644cd846b))
+* move GenUrlPopup to separate component ([a1f13a3](https://github.com/StableUnit/safe-transfer/commit/a1f13a39b4f183bc97b986132942d2d5ccd4635f))
+
+
+### Bug Fixes
+
+* paddings and length of genUrl ([d322af9](https://github.com/StableUnit/safe-transfer/commit/d322af9d082bb721f4a4c04b25e64403f96d6c42))
+
 ### [0.4.13](https://github.com/StableUnit/safe-transfer/compare/v0.4.12...v0.4.13) (2023-01-23)
 
 
