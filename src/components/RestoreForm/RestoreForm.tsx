@@ -10,6 +10,7 @@ import { StateContext } from "../../reducer/constants";
 
 import "./RestoreForm.scss";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
+import GenUrl from "../GenUrl";
 
 const RestoreForm = () => {
     const { address, chainId, web3 } = useContext(StateContext);
@@ -74,19 +75,7 @@ const RestoreForm = () => {
                         {isRestoreLoading ? "Loading..." : "Restore"}
                     </Button>
                 </div>
-                {genUrl && (
-                    <div className="restore-form__url">
-                        <div className="restore-form__url__text">
-                            <div>Link to receive:&nbsp;&nbsp;</div>
-                            <a href={genUrl} target="_blank" rel="noreferrer">
-                                {getShortUrl(genUrl)}
-                            </a>
-                        </div>
-                        <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
-                            <ContentCopyIcon />
-                        </IconButton>
-                    </div>
-                )}
+                <GenUrl genUrl={genUrl} text="Link to receive:" />
             </div>
         </>
     );

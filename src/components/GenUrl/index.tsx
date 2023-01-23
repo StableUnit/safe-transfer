@@ -10,16 +10,17 @@ interface GenUrlProps {
     genUrl?: string;
     isLoading?: boolean;
     text: string;
+    linkText?: string;
 }
 
-const GenUrl = React.memo(({ genUrl, isLoading = false, text }: GenUrlProps) => {
+const GenUrl = React.memo(({ genUrl, linkText, isLoading = false, text }: GenUrlProps) => {
     return genUrl ? (
         <div className="gen-url-container">
             <div className="gen-url">
                 <div className="gen-url__text">
                     <div className="gen-url__text--title">{text}&nbsp;&nbsp;</div>
                     <a href={genUrl} target="_blank" rel="noreferrer">
-                        {getShortUrl(genUrl ?? "")}
+                        {linkText ?? getShortUrl(genUrl ?? "")}
                     </a>
                 </div>
                 <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl ?? "")}>
