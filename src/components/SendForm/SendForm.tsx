@@ -456,7 +456,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                                     // eslint-disable-next-line no-param-reassign
                                                     currentTarget.onerror = null; // prevents looping
                                                     // eslint-disable-next-line no-param-reassign
-                                                    currentTarget.src = "/default.png";
+                                                    currentTarget.src = "/default.svg";
                                                 }}
                                             />
                                             <div className="send-form__token-form__symbol">{token.symbol}</div>

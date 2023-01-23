@@ -68,6 +68,7 @@
 
   & &__network-form,
   & &__address,
+  & &__token-address,
   & &__value {
     width: 352px;
     margin: 8px 0 18px;
@@ -104,6 +105,23 @@
     }
   }
 
+  & &__token-input {
+    display: flex;
+    align-items: center;
+
+    img {
+      margin-left: 20px;
+      margin-right: -5px;
+    }
+  }
+
+  & &__token-name {
+    position: relative;
+    left: 17px;
+    font-size: 12px;
+    top: -14px;
+  }
+
   &__paper {
     background-color: #313131 !important;
     border-radius: 8px !important;
@@ -130,10 +148,14 @@
 }
 
 .MuiAutocomplete-paper {
-  color: $gray1 !important;
+  color: white !important;
   background: $dark-gray !important;
 
   .MuiAutocomplete-noOptions {
     color: $gray1 !important;
+  }
+
+  img {
+    margin-right: 8px;
   }
 }
