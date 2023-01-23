@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.13](https://github.com/StableUnit/safe-transfer/compare/v0.4.12...v0.4.13) (2023-01-23)
+
+
+### Features
+
+* add custom tokens + fix chainId ([b5eded7](https://github.com/StableUnit/safe-transfer/commit/b5eded75e180e131c027b9ebdf6d00988eb50f64))
+* add listener + fix chain connect ([b13219a](https://github.com/StableUnit/safe-transfer/commit/b13219a19cc4781dafd67414e7fd861b5afc73f0))
+* add onConnect for button ([a06e4d6](https://github.com/StableUnit/safe-transfer/commit/a06e4d6df4b1f71c57886a9a1a4350d18121c59f))
+* use new web3modal version 2 ([3d7c772](https://github.com/StableUnit/safe-transfer/commit/3d7c7723681a2dcfd1c60ed5564bed58853c2bcd))
+
+
+### Bug Fixes
+
+* listen chain change ([2ae2ce5](https://github.com/StableUnit/safe-transfer/commit/2ae2ce51dcd9717ff9ab1bb49c2d314ab568ff0f))
+* provider for web3 + restore styles ([5ef7929](https://github.com/StableUnit/safe-transfer/commit/5ef79290e1bada369f766c23126976de77cb741a))
+
 ### [0.4.12](https://github.com/StableUnit/safe-transfer/compare/v0.4.11...v0.4.12) (2023-01-23)
 
 
