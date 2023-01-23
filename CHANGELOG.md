@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.12](https://github.com/StableUnit/safe-transfer/compare/v0.4.11...v0.4.12) (2023-01-23)
+
+
+### Features
+
+* add logo ([31db4a0](https://github.com/StableUnit/safe-transfer/commit/31db4a00d44b4ffe6ce651f6baf851615bface45))
+* add token link ([e63bcde](https://github.com/StableUnit/safe-transfer/commit/e63bcde40485ef2b97cf84e3f1e88dd6dd17437b))
+* add token logo and url in request page ([634a96d](https://github.com/StableUnit/safe-transfer/commit/634a96d306e3a0060d0dff4e2cd71db33e0f5f91))
+
 ### [0.4.11](https://github.com/StableUnit/safe-transfer/compare/v0.4.10...v0.4.11) (2023-01-23)
 
 
