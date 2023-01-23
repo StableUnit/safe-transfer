@@ -62,7 +62,7 @@
   }
 
   &__label {
-    color: $gray1;
+    color: $gray4;
     padding-left: 16px;
   }
 
@@ -76,11 +76,11 @@
     border-radius: 80px;
 
     & > div {
-      color: $gray1;
+      color: $gray3;
     }
 
     input {
-      color: $gray1;
+      color: $gray3;
       background-color: $black !important;
       border-radius: 80px;
       outline: none;

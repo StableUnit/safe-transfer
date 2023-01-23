@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useCallback, useContext, useEffect, useState } from "react";
 import { FormControl, IconButton, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import cn from "classnames";
 import BN from "bn.js";
@@ -40,9 +40,10 @@ import GenUrl from "../GenUrl";
 import { useRequestToken } from "../../hooks/useRequestToken";
 import { PageNotFound } from "../PageNotFound";
 import { useCurrentTokenData } from "../../hooks/useCurrentTokenData";
+import { GradientHref } from "../../ui-kit/components/GradientHref";
+import GenUrlPopup from "../GenUrlPopup";
 
 import "./SendForm.scss";
-import { GradientHref } from "../../ui-kit/components/GradientHref";
 
 export type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -532,6 +533,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     )}
                 </div>
             </div>
+            <GenUrlPopup genUrl={genUrl} />
             <Twitter />
         </>
     );
