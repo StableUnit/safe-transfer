@@ -10,7 +10,7 @@ import {
     networkNames,
     networkToId,
 } from "../../utils/network";
-import { decodeToken, getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
+import { getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
 import {
     beautifyTokenBalance,
     getCustomTokenAllowance,
@@ -28,7 +28,7 @@ import { StateContext } from "../../reducer/constants";
 import RestoreForm from "../RestoreForm/RestoreForm";
 import { ensToAddress } from "../../utils/wallet";
 import { PageNotFound } from "../PageNotFound";
-import { trackEvent } from "../../utils/events";
+import { sendAddTransferEvent, trackEvent } from "../../utils/events";
 import Twitter from "../Twitter";
 
 import "../PageNotFound/styles.scss";
@@ -94,9 +94,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                         .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
                         .on("transactionHash", (hash: string) => {
                             setTrxHash(hash);
-                            // eslint-disable-next-line max-len
-                            // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
-                            trackEvent("TRANSFER_FROM_SENT", {
+                            const eventData = {
                                 chainId: networkToId[networkName],
                                 txHash: hash,
                                 fromAddress: tokenData.from,
@@ -104,7 +102,11 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                                 tokenAddress: tokenData.address,
                                 tokenSymbol: tokenMetadata?.symbol,
                                 tokenAmount: getValue(tokenMetadata, tokenData),
-                            });
+                            };
+                            sendAddTransferEvent(eventData);
+                            // eslint-disable-next-line max-len
+                            // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                            trackEvent("TRANSFER_FROM_SENT", eventData);
                         });
 
                     addSuccessNotification("Success", "Transfer from transaction completed");

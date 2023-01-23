@@ -31,7 +31,7 @@ const providerOptions = {
         package: WalletConnectProvider,
         options: {
             rpc: getRPC(),
-            chainId: [networkToId[DEFAULT_NETWORK]],
+            chainId: [networkToId[NETWORK.eth]],
             network: DEFAULT_NETWORK,
             qrcode: true,
             qrcodeModalOptions: {
