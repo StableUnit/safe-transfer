@@ -13,7 +13,7 @@ const Instructions = ({ onClose }: InstructionsProps) => (
         <div onClick={onClose} className="instructions__close">
             <CloseIcon />
         </div>
-        <div className="instructions__title">Stop sending tokens to wrong address or blockchain</div>
+        <div className="instructions__title">Do safe transfers to never lose tokens</div>
         <ol className="instructions__steps">
             <li>Approve token instead of sending directly</li>
             <li>Send link to the recipient</li>

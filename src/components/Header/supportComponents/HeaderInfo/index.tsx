@@ -14,10 +14,12 @@ export const HeaderInfo = () => {
                     <img src="https://stableunit.org/assets/img/logo.svg" />
                 </a>
             </div>
-            <div className="header-info__transferred">
-                <GradientHref>Total transferred: </GradientHref>
-                <span className="header-info__transferred__total">${Math.floor(volume).toLocaleString()}+</span>
-            </div>
+            {volume !== 0 && (
+                <div className="header-info__transferred">
+                    <GradientHref>Total transferred: </GradientHref>
+                    <span className="header-info__transferred__total">${Math.floor(volume).toLocaleString()}+</span>
+                </div>
+            )}
         </div>
     );
 };
