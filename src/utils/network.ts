@@ -34,18 +34,18 @@ export const DEFAULT_NETWORK = "mainnet"; // Name of NETWORK.eth in web3modal
 
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",
+    [NETWORK.avalanche]: "Avalanche",
+    [NETWORK.bsc]: "Binance Smart Chain",
     [NETWORK.polygon]: "Polygon",
     [NETWORK.goerli]: "Goerli",
+    [NETWORK.fantom]: "Fantom",
+    [NETWORK.optimism]: "Optimism",
     [NETWORK.aurora]: "Aurora",
     [NETWORK.harmony]: "Harmony",
     // [NETWORK.arbitrum]: "Arbitrum",
-    [NETWORK.optimism]: "Optimism",
     [NETWORK.boba]: "Boba",
     [NETWORK.skale]: "Skale",
     [NETWORK.cronos]: "Cronos",
-    [NETWORK.bsc]: "Binance Smart Chain",
-    [NETWORK.fantom]: "Fantom",
-    [NETWORK.avalanche]: "Avalanche",
 };
 
 const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj).map((a) => a.reverse()));
@@ -84,7 +84,7 @@ export const networkInfo = {
         chainName: "Goerli",
         chainId: Web3.utils.toHex(networkToId[NETWORK.goerli]),
         blockExplorerUrls: ["https://goerli.etherscan.io"],
-        rpcUrls: ["https://eth-goerli.public.blastapi.io"],
+        rpcUrls: ["https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
         nativeCurrency: {
             name: "GoerliETH",
             symbol: "GoerliETH",
