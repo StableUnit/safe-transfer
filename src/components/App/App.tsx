@@ -46,7 +46,6 @@ const App = () => {
     const syncStore = async () => {
         dispatch({ type: Actions.SetCurrentAddress, payload: address });
         dispatch({ type: Actions.SetChainId, payload: chain?.id });
-        dispatch({ type: Actions.SetWeb3, payload: new Web3(Web3.givenProvider) });
     };
     useEffect(() => {
         if (isConnected) {
