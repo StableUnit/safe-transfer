@@ -5,6 +5,8 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 
+import { useSwitchNetwork } from "wagmi";
+import Web3 from "web3";
 import {
     changeNetworkAtMetamask,
     NetworkType,
@@ -61,6 +63,7 @@ interface ApproveFormProps {
 }
 
 const SendForm = ({ onConnect }: ApproveFormProps) => {
+    const { switchNetwork } = useSwitchNetwork();
     const { address, chainId, web3, newCustomToken } = useContext(StateContext);
     const networkName = chainId ? idToNetwork[chainId] : undefined;
     const [toAddress, setToAddress] = useState<string>();
@@ -199,9 +202,20 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         onMount();
     }, [chainId, address, web3, requestToken]);
 
-    const handleNetworkChange = useCallback((event) => {
-        changeNetworkAtMetamask(event.target.value);
-    }, []);
+    const handleNetworkChange = (event: any) => {
+        const newNetworkName = event.target.value as NetworkType;
+        const newNetworkId = networkToId[newNetworkName];
+        const newHexNetworkId = Web3.utils.toHex(newNetworkId);
+        if (switchNetwork) {
+            try {
+                switchNetwork(newNetworkId);
+                // @ts-ignore
+                switchNetwork(newHexNetworkId);
+            } catch (e: any) {
+                console.error("Switch network error:", e.message);
+            }
+        }
+    };
 
     const handleAddressChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setToAddress(event.target.value);
