@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.15](https://github.com/StableUnit/safe-transfer/compare/v0.4.14...v0.4.15) (2023-01-26)
+
+
+### Features
+
+* fix networkVersion bug ([c2cca7f](https://github.com/StableUnit/safe-transfer/commit/c2cca7fb177ee8d6a991a7c380cbedac329787b6))
+* some renamings and remove totalValue in case of ssl problem ([2edfe3c](https://github.com/StableUnit/safe-transfer/commit/2edfe3c1be139b3bf9d75b5923f5c6e89646a4da))
+* update meta ([d45ac22](https://github.com/StableUnit/safe-transfer/commit/d45ac221772da01991042cea7545a0e266c29eb2))
+
+
+### Bug Fixes
+
+* add https ([1a53852](https://github.com/StableUnit/safe-transfer/commit/1a538529420af7905ae8c3996463df5a047c2f76))
+* small fix of volume ([213f05b](https://github.com/StableUnit/safe-transfer/commit/213f05bab97286d06c13b55655a6caa60b9f04af))
+
 ### [0.4.14](https://github.com/StableUnit/safe-transfer/compare/v0.4.13...v0.4.14) (2023-01-23)
 
 
