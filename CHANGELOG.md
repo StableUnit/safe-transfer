@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.16](https://github.com/StableUnit/safe-transfer/compare/v0.4.15...v0.4.16) (2023-01-26)
+
+
+### Bug Fixes
+
+* changing network ([b6b3f6e](https://github.com/StableUnit/safe-transfer/commit/b6b3f6e1bcfa9e2f2ecddef064ea824f3905eefe))
+
 ### [0.4.15](https://github.com/StableUnit/safe-transfer/compare/v0.4.14...v0.4.15) (2023-01-26)
 
 
