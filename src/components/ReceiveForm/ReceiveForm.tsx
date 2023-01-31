@@ -56,6 +56,30 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
 
     const { tokenData, token } = useReceiveToken();
 
+    const [isToAddressRequesting, setIsToAddressRequesting] = useState(false);
+    const [toAddress, setToAddress] = useState<string | null>();
+
+    const requestEns = async () => {
+        if (tokenData?.to && !toAddress && networkName) {
+            try {
+                setIsToAddressRequesting(true);
+                const newToAddress = await ensToAddress(networkName, tokenData.to);
+                if (!newToAddress) {
+                    addErrorNotification("Invalid ENS address");
+                }
+                setToAddress(newToAddress ?? tokenData.to);
+                setIsToAddressRequesting(false);
+            } catch (e: any) {
+                setIsToAddressRequesting(false);
+                addErrorNotification("Invalid ENS address");
+                setToAddress(tokenData.to);
+            }
+        }
+    };
+    useEffect(() => {
+        requestEns();
+    }, [tokenData, networkName]);
+
     const updateTokenMetadata = async () => {
         if (tokenData) {
             const newTokenMetadata = await getCustomTokenMetadata(tokenData.chain as NetworkType, tokenData.address);
@@ -65,12 +89,12 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     };
 
     const updateAllowance = async () => {
-        if (tokenData) {
+        if (tokenData && toAddress) {
             const allowanceFromContract = await getCustomTokenAllowance(
                 tokenData.chain as NetworkType,
                 tokenData.address,
                 tokenData.from,
-                tokenData.to
+                toAddress
             );
             setAllowance(allowanceFromContract);
         }
@@ -85,7 +109,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         setIsTransferFetching(true);
 
         try {
-            if (tokenData && web3 && networkName) {
+            if (tokenData && web3 && networkName && toAddress) {
                 const getTokenContract = getTokenContractFactory(web3);
                 const tokenContract = getTokenContract(tokenData.address);
                 if (tokenContract) {
@@ -127,12 +151,12 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         setIsCancelFetching(true);
 
         try {
-            if (tokenData && web3 && networkName) {
+            if (tokenData && web3 && networkName && toAddress) {
                 const getTokenContract = getTokenContractFactory(web3);
                 const tokenContract = getTokenContract(tokenData.address);
                 if (tokenContract) {
                     await tokenContract.methods
-                        .approve(await ensToAddress(tokenData.to), "0")
+                        .approve(toAddress, "0")
                         .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
                         .on("transactionHash", async (txHash: string) => {
                             const symbol = await tokenContract.methods.symbol().call();
@@ -197,9 +221,12 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         tokenData.value !== "0";
 
     const isDisabledContent =
-        !address || tokenData?.to.toLowerCase() !== address.toLowerCase() || tokenData?.chain !== networkName;
+        !address ||
+        !toAddress ||
+        toAddress?.toLowerCase() !== address.toLowerCase() ||
+        tokenData?.chain !== networkName;
 
-    const isReceiver = tokenData && address && tokenData.to.toLowerCase() === address.toLowerCase();
+    const isReceiver = address && toAddress && toAddress.toLowerCase() === address.toLowerCase();
     const isSender = tokenData && address && tokenData.from.toLowerCase() === address.toLowerCase();
 
     if (token && !hasAllData) {
@@ -214,6 +241,14 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
             return (
                 <Button onClick={onConnect} className="receive-form__button">
                     CONNECT WALLET
+                </Button>
+            );
+        }
+
+        if (isToAddressRequesting) {
+            return (
+                <Button disabled className="receive-form__button">
+                    Loading...
                 </Button>
             );
         }
@@ -311,11 +346,13 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                                     )}
                                 </div>
                                 {renderButton()}
-                                {address && tokenData.to.toLowerCase() !== address?.toLowerCase() && (
+                                {address && toAddress && toAddress.toLowerCase() !== address?.toLowerCase() && (
                                     <div className="receive-form__error">
                                         Only account{" "}
-                                        {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to} can
-                                        receive the transfer.
+                                        {tokenData.to.startsWith("0x")
+                                            ? getShortHash(tokenData.to)
+                                            : `${tokenData.to}(${getShortHash(toAddress)})`}{" "}
+                                        can receive the transfer.
                                     </div>
                                 )}
                                 {address && tokenData.chain !== networkName && (

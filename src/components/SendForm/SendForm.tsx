@@ -244,7 +244,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         try {
             setIsCancelApproveLoading(true);
             await tokenContract.methods
-                .approve(await ensToAddress(toAddress), "0")
+                .approve(await ensToAddress(networkName, toAddress), "0")
                 .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
                 .on("transactionHash", async (txHash: string) => {
                     const symbol = await tokenContract.methods.symbol().call();
@@ -289,7 +289,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
             const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
             const tokenContract = getTokenContract(currentToken.token_address);
-            const ensAddress = await ensToAddress(toAddress);
+            const ensAddress = await ensToAddress(networkName, toAddress);
             try {
                 await tokenContract?.methods
                     .approve(ensAddress, valueBN)
@@ -344,11 +344,11 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const setAllowanceAsync = async () => {
-        if (isCorrectData && currentToken) {
+        if (isCorrectData && currentToken && networkName) {
             const tokenContract = getTokenContract(currentToken.token_address);
             if (tokenContract) {
                 const allowanceFromContract = await tokenContract.methods
-                    .allowance(address, await ensToAddress(toAddress))
+                    .allowance(address, await ensToAddress(networkName, toAddress))
                     .call();
                 setAllowance(allowanceFromContract.toString());
             }
