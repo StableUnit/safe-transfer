@@ -19,8 +19,7 @@ interface NavbarProps {
 
 const LINKS = [
     {
-        isExternal: true,
-        href: "https://medium.com/stableunit/avoid-sending-tokens-to-the-wrong-address-with-safe-transfer-7c649284496f",
+        href: "/intro",
         text: "Intro",
     },
     {

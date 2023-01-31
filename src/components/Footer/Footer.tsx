@@ -13,11 +13,11 @@ export const Footer = () => (
             <SocialNetwork name="github" />
         </div>
         <div className="footer__made-by">
-            Made by{" "}
+            Open-source project from{" "}
             <a href="https://stableunit.org/" target="_blank" rel="noreferrer">
                 stableunit.org
             </a>{" "}
-            core team
+            core team.
         </div>
         <div className="footer__version">(v{process.env.REACT_APP_VERSION})</div>
     </div>
