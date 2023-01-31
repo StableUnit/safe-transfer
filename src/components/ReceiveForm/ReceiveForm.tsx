@@ -95,6 +95,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                         .on("transactionHash", (hash: string) => {
                             setTrxHash(hash);
                             const eventData = {
+                                location: window.location.href,
                                 chainId: networkToId[networkName],
                                 txHash: hash,
                                 fromAddress: tokenData.from,
@@ -139,6 +140,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                             // eslint-disable-next-line max-len
                             // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
                             trackEvent("APPROVED_REVOKE_SENT", {
+                                location: window.location.href,
                                 source: "Receive Page",
                                 chainId: networkToId[networkName],
                                 txHash,
@@ -177,7 +179,11 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                     },
                 },
             });
-            trackEvent("METAMASK_TOKEN_ADD", { source: "Receive Page", symbol: tokenMetadata?.symbol });
+            trackEvent("METAMASK_TOKEN_ADD", {
+                source: "Receive Page",
+                symbol: tokenMetadata?.symbol,
+                location: window.location.href,
+            });
         }
     };
 
