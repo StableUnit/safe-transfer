@@ -5,7 +5,7 @@ import { TwitterPosts } from "../TwitterPosts";
 
 import "./styles.scss";
 
-const twitterPosts = [
+export const twitterPosts = [
     "1595062904679956482",
     "1594459327674425346",
     "1543956221614489601",

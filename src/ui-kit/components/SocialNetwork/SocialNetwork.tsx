@@ -12,7 +12,7 @@ interface SocialNetworkProps {
     height?: number;
 }
 
-const SOCIAL_NETWORKS: Record<string, { href: string; icon: React.ReactNode }> = {
+export const SOCIAL_NETWORKS: Record<string, { href: string; icon: React.ReactNode }> = {
     tg: {
         href: "https://t.me/stableunit",
         icon: TgIcon,
