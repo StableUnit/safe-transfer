@@ -50,6 +50,7 @@
         "typescript": "^4.5.2",
         "web3": "^1.7.1",
         "web3-eth-contract": "^1.7.1",
+        "web3-eth-ens": "^1.8.2",
         "web3modal": "^1.9.10"
     },
     "scripts": {
