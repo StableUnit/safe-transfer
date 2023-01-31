@@ -57,21 +57,25 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     const [toAddress, setToAddress] = useState<string | null>();
 
     const requestEns = async () => {
-        if (tokenData?.to && !toAddress) {
+        if (tokenData?.to && !toAddress && networkName) {
             try {
                 setIsToAddressRequesting(true);
-                const newToAddress = await ensToAddress(tokenData.to);
-                setToAddress(newToAddress);
+                const newToAddress = await ensToAddress(networkName, tokenData.to);
+                if (!newToAddress) {
+                    addErrorNotification("Invalid ENS address");
+                }
+                setToAddress(newToAddress ?? tokenData.to);
                 setIsToAddressRequesting(false);
             } catch (e: any) {
                 setIsToAddressRequesting(false);
-                console.log(e.message);
+                addErrorNotification("Invalid ENS address");
+                setToAddress(tokenData.to);
             }
         }
     };
     useEffect(() => {
         requestEns();
-    }, [tokenData]);
+    }, [tokenData, networkName]);
 
     const updateTokenMetadata = async () => {
         if (tokenData) {
