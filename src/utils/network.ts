@@ -1,5 +1,4 @@
 import Web3 from "web3";
-import { Chain } from "wagmi";
 
 export type NetworkType =
     | "eth"
@@ -30,6 +29,8 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     fantom: "fantom",
     avalanche: "avalanche",
 };
+
+export const DEFAULT_NETWORK = "mainnet"; // Name of NETWORK.eth in web3modal
 
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",
@@ -255,27 +256,6 @@ export const networkInfo = {
             decimals: 18,
         },
     },
-};
-
-const generateWagmiCustomNetwork = (network: NetworkType) => ({
-    id: networkToId[network],
-    name: networkInfo[network].chainName,
-    network: networkInfo[network].chainName.toLowerCase(),
-    nativeCurrency: networkInfo[network].nativeCurrency,
-    rpcUrls: {
-        default: { http: networkInfo[network].rpcUrls },
-        public: { http: networkInfo[network].rpcUrls },
-    },
-    blockExplorers: {
-        default: { name: `${networkInfo[network].chainName}scan`, url: networkInfo[network].blockExplorerUrls[0] },
-    },
-});
-
-export const wagmiCustomNetworks: Record<string, Chain> = {
-    [NETWORK.cronos]: generateWagmiCustomNetwork(NETWORK.cronos),
-    [NETWORK.boba]: generateWagmiCustomNetwork(NETWORK.boba),
-    [NETWORK.aurora]: generateWagmiCustomNetwork(NETWORK.aurora),
-    [NETWORK.harmony]: generateWagmiCustomNetwork(NETWORK.harmony),
 };
 
 export const changeNetworkAtMetamask = async (networkName: NetworkType) => {
