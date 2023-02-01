@@ -21,6 +21,7 @@ import {
     fromHRToBN,
     getCovalentUrl,
     getTokenContractFactory,
+    nativeTokensAddresses,
     toHRNumberFloat,
 } from "../../utils/tokens";
 import { generateUrl, getShortHash, handleCopyUrl } from "../../utils/urlGenerator";
@@ -126,7 +127,10 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         decimals: v.contract_decimals,
                         balance: v.balance,
                     }))
-                    .filter((v: BalanceType) => v.balance !== "0") as BalanceType[];
+                    .filter((v: BalanceType) => v.balance !== "0")
+                    .filter(
+                        (v: BalanceType) => !nativeTokensAddresses.includes(v.token_address?.toLowerCase())
+                    ) as BalanceType[];
                 setBalances(sortBySymbol(result));
             } catch (e: any) {
                 setIsBalanceRequestLoading(false);

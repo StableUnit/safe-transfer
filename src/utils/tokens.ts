@@ -157,3 +157,17 @@ export const getTokenContractFactory = (web3?: Web3) => (address: string) => {
 export const getCovalentUrl = (chainId: number, address: string) =>
     // eslint-disable-next-line max-len
     `https://api.covalenthq.com/v1/${chainId}/address/${address}/balances_v2/?quote-currency=USD&format=JSON&nft=false&no-nft-fetch=true&key=${process.env.REACT_APP_COVALENT_KEY}`;
+
+// export const nativeTokensAddresses = {
+//     [NETWORK.eth]: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+//     [NETWORK.goerli]: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+//     [NETWORK.bsc]: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+//     [NETWORK.polygon]: "0x0000000000000000000000000000000000001010",
+// };
+
+export const nativeTokensAddresses = [
+    "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "0x0000000000000000000000000000000000001010",
+    "0x000000000000000000000000000000000000dead",
+    "0x0000000000000000000000000000000000000000",
+];

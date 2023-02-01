@@ -103,6 +103,7 @@ const App = () => {
 
     const onBugClick = () => {
         window.open(
+            // eslint-disable-next-line max-len
             "https://github.com/StableUnit/safe-transfer/issues/new?assignees=Kud8&labels=&template=bug_report.md&title=%5BBUG%5D",
             "_blank"
         );
