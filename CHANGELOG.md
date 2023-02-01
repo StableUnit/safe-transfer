@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.20](https://github.com/StableUnit/safe-transfer/compare/v0.4.19...v0.4.20) (2023-02-01)
+
+
+### Features
+
+* remove native tokens from token list in SendPage ([578c3da](https://github.com/StableUnit/safe-transfer/commit/578c3daf66a0dec4b0757d7582d7a29db9095c16))
+
 ### [0.4.19](https://github.com/StableUnit/safe-transfer/compare/v0.4.18...v0.4.19) (2023-02-01)
 
 
