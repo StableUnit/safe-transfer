@@ -81,15 +81,18 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     }, [tokenData, networkName]);
 
     const updateTokenMetadata = async () => {
-        if (tokenData) {
+        if (tokenData && !tokenMetadata) {
             const newTokenMetadata = await getCustomTokenMetadata(tokenData.chain as NetworkType, tokenData.address);
             setTokenMetadata(newTokenMetadata);
             document.title = `Receive ${getValue(newTokenMetadata, tokenData)}`;
         }
     };
+    useEffect(() => {
+        updateTokenMetadata();
+    }, [tokenData, tokenMetadata]);
 
     const updateAllowance = async () => {
-        if (tokenData && toAddress) {
+        if (tokenData && toAddress && !allowance) {
             const allowanceFromContract = await getCustomTokenAllowance(
                 tokenData.chain as NetworkType,
                 tokenData.address,
@@ -101,9 +104,8 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     };
 
     useEffect(() => {
-        updateTokenMetadata();
         updateAllowance();
-    }, [token, address]);
+    }, [tokenData, toAddress, allowance]);
 
     const handleTransfer = async () => {
         setIsTransferFetching(true);
