@@ -335,7 +335,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                                     <InfoCell title="Approved value:">
                                         <div id="value">{getValue(tokenMetadata, tokenData)}</div>
                                     </InfoCell>
-                                    {allowance && tokenMetadata && (
+                                    {allowance !== undefined && tokenMetadata && (
                                         <InfoCell title="Current allowance:">
                                             <div id="allowance">
                                                 {`${beautifyTokenBalance(allowance, +tokenMetadata.decimals)} ${

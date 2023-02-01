@@ -1,10 +1,5 @@
 import { ethers } from "ethers";
-import Web3 from "web3";
-import { networkInfo, networkToId, NetworkType } from "./network";
-import { rpcList } from "./rpc";
-
-export const NETWORK_TYPE = "matic";
-export const NETWORK_TYPE_CODE = 137;
+import { NetworkType } from "./network";
 
 export const getShortAddress = (address: string | null) =>
     address ? `${address.slice(0, 6)}...${address.slice(address.length - 3)}` : "";

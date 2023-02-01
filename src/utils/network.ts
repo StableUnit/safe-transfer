@@ -101,7 +101,7 @@ export const networkInfo = {
         chainName: "Optimism",
         chainId: Web3.utils.toHex(networkToId[NETWORK.optimism]),
         rpcUrls: ["https://mainnet.optimism.io/"],
-        blockExplorerUrls: ["https://optimistic.etherscan.io"],
+        blockExplorerUrls: [`https://rpc.ankr.com/optimism/${process.env.REACT_APP_ANKR_KEY}`],
         nativeCurrency: {
             name: "KOR",
             symbol: "KOR",
@@ -182,7 +182,7 @@ export const networkInfo = {
     [NETWORK.bsc]: {
         chainName: "Binance Smart Chain Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.bsc]),
-        rpcUrls: ["https://bsc-dataseed.binance.org/"],
+        rpcUrls: [`https://rpc.ankr.com/bsc/${process.env.REACT_APP_ANKR_KEY}`],
         blockExplorerUrls: ["https://bscscan.com"],
         nativeCurrency: {
             name: "BNB",
@@ -204,7 +204,7 @@ export const networkInfo = {
     [NETWORK.fantom]: {
         chainName: "Fantom Opera",
         chainId: Web3.utils.toHex(networkToId[NETWORK.fantom]),
-        rpcUrls: ["https://rpc.ftm.tools/"],
+        rpcUrls: [`https://rpc.ankr.com/fantom/${process.env.REACT_APP_ANKR_KEY}`],
         blockExplorerUrls: ["https://ftmscan.com"],
         nativeCurrency: {
             name: "FTM",
@@ -226,7 +226,7 @@ export const networkInfo = {
     [NETWORK.avalanche]: {
         chainName: "Avalanche C-Chain",
         chainId: Web3.utils.toHex(networkToId[NETWORK.avalanche]),
-        rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
+        rpcUrls: [`https://rpc.ankr.com/avalanche/${process.env.REACT_APP_ANKR_KEY}`],
         blockExplorerUrls: ["https://snowtrace.io"],
         nativeCurrency: {
             name: "AVAX",
@@ -248,7 +248,7 @@ export const networkInfo = {
     [NETWORK.harmony]: {
         chainName: "Harmony Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.harmony]),
-        rpcUrls: ["https://api.harmony.one"],
+        rpcUrls: [`https://rpc.ankr.com/harmony/${process.env.REACT_APP_ANKR_KEY}`],
         blockExplorerUrls: ["https://explorer.harmony.one/"],
         nativeCurrency: {
             name: "ONE",
