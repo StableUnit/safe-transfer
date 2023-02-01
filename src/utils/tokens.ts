@@ -1,8 +1,9 @@
 import BN from "bn.js";
 import Web3 from "web3";
 
-import { NetworkType } from "./network";
+import { networkToId, NetworkType } from "./network";
 import CONTRACT_ERC20 from "../contracts/ERC20.json";
+import TOKEN_LIST from "../contracts/tokenlist.json";
 import { rpcList } from "./rpc";
 
 export type TokenMetadataType = {
@@ -143,6 +144,9 @@ export const getCustomTokenMetadata = async (chain: NetworkType, address: string
         name: await tokenContract.methods.name().call(),
         symbol: await tokenContract.methods.symbol().call(),
         decimals: await tokenContract.methods.decimals().call(),
+        // @ts-ignore
+        logo: TOKEN_LIST[networkToId[chain]]?.find((v: any) => v.address?.toLowerCase() === address?.toLowerCase())
+            ?.logoURI,
     };
 };
 
