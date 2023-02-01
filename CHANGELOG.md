@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.22](https://github.com/StableUnit/safe-transfer/compare/v0.4.21...v0.4.22) (2023-02-01)
+
+
+### Features
+
+* add timestamp from last commit ([2536fe2](https://github.com/StableUnit/safe-transfer/commit/2536fe23e7163ad3ff8a7410fcf869829bea0ea6))
+
 ### [0.4.21](https://github.com/StableUnit/safe-transfer/compare/v0.4.20...v0.4.21) (2023-02-01)
 
 
