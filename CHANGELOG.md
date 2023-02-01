@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.18](https://github.com/StableUnit/safe-transfer/compare/v0.4.17...v0.4.18) (2023-02-01)
+
+
+### Features
+
+* add new rpc endpoints ([0573264](https://github.com/StableUnit/safe-transfer/commit/0573264227f895fc1bfd6c9ca2e54e60d25309c9))
+
 ### [0.4.17](https://github.com/StableUnit/safe-transfer/compare/v0.4.16...v0.4.17) (2023-02-01)
 
 
