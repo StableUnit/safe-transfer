@@ -35,7 +35,7 @@ export const Routes = ({ onConnect }: Props) => (
 
         {/* @ts-ignore */}
         <Route exact path="/">
-            <Redirect to="/send" />
+            <Redirect to="/intro" />
         </Route>
 
         <Route path="*">
