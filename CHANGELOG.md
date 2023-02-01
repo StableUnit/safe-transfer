@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.21](https://github.com/StableUnit/safe-transfer/compare/v0.4.20...v0.4.21) (2023-02-01)
+
+
+### Features
+
+* add token logo in receivePage to add in metamask ([865aca1](https://github.com/StableUnit/safe-transfer/commit/865aca10a583d5b7da1170e6bd6737f8820d0f56))
+
 ### [0.4.20](https://github.com/StableUnit/safe-transfer/compare/v0.4.19...v0.4.20) (2023-02-01)
 
 
