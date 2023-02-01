@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.23](https://github.com/StableUnit/safe-transfer/compare/v0.4.22...v0.4.23) (2023-02-01)
+
+
+### Features
+
+* add new rpc for ankr ([6f1fc78](https://github.com/StableUnit/safe-transfer/commit/6f1fc7812533a252ce00077d2c340b884018cb08))
+* use InfuraProvider ([6060432](https://github.com/StableUnit/safe-transfer/commit/60604321adf84317c39ee5a653d61c0a98a12407))
+
 ### [0.4.22](https://github.com/StableUnit/safe-transfer/compare/v0.4.21...v0.4.22) (2023-02-01)
 
 
