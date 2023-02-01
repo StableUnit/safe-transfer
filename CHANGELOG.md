@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.17](https://github.com/StableUnit/safe-transfer/compare/v0.4.16...v0.4.17) (2023-02-01)
+
+
+### Features
+
+* add ens ([03f4120](https://github.com/StableUnit/safe-transfer/commit/03f412074558aae82c9d1526ff0ab89755757651))
+* add IntroPage + change Footer text ([9dd7714](https://github.com/StableUnit/safe-transfer/commit/9dd77146b326d9794aa2c2118cd741f6ef4e4748))
+* add location in events ([fbcb5dd](https://github.com/StableUnit/safe-transfer/commit/fbcb5dd55bbcecbec838769d3030165052c90580))
+* add new twitter posts ([454bb39](https://github.com/StableUnit/safe-transfer/commit/454bb39b3bbcde113689b2991c544efe187b9287))
+
 ### [0.4.16](https://github.com/StableUnit/safe-transfer/compare/v0.4.15...v0.4.16) (2023-01-26)
 
 
