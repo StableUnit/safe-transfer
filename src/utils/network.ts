@@ -78,7 +78,7 @@ export const networkInfo = {
         chainName: "Ethereum Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.eth]),
         blockExplorerUrls: ["https://etherscan.io"],
-        rpcUrls: ["https://rpc.ankr.com/eth"],
+        rpcUrls: [`https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`],
         nativeCurrency: {
             name: "ETH",
             symbol: "ETH",
@@ -89,7 +89,7 @@ export const networkInfo = {
         chainName: "Goerli",
         chainId: Web3.utils.toHex(networkToId[NETWORK.goerli]),
         blockExplorerUrls: ["https://goerli.etherscan.io"],
-        rpcUrls: ["https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
+        rpcUrls: [`https://goerli.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`],
         nativeCurrency: {
             name: "GoerliETH",
             symbol: "GoerliETH",
@@ -193,7 +193,7 @@ export const networkInfo = {
     [NETWORK.polygon]: {
         chainName: "Polygon Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.polygon]),
-        rpcUrls: ["https://rpc.ankr.com/polygon"],
+        rpcUrls: [`https://polygon-mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`],
         blockExplorerUrls: ["https://polygonscan.com/"],
         nativeCurrency: {
             name: "MATIC Token",
