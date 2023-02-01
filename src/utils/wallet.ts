@@ -12,25 +12,8 @@ export const getShortAddress = (address: string | null) =>
 export const isAddress = (address?: string) => address?.startsWith("0x") || address?.includes(".eth");
 
 export const ensToAddress = async (chain: NetworkType, ens?: string) => {
-    console.log(chain, ens);
     if (ens?.includes(".eth")) {
-        // const rpc = networkInfo[chain].rpcUrls[0];
-        // console.log(rpc);
-        const provider = ethers.providers.getDefaultProvider();
-        console.log(provider);
-        // console.log(provider);
-        // const signer = provider.getSigner();
-        // console.log(signer);
-        // console.log(await provider.getResolver(ens));
-        // console.log(await signer.resolveName(ens));
-        // const web3 = rpcList[chain];
-        // console.log("web3", rpc, web3);
-        // const ethersName = await ethers.getDefaultProvider(rpc).resolveName(ens);
-        // console.log(ethersName);
-        //
-        // const web3Name = await web3.eth.ens.getAddress(ens);
-        // console.log(web3Name);
-
+        const provider = new ethers.providers.InfuraProvider("homestead", process.env.REACT_APP_INFURA_KEY);
         return provider.resolveName(ens);
     }
 
