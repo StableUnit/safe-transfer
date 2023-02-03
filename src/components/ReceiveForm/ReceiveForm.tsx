@@ -2,8 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import cn from "classnames";
 
-import { NetworkType, getAddressLink, getTrxHashLink, idToNetwork, networkNames } from "../../utils/network";
-import { decodeToken, getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
+import {
+    NetworkType,
+    getAddressLink,
+    getTrxHashLink,
+    idToNetwork,
+    networkNames,
+    networkToId,
+} from "../../utils/network";
+import { getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
 import {
     beautifyTokenBalance,
     getCustomTokenAllowance,
@@ -20,11 +27,13 @@ import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage"
 import { StateContext } from "../../reducer/constants";
 import RestoreForm from "../RestoreForm/RestoreForm";
 import { ensToAddress } from "../../utils/wallet";
+import { PageNotFound } from "../PageNotFound";
+import { sendAddTransferEvent, trackEvent } from "../../utils/events";
+import Twitter from "../Twitter";
 
 import "../PageNotFound/styles.scss";
 import "./ReceiveForm.scss";
-import { PageNotFound } from "../PageNotFound";
-import { trackEvent } from "../../utils/events";
+import { useReceiveToken } from "../../hooks/useReceiveToken";
 
 interface TransferFormProps {
     onConnect: () => void;
@@ -45,13 +54,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
     const networkName = chainId ? idToNetwork[chainId] : undefined;
 
-    const [token, setToken] = useState<string | null>(null);
-    const tokenData = token ? decodeToken(token) : undefined;
-
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        setToken(urlParams.get("token"));
-    }, []);
+    const { tokenData, token } = useReceiveToken();
 
     const [isToAddressRequesting, setIsToAddressRequesting] = useState(false);
     const [toAddress, setToAddress] = useState<string | null>();
@@ -78,15 +81,18 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     }, [tokenData, networkName]);
 
     const updateTokenMetadata = async () => {
-        if (tokenData) {
+        if (tokenData && !tokenMetadata) {
             const newTokenMetadata = await getCustomTokenMetadata(tokenData.chain as NetworkType, tokenData.address);
             setTokenMetadata(newTokenMetadata);
             document.title = `Receive ${getValue(newTokenMetadata, tokenData)}`;
         }
     };
+    useEffect(() => {
+        updateTokenMetadata();
+    }, [tokenData, tokenMetadata]);
 
     const updateAllowance = async () => {
-        if (tokenData && toAddress) {
+        if (tokenData && toAddress && !allowance) {
             const allowanceFromContract = await getCustomTokenAllowance(
                 tokenData.chain as NetworkType,
                 tokenData.address,
@@ -98,9 +104,8 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     };
 
     useEffect(() => {
-        updateTokenMetadata();
         updateAllowance();
-    }, [token, address]);
+    }, [tokenData, toAddress, allowance]);
 
     const handleTransfer = async () => {
         setIsTransferFetching(true);
@@ -115,19 +120,25 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                         .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
                         .on("transactionHash", (hash: string) => {
                             setTrxHash(hash);
+                            const eventData = {
+                                location: window.location.href,
+                                chainId: networkToId[networkName],
+                                txHash: hash,
+                                fromAddress: tokenData.from,
+                                toAddress: tokenData.to,
+                                tokenAddress: tokenData.address,
+                                tokenSymbol: tokenMetadata?.symbol,
+                                tokenAmount: getValue(tokenMetadata, tokenData),
+                            };
+                            sendAddTransferEvent(eventData);
+                            // eslint-disable-next-line max-len
+                            // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                            trackEvent("TRANSFER_FROM_SENT", eventData);
                         });
 
                     addSuccessNotification("Success", "Transfer from transaction completed");
                     setIsSuccess(true);
                     setIsTransferFetching(false);
-
-                    const symbol = await tokenContract.methods.symbol().call();
-                    trackEvent("RECEIVE_SUCCESS", {
-                        from: tokenData.from,
-                        to: toAddress,
-                        value: tokenData.value.toString(),
-                        symbol,
-                    });
                 }
             }
         } catch (e) {
@@ -148,19 +159,27 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                 if (tokenContract) {
                     await tokenContract.methods
                         .approve(toAddress, "0")
-                        .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null });
+                        .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
+                        .on("transactionHash", async (txHash: string) => {
+                            const symbol = await tokenContract.methods.symbol().call();
+
+                            // eslint-disable-next-line max-len
+                            // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                            trackEvent("APPROVED_REVOKE_SENT", {
+                                location: window.location.href,
+                                source: "Receive Page",
+                                chainId: networkToId[networkName],
+                                txHash,
+                                fromAddress: tokenData.from,
+                                toAddress: tokenData.to,
+                                tokenAddress: tokenData.address,
+                                tokenSymbol: symbol,
+                            });
+                        });
 
                     addSuccessNotification("Success", "Cancel allowance completed");
                     setIsCancelFetching(false);
                     await updateAllowance();
-
-                    const symbol = await tokenContract.methods.symbol().call();
-                    trackEvent("CANCEL_ALLOWANCE", {
-                        source: "Receive Page",
-                        symbol,
-                        to: tokenData.to,
-                        from: tokenData.from,
-                    });
                 }
             }
         } catch (e) {
@@ -186,7 +205,11 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                     },
                 },
             });
-            trackEvent("ADD_TO_METAMASK", { source: "Receive Page", symbol: tokenMetadata?.symbol });
+            trackEvent("METAMASK_TOKEN_ADD", {
+                source: "Receive Page",
+                symbol: tokenMetadata?.symbol,
+                location: window.location.href,
+            });
         }
     };
 
@@ -257,106 +280,111 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     };
 
     return (
-        <div className={cn("receive-form", { "receive-form--disabled": isDisabledContent })}>
-            {token && (
-                <div className="receive-form__content">
-                    <div className="receive-form__title">Receive</div>
-                    {tokenData && (
-                        <>
-                            <InfoCell title="Network:">
-                                <NetworkImage network={tokenData.chain} width={24} height={24} />
-                                <div>&nbsp;&nbsp;{networkNames[tokenData.chain]}</div>
-                            </InfoCell>
-                            <div className="receive-form__line">
-                                <InfoCell
-                                    className="receive-form__copy-container"
-                                    title="From:"
-                                    bubble={isSender ? "You" : undefined}
-                                >
-                                    <div id="from">{getShortHash(tokenData.from)}</div>
-                                    <div onClick={handleCopyUrl(tokenData.from)}>
-                                        <ContentCopyIcon />
-                                    </div>
+        <>
+            <div className={cn("receive-form", { "receive-form--disabled": isDisabledContent })}>
+                {token && (
+                    <div className="receive-form__content">
+                        <div className="receive-form__title">Receive</div>
+                        {tokenData && (
+                            <>
+                                <InfoCell title="Network:">
+                                    <NetworkImage network={tokenData.chain} width={24} height={24} />
+                                    <div>&nbsp;&nbsp;{networkNames[tokenData.chain]}</div>
                                 </InfoCell>
-                                <InfoCell
-                                    className="receive-form__copy-container"
-                                    title="To:"
-                                    bubble={isReceiver ? "You" : undefined}
-                                >
-                                    <div id="to">
-                                        {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to}
-                                    </div>
-                                    <div onClick={handleCopyUrl(tokenData.to)}>
-                                        <ContentCopyIcon />
-                                    </div>
-                                </InfoCell>
-                            </div>
-                            <InfoCell className="receive-form__token-address" title="Token address:">
-                                <a
-                                    href={getAddressLink(tokenData.address, tokenData.chain)}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                >
-                                    <div id="tokenAddress">{getShortHash(tokenData.address)}</div>
-                                </a>
-                                <div className="receive-form__token-address__buttons">
-                                    <div className="receive-form__metamask" onClick={handleAddToMetamask}>
-                                        <div>Add to&nbsp;</div>
-                                        <MetamaskIcon />
-                                    </div>
-                                    <div onClick={handleCopyUrl(tokenData.address)}>
-                                        <ContentCopyIcon />
-                                    </div>
-                                </div>
-                            </InfoCell>
-                            <div className="receive-form__line">
-                                <InfoCell title="Approved value:">
-                                    <div id="value">{getValue(tokenMetadata, tokenData)}</div>
-                                </InfoCell>
-                                {allowance && tokenMetadata && (
-                                    <InfoCell title="Current allowance:">
-                                        <div id="allowance">
-                                            {`${beautifyTokenBalance(allowance, +tokenMetadata.decimals)} ${
-                                                tokenMetadata?.symbol
-                                            }`}
+                                <div className="receive-form__line">
+                                    <InfoCell
+                                        className="receive-form__copy-container"
+                                        title="From:"
+                                        bubble={isSender ? "You" : undefined}
+                                    >
+                                        <div id="from">{getShortHash(tokenData.from)}</div>
+                                        <div onClick={handleCopyUrl(tokenData.from)}>
+                                            <ContentCopyIcon />
                                         </div>
                                     </InfoCell>
-                                )}
-                            </div>
-                            {renderButton()}
-                            {address && toAddress && toAddress.toLowerCase() !== address?.toLowerCase() && (
-                                <div className="receive-form__error">
-                                    Only account{" "}
-                                    {tokenData.to.startsWith("0x")
-                                        ? getShortHash(tokenData.to)
-                                        : `${tokenData.to}(${getShortHash(toAddress)})`}{" "}
-                                    can receive the transfer.
+                                    <InfoCell
+                                        className="receive-form__copy-container"
+                                        title="To:"
+                                        bubble={isReceiver ? "You" : undefined}
+                                    >
+                                        <div id="to">
+                                            {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to}
+                                        </div>
+                                        <div onClick={handleCopyUrl(tokenData.to)}>
+                                            <ContentCopyIcon />
+                                        </div>
+                                    </InfoCell>
                                 </div>
-                            )}
-                            {address && tokenData.chain !== networkName && (
-                                <div className="receive-form__error">Please change network to {tokenData.chain}</div>
-                            )}
-                        </>
-                    )}
-                </div>
-            )}
-            {trxHash && networkName && (
-                <div className="receive-form__hash">
-                    <div className="receive-form__hash__text">
-                        <div>Hash:&nbsp;&nbsp;</div>
-                        <div id="generated-url">
-                            <a href={getTrxHashLink(trxHash, networkName)} target="_blank" rel="noreferrer">
-                                {getShortHash(trxHash)}
-                            </a>
-                        </div>
+                                <InfoCell className="receive-form__token-address" title="Token address:">
+                                    <a
+                                        href={getAddressLink(tokenData.address, tokenData.chain)}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        <div id="tokenAddress">{getShortHash(tokenData.address)}</div>
+                                    </a>
+                                    <div className="receive-form__token-address__buttons">
+                                        <div className="receive-form__metamask" onClick={handleAddToMetamask}>
+                                            <div>Add to&nbsp;</div>
+                                            <MetamaskIcon />
+                                        </div>
+                                        <div onClick={handleCopyUrl(tokenData.address)}>
+                                            <ContentCopyIcon />
+                                        </div>
+                                    </div>
+                                </InfoCell>
+                                <div className="receive-form__line">
+                                    <InfoCell title="Approved value:">
+                                        <div id="value">{getValue(tokenMetadata, tokenData)}</div>
+                                    </InfoCell>
+                                    {allowance !== undefined && tokenMetadata && (
+                                        <InfoCell title="Current allowance:">
+                                            <div id="allowance">
+                                                {`${beautifyTokenBalance(allowance, +tokenMetadata.decimals)} ${
+                                                    tokenMetadata?.symbol
+                                                }`}
+                                            </div>
+                                        </InfoCell>
+                                    )}
+                                </div>
+                                {renderButton()}
+                                {address && toAddress && toAddress.toLowerCase() !== address?.toLowerCase() && (
+                                    <div className="receive-form__error">
+                                        Only account{" "}
+                                        {tokenData.to.startsWith("0x")
+                                            ? getShortHash(tokenData.to)
+                                            : `${tokenData.to}(${getShortHash(toAddress)})`}{" "}
+                                        can receive the transfer.
+                                    </div>
+                                )}
+                                {address && tokenData.chain !== networkName && (
+                                    <div className="receive-form__error">
+                                        Please change network to {tokenData.chain}
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
-                    <IconButton aria-label="copy" onClick={handleCopyUrl(trxHash)}>
-                        <ContentCopyIcon />
-                    </IconButton>
-                </div>
-            )}
-            {!tokenData && <RestoreForm />}
-        </div>
+                )}
+                {trxHash && networkName && (
+                    <div className="receive-form__hash">
+                        <div className="receive-form__hash__text">
+                            <div>Hash:&nbsp;&nbsp;</div>
+                            <div id="generated-url">
+                                <a href={getTrxHashLink(trxHash, networkName)} target="_blank" rel="noreferrer">
+                                    {getShortHash(trxHash)}
+                                </a>
+                            </div>
+                        </div>
+                        <IconButton aria-label="copy" onClick={handleCopyUrl(trxHash)}>
+                            <ContentCopyIcon />
+                        </IconButton>
+                    </div>
+                )}
+                {!tokenData && <RestoreForm />}
+            </div>
+            <Twitter />
+        </>
     );
 });
 

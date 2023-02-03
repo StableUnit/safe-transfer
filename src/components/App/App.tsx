@@ -31,7 +31,7 @@ const providerOptions = {
         package: WalletConnectProvider,
         options: {
             rpc: getRPC(),
-            chainId: [networkToId[DEFAULT_NETWORK]],
+            chainId: [networkToId[NETWORK.eth]],
             network: DEFAULT_NETWORK,
             qrcode: true,
             qrcodeModalOptions: {
@@ -97,21 +97,22 @@ const App = () => {
         const newChainId = await web3.eth.getChainId();
         dispatch({ type: Actions.SetChainId, payload: newChainId });
 
-        trackEvent("WALLET_CONNECTED", { address: accounts[0], chainId: newChainId });
-
         // const loadedAsSafeApp = await web3Modal.isSafeApp();
         // console.log("Is connected to safe app:", loadedAsSafeApp);
     };
 
     const onBugClick = () => {
         window.open(
-            "https://docs.google.com/forms/d/e/1FAIpQLSf1Tqq8TwjOtgK8_tFndM3QDJW2XTy8oCs6zoPLUWey1nBvwA/viewform",
+            // eslint-disable-next-line max-len
+            "https://github.com/StableUnit/safe-transfer/issues/new?assignees=Kud8&labels=&template=bug_report.md&title=%5BBUG%5D",
             "_blank"
         );
     };
 
     useEffect(() => {
-        onConnect();
+        if (web3Modal.cachedProvider) {
+            onConnect();
+        }
     }, []);
 
     return (

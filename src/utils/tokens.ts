@@ -1,8 +1,9 @@
 import BN from "bn.js";
 import Web3 from "web3";
 
-import { NetworkType } from "./network";
+import { networkToId, NetworkType } from "./network";
 import CONTRACT_ERC20 from "../contracts/ERC20.json";
+import TOKEN_LIST from "../contracts/tokenlist.json";
 import { rpcList } from "./rpc";
 
 export type TokenMetadataType = {
@@ -100,7 +101,6 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
         },
     ],
     boba: [],
-    skale: [],
     cronos: [],
 };
 
@@ -144,6 +144,9 @@ export const getCustomTokenMetadata = async (chain: NetworkType, address: string
         name: await tokenContract.methods.name().call(),
         symbol: await tokenContract.methods.symbol().call(),
         decimals: await tokenContract.methods.decimals().call(),
+        // @ts-ignore
+        logo: TOKEN_LIST[networkToId[chain]]?.find((v: any) => v.address?.toLowerCase() === address?.toLowerCase())
+            ?.logoURI,
     };
 };
 
@@ -158,3 +161,17 @@ export const getTokenContractFactory = (web3?: Web3) => (address: string) => {
 export const getCovalentUrl = (chainId: number, address: string) =>
     // eslint-disable-next-line max-len
     `https://api.covalenthq.com/v1/${chainId}/address/${address}/balances_v2/?quote-currency=USD&format=JSON&nft=false&no-nft-fetch=true&key=${process.env.REACT_APP_COVALENT_KEY}`;
+
+// export const nativeTokensAddresses = {
+//     [NETWORK.eth]: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+//     [NETWORK.goerli]: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+//     [NETWORK.bsc]: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+//     [NETWORK.polygon]: "0x0000000000000000000000000000000000001010",
+// };
+
+export const nativeTokensAddresses = [
+    "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "0x0000000000000000000000000000000000001010",
+    "0x000000000000000000000000000000000000dead",
+    "0x0000000000000000000000000000000000000000",
+];

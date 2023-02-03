@@ -2,6 +2,184 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.24](https://github.com/StableUnit/safe-transfer/compare/v0.4.23...v0.4.24) (2023-02-01)
+
+
+### Features
+
+* Intro is initial page ([8db3a32](https://github.com/StableUnit/safe-transfer/commit/8db3a32ad2b7c9faf4ddc652d459f331c263f8f9))
+
+
+### Bug Fixes
+
+* allowance ([9aed4db](https://github.com/StableUnit/safe-transfer/commit/9aed4db244669b79a19d2dde60e2e023a11b2d8b))
+
+### [0.4.23](https://github.com/StableUnit/safe-transfer/compare/v0.4.22...v0.4.23) (2023-02-01)
+
+
+### Features
+
+* add new rpc for ankr ([6f1fc78](https://github.com/StableUnit/safe-transfer/commit/6f1fc7812533a252ce00077d2c340b884018cb08))
+* use InfuraProvider ([6060432](https://github.com/StableUnit/safe-transfer/commit/60604321adf84317c39ee5a653d61c0a98a12407))
+
+### [0.4.22](https://github.com/StableUnit/safe-transfer/compare/v0.4.21...v0.4.22) (2023-02-01)
+
+
+### Features
+
+* add timestamp from last commit ([2536fe2](https://github.com/StableUnit/safe-transfer/commit/2536fe23e7163ad3ff8a7410fcf869829bea0ea6))
+
+### [0.4.21](https://github.com/StableUnit/safe-transfer/compare/v0.4.20...v0.4.21) (2023-02-01)
+
+
+### Features
+
+* add token logo in receivePage to add in metamask ([865aca1](https://github.com/StableUnit/safe-transfer/commit/865aca10a583d5b7da1170e6bd6737f8820d0f56))
+
+### [0.4.20](https://github.com/StableUnit/safe-transfer/compare/v0.4.19...v0.4.20) (2023-02-01)
+
+
+### Features
+
+* remove native tokens from token list in SendPage ([578c3da](https://github.com/StableUnit/safe-transfer/commit/578c3daf66a0dec4b0757d7582d7a29db9095c16))
+
+### [0.4.19](https://github.com/StableUnit/safe-transfer/compare/v0.4.18...v0.4.19) (2023-02-01)
+
+
+### Features
+
+* add issue template for bug button ([ecf26b0](https://github.com/StableUnit/safe-transfer/commit/ecf26b010beb77cb811a06db99e1d57e67c506c4))
+
+### [0.4.18](https://github.com/StableUnit/safe-transfer/compare/v0.4.17...v0.4.18) (2023-02-01)
+
+
+### Features
+
+* add new rpc endpoints ([0573264](https://github.com/StableUnit/safe-transfer/commit/0573264227f895fc1bfd6c9ca2e54e60d25309c9))
+
+### [0.4.17](https://github.com/StableUnit/safe-transfer/compare/v0.4.16...v0.4.17) (2023-02-01)
+
+
+### Features
+
+* add ens ([03f4120](https://github.com/StableUnit/safe-transfer/commit/03f412074558aae82c9d1526ff0ab89755757651))
+* add IntroPage + change Footer text ([9dd7714](https://github.com/StableUnit/safe-transfer/commit/9dd77146b326d9794aa2c2118cd741f6ef4e4748))
+* add location in events ([fbcb5dd](https://github.com/StableUnit/safe-transfer/commit/fbcb5dd55bbcecbec838769d3030165052c90580))
+* add new twitter posts ([454bb39](https://github.com/StableUnit/safe-transfer/commit/454bb39b3bbcde113689b2991c544efe187b9287))
+
+### [0.4.16](https://github.com/StableUnit/safe-transfer/compare/v0.4.15...v0.4.16) (2023-01-26)
+
+
+### Bug Fixes
+
+* changing network ([b6b3f6e](https://github.com/StableUnit/safe-transfer/commit/b6b3f6e1bcfa9e2f2ecddef064ea824f3905eefe))
+
+### [0.4.15](https://github.com/StableUnit/safe-transfer/compare/v0.4.14...v0.4.15) (2023-01-26)
+
+
+### Features
+
+* fix networkVersion bug ([c2cca7f](https://github.com/StableUnit/safe-transfer/commit/c2cca7fb177ee8d6a991a7c380cbedac329787b6))
+* some renamings and remove totalValue in case of ssl problem ([2edfe3c](https://github.com/StableUnit/safe-transfer/commit/2edfe3c1be139b3bf9d75b5923f5c6e89646a4da))
+* update meta ([d45ac22](https://github.com/StableUnit/safe-transfer/commit/d45ac221772da01991042cea7545a0e266c29eb2))
+
+
+### Bug Fixes
+
+* add https ([1a53852](https://github.com/StableUnit/safe-transfer/commit/1a538529420af7905ae8c3996463df5a047c2f76))
+* small fix of volume ([213f05b](https://github.com/StableUnit/safe-transfer/commit/213f05bab97286d06c13b55655a6caa60b9f04af))
+
+### [0.4.14](https://github.com/StableUnit/safe-transfer/compare/v0.4.13...v0.4.14) (2023-01-23)
+
+
+### Features
+
+* add popup ([ff37901](https://github.com/StableUnit/safe-transfer/commit/ff37901875cbcad6d14a24c466abe2dff631d73e))
+* change fonts ([cca47c2](https://github.com/StableUnit/safe-transfer/commit/cca47c2af32b779468e25bccdbd488332c165197))
+* fix events ([388d625](https://github.com/StableUnit/safe-transfer/commit/388d625a91df5dae22cafae19426600644cd846b))
+* move GenUrlPopup to separate component ([a1f13a3](https://github.com/StableUnit/safe-transfer/commit/a1f13a39b4f183bc97b986132942d2d5ccd4635f))
+
+
+### Bug Fixes
+
+* paddings and length of genUrl ([d322af9](https://github.com/StableUnit/safe-transfer/commit/d322af9d082bb721f4a4c04b25e64403f96d6c42))
+
+### [0.4.13](https://github.com/StableUnit/safe-transfer/compare/v0.4.12...v0.4.13) (2023-01-23)
+
+
+### Features
+
+* add custom tokens + fix chainId ([b5eded7](https://github.com/StableUnit/safe-transfer/commit/b5eded75e180e131c027b9ebdf6d00988eb50f64))
+* add listener + fix chain connect ([b13219a](https://github.com/StableUnit/safe-transfer/commit/b13219a19cc4781dafd67414e7fd861b5afc73f0))
+* add onConnect for button ([a06e4d6](https://github.com/StableUnit/safe-transfer/commit/a06e4d6df4b1f71c57886a9a1a4350d18121c59f))
+* use new web3modal version 2 ([3d7c772](https://github.com/StableUnit/safe-transfer/commit/3d7c7723681a2dcfd1c60ed5564bed58853c2bcd))
+
+
+### Bug Fixes
+
+* listen chain change ([2ae2ce5](https://github.com/StableUnit/safe-transfer/commit/2ae2ce51dcd9717ff9ab1bb49c2d314ab568ff0f))
+* provider for web3 + restore styles ([5ef7929](https://github.com/StableUnit/safe-transfer/commit/5ef79290e1bada369f766c23126976de77cb741a))
+
+### [0.4.12](https://github.com/StableUnit/safe-transfer/compare/v0.4.11...v0.4.12) (2023-01-23)
+
+
+### Features
+
+* add logo ([31db4a0](https://github.com/StableUnit/safe-transfer/commit/31db4a00d44b4ffe6ce651f6baf851615bface45))
+* add token link ([e63bcde](https://github.com/StableUnit/safe-transfer/commit/e63bcde40485ef2b97cf84e3f1e88dd6dd17437b))
+* add token logo and url in request page ([634a96d](https://github.com/StableUnit/safe-transfer/commit/634a96d306e3a0060d0dff4e2cd71db33e0f5f91))
+
+### [0.4.11](https://github.com/StableUnit/safe-transfer/compare/v0.4.10...v0.4.11) (2023-01-23)
+
+
+### Features
+
+* add requests for backend ([0455ef1](https://github.com/StableUnit/safe-transfer/commit/0455ef17f8f8734b6faac1a0a18688515e8c872a))
+
+### [0.4.10](https://github.com/StableUnit/safe-transfer/compare/v0.4.9...v0.4.10) (2023-01-20)
+
+
+### Features
+
+* add approve link generated event ([dbe56da](https://github.com/StableUnit/safe-transfer/commit/dbe56dabf0f2eb2c72483f2067b573ce2853100c))
+* add disclaimer ([c413473](https://github.com/StableUnit/safe-transfer/commit/c4134737a5479e22db5288a7633d1442f5ecba84))
+* update events ([4156aca](https://github.com/StableUnit/safe-transfer/commit/4156aca890c7912cfa054ccc83b56d2da9e362d9))
+
+
+### Bug Fixes
+
+* fix some events + add disclaimers ([b318031](https://github.com/StableUnit/safe-transfer/commit/b318031f444a0cbd2c05d9f1512f2807ac87f94b))
+
+### [0.4.9](https://github.com/StableUnit/safe-transfer/compare/v0.4.8...v0.4.9) (2023-01-20)
+
+
+### Features
+
+* add Autocomplete ([a5ccda9](https://github.com/StableUnit/safe-transfer/commit/a5ccda9b4f309f4a47f4c4da82e346e723bd1c2e))
+* add isLoading for GenUrl ([ec6b146](https://github.com/StableUnit/safe-transfer/commit/ec6b146e3e8fbfd6591a2e3054422c217435d705))
+* add logic in RequestPage ([41bd440](https://github.com/StableUnit/safe-transfer/commit/41bd440caeaac39afad3f528e1e8da0c2475162c))
+* add required fields ([931c45c](https://github.com/StableUnit/safe-transfer/commit/931c45c8a56242711f5cd357a0a32b2a7e33c22d))
+* add token logic ([7a3e5ac](https://github.com/StableUnit/safe-transfer/commit/7a3e5acbfd2030c237009c2fb979fd2679b03f88))
+* add twitter to receive page + separate gen-url + add request form tab ([f17c89e](https://github.com/StableUnit/safe-transfer/commit/f17c89e01d4a81fc754e7e13c196c35b22a523e0))
+* disable fields + check network ([09d389e](https://github.com/StableUnit/safe-transfer/commit/09d389e16b76806b27b60a15bddc04394b897428))
+* hooks for token ([f25add4](https://github.com/StableUnit/safe-transfer/commit/f25add4ace5617f695ce58fc7b32202be419b6e5))
+* remove filteredOptions ([4dbad42](https://github.com/StableUnit/safe-transfer/commit/4dbad42dfe887801840cd306190b17924f93bbd8))
+* show genUrl with no trx wait + fix approve ([669a585](https://github.com/StableUnit/safe-transfer/commit/669a585def31e879a40548b15868b64e4db9ba10))
+* use some mainnets + add tokenlist.json ([bc033ca](https://github.com/StableUnit/safe-transfer/commit/bc033ca5a5e0e2dd35dde8c8ddefd275b9ee9ef7))
+
+
+### Bug Fixes
+
+* metamask symbol length ([15ffd42](https://github.com/StableUnit/safe-transfer/commit/15ffd42cc0b98bcb1582292dcf7d2cb85b36bf0b))
+* small ui fixes ([a0897af](https://github.com/StableUnit/safe-transfer/commit/a0897af114d4256994f444249378cafd5ee9a73d))
+
+### [0.4.8](https://github.com/StableUnit/safe-transfer/compare/v0.4.7...v0.4.8) (2023-01-20)
+
+
+### Bug Fixes
+
+* remove connect modal if user disconnected ([642bd2e](https://github.com/StableUnit/safe-transfer/commit/642bd2e7def7992d52a356b6f3f0696ae0b6ee28))
+
 ### [0.4.7](https://github.com/StableUnit/safe-transfer/compare/v0.4.6...v0.4.7) (2023-01-17)
 
 

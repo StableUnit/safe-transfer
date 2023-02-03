@@ -1,0 +1,30 @@
+@import "src/ui-kit/styles/vars";
+
+.intro-page {
+  max-width: 810px;
+  padding: 20px 20px 0 20px;
+
+  &__title {
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 42px;
+    padding-bottom: 32px;
+    text-align: center;
+  }
+
+  &__section {
+    padding-bottom: 14px;
+
+    &__title {
+      font-size: 20px;
+      line-height: 24px;
+      font-weight: 500;
+      padding-bottom: 8px;
+    }
+
+    &__description {
+      padding-top: 2px;
+      padding-bottom: 8px;
+    }
+  }
+}

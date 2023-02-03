@@ -20,30 +20,6 @@
     position: relative;
     border-radius: 24px;
 
-    &__twitter {
-        width: 100%;
-
-        &__header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-bottom: 12px;
-        }
-
-        &__title {
-            text-align: center;
-            font-size: 20px;
-            line-height: 24px;
-            font-weight: 500;
-            padding-right: 10px;
-            padding-bottom: 6px;
-        }
-
-        div {
-            text-align: center;
-        }
-    }
-
     &--disabled {
         .approve-form__content {
             pointer-events: none;
@@ -98,7 +74,7 @@
     }
 
     &__label {
-        color: $gray1;
+        color: $gray4;
         padding-left: 16px;
     }
 
@@ -150,6 +126,11 @@
         white-space: nowrap;
     }
 
+    &__token-form__logo {
+        width: 20px;
+        height: 20px;
+    }
+
     &__token-form__loader {
         margin: 6px 16px 12px 16px;
     }
@@ -176,6 +157,13 @@
     & &__token-balance {
         color: rgba(0,0,0,0.6);
         padding-top: 5px;
+    }
+
+    & &__token-name {
+        position: absolute;
+        left: 40px;
+        margin-top: -14px;
+        font-size: 12px;
     }
 
     &__paper {
@@ -227,8 +215,7 @@
         }
     }
 
-    &__hash,
-    &__url {
+    &__hash {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -237,6 +224,8 @@
         font-size: 14px;
         line-height: 18px;
         margin: 0 25px;
+
+        padding: 16px 8px 16px 16px;
 
         a {
             text-decoration-line: underline;
@@ -262,16 +251,6 @@
         }
     }
 
-    &__hash {
-        padding: 16px 8px 16px 16px;
-    }
-
-    &__url {
-        background: $dark-gray;
-        border-radius: 8px;
-        padding: 8px 8px 8px 16px;
-    }
-
     &__button  {
         width: 100%;
         height: 58px;
@@ -286,13 +265,25 @@
         }
     }
 
+    .Mui-disabled {
+        opacity: 0.3 !important;
+        -webkit-text-fill-color: white !important;
+    }
+
+    &__error {
+        font-weight: 700;
+        font-size: 12px;
+        line-height: 16px;
+        color: #FC7557;
+        text-align: center;
+        padding-bottom: 8px;
+
+        &:last-child {
+            padding-bottom: 0;
+        }
+    }
+
     @media screen and (max-width: 600px) {
         width: 330px;
-
-        &__twitter {
-            &__title {
-                font-size: 14px;
-            }
-        }
     }
 }
