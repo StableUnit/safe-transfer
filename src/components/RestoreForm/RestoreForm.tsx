@@ -1,20 +1,21 @@
-import React, { ChangeEvent, useContext, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
+import { TextField } from "@mui/material";
 import Web3 from "web3";
-import { IconButton, TextField } from "@mui/material";
 
+import { useAccount, useNetwork } from "wagmi";
 import { idToNetwork } from "../../utils/network";
-import { generateUrl, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
 import { addErrorNotification } from "../../utils/notifications";
 import Button from "../../ui-kit/components/Button/Button";
-import { StateContext } from "../../reducer/constants";
+import GenUrl from "../GenUrl";
+import { generateUrl } from "../../utils/urlGenerator";
 
 import "./RestoreForm.scss";
-import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
-import GenUrl from "../GenUrl";
 
 const RestoreForm = () => {
-    const { address, chainId, web3 } = useContext(StateContext);
-    const networkName = chainId ? idToNetwork[chainId] : undefined;
+    const { address } = useAccount();
+    const { chain } = useNetwork();
+    const { connector } = useAccount();
+    const networkName = chain?.id ? idToNetwork[chain?.id] : undefined;
     const [restoreHash, setRestoreHash] = useState<undefined | string>(undefined);
     const [isRestoreLoading, setIsRestoreLoading] = useState(false);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);
@@ -25,13 +26,13 @@ const RestoreForm = () => {
 
     const handleRestore = async () => {
         try {
-            setIsRestoreLoading(true);
+            const web3 = new Web3(await connector?.getProvider());
             const transaction = await web3?.eth.getTransactionReceipt(restoreHash ?? "");
             if (!transaction || !networkName) {
                 addErrorNotification("Error", "Can't get transaction");
-                setIsRestoreLoading(false);
                 return;
             }
+            setIsRestoreLoading(true);
             const valueBN = Web3.utils.hexToNumberString(transaction.logs[0].data);
             const to = `0x${transaction.logs[0].topics[2]?.slice(-40)}`;
             setGenUrl(
@@ -57,7 +58,7 @@ const RestoreForm = () => {
                 Please ask sender to send you a link with receive details. <br />
                 Alternatively, you can use widget below to restore details from on-chain data.
             </div>
-            <div className="send-form">
+            <div className="send-form restore-form">
                 <div className="restore-form__restore">
                     <div>Restore link by Approve transaction hash</div>
                     <TextField

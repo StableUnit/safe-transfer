@@ -1,9 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import cn from "classnames";
 
+import { useAccount } from "wagmi";
 import { getShortAddress } from "../../utils/wallet";
-import { StateContext } from "../../reducer/constants";
 import { GradientHref } from "../../ui-kit/components/GradientHref";
 import { useDevice } from "../../hooks/useDimensions";
 import { BurgerIcon } from "../../ui-kit/images/icons";
@@ -42,7 +42,7 @@ const LINKS = [
 ] as LinkType[];
 
 const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
-    const { address } = useContext(StateContext);
+    const { address } = useAccount();
     const [isMenuModalVisible, setIsMenuModalVisible] = useState(false);
     const { isMobile } = useDevice();
     const location = useLocation();
@@ -81,7 +81,8 @@ const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
                 )}
                 {address ? (
                     <div className="header__address" onClick={onDisconnect}>
-                        {getShortAddress(address)}
+                        <span className="header__address-text">{getShortAddress(address)}</span>
+                        <span className="header__address-disconnect">Disconnect</span>
                     </div>
                 ) : (
                     <div className="header__button" onClick={onConnect} id="connect-button">

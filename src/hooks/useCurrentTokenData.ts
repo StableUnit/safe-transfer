@@ -1,7 +1,7 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
+import { useAccount } from "wagmi";
 import { RequestUrlType } from "../utils/urlGenerator";
 import { BalanceType } from "../components/SendForm/SendForm";
-import { StateContext } from "../reducer/constants";
 import { rpcList } from "../utils/rpc";
 import CONTRACT_ERC20 from "../contracts/ERC20.json";
 
@@ -10,7 +10,7 @@ export const useCurrentTokenData = (
     selectedToken?: string,
     requestTokenData?: RequestUrlType
 ) => {
-    const { address } = useContext(StateContext);
+    const { address } = useAccount();
     const [tokenData, setTokenData] = useState<BalanceType>();
 
     const { networkName, token: tokenName } = requestTokenData ?? {};

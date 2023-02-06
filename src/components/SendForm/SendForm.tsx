@@ -5,6 +5,9 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 
+import { fetchBalance } from "@wagmi/core";
+import { useAccount, useContract, useNetwork, useSigner } from "wagmi";
+
 import {
     changeNetworkAtMetamask,
     NetworkType,
@@ -20,7 +23,6 @@ import {
     CUSTOM_TOKENS,
     fromHRToBN,
     getCovalentUrl,
-    getTokenContractFactory,
     nativeTokensAddresses,
     toHRNumberFloat,
 } from "../../utils/tokens";
@@ -43,6 +45,7 @@ import { PageNotFound } from "../PageNotFound";
 import { useCurrentTokenData } from "../../hooks/useCurrentTokenData";
 import { GradientHref } from "../../ui-kit/components/GradientHref";
 import GenUrlPopup from "../GenUrlPopup";
+import CONTRACT_ERC20 from "../../contracts/ERC20.json";
 
 import "./SendForm.scss";
 
@@ -62,8 +65,11 @@ interface ApproveFormProps {
 }
 
 const SendForm = ({ onConnect }: ApproveFormProps) => {
-    const { address, chainId, web3, newCustomToken } = useContext(StateContext);
-    const networkName = chainId ? idToNetwork[chainId] : undefined;
+    const { data: signer } = useSigner();
+    const { address } = useAccount();
+    const { chain } = useNetwork();
+    const networkName = chain?.id ? idToNetwork[chain?.id] : undefined;
+    const { newCustomToken } = useContext(StateContext);
     const [toAddress, setToAddress] = useState<string>();
     const [value, setValue] = useState<number>();
     const [selectedToken, setSelectedToken] = useState<string>(); // address
@@ -81,6 +87,11 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const hasRequestToken = !!requestTokenData;
 
     const currentToken = useCurrentTokenData(balances, selectedToken, requestTokenData);
+    const currentTokenContract = useContract({
+        address: currentToken?.token_address,
+        abi: CONTRACT_ERC20,
+        signerOrProvider: signer,
+    });
 
     useEffect(() => {
         if (hasRequestToken && currentToken) {
@@ -103,10 +114,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         : 0;
     const hasAllowance = !!(allowance && allowance !== "0");
 
-    const getTokenContract = getTokenContractFactory(web3);
-
     const onMount = async () => {
-        if (chainId && address && web3 && !requestTokenData?.token) {
+        if (chain && address && !requestTokenData?.token) {
             let longRequestTimeoutId;
             try {
                 setIsBalanceRequestLoading(true);
@@ -114,7 +123,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     Sentry.captureMessage("Long Covalent request");
                 }, 10000);
 
-                const response = await axios.get(getCovalentUrl(chainId, address));
+                const response = await axios.get(getCovalentUrl(chain.id, address));
                 clearTimeout(longRequestTimeoutId);
                 setIsBalanceRequestLoading(false);
 
@@ -149,20 +158,16 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                 })),
             ];
             for (const token of tokens) {
-                const tokenContract = getTokenContract(token.address);
-                if (!tokenContract) {
-                    return;
-                }
-
                 try {
-                    const balance = await tokenContract.methods.balanceOf(address.toLowerCase()).call();
+                    // @ts-ignore
+                    const balance = await fetchBalance({ address, token: token.address });
 
                     const newTokenBalance = {
                         token_address: token.address,
                         name: token.id,
                         symbol: token.symbol,
                         decimals: token.decimals,
-                        balance,
+                        balance: balance.value.toString(),
                     } as BalanceType;
                     setBalances((oldBalances) => {
                         const newBalances = arrayUniqueByKey(
@@ -201,10 +206,11 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     useEffect(() => {
         onMount();
-    }, [chainId, address, web3, requestToken]);
+    }, [networkName, address, requestToken]);
 
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);
+        // useSwitchNetwork?
     }, []);
 
     const handleAddressChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -239,33 +245,30 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const cancelApprove = async () => {
-        const tokenContract = getTokenContract(currentToken?.token_address ?? "");
-        if (!tokenContract || !web3 || !networkName) {
+        if (!networkName || !currentTokenContract) {
             addErrorNotification("Error", "No network");
             return;
         }
 
         try {
             setIsCancelApproveLoading(true);
-            await tokenContract.methods
-                .approve(await ensToAddress(networkName, toAddress), "0")
-                .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
-                .on("transactionHash", async (txHash: string) => {
-                    const symbol = await tokenContract.methods.symbol().call();
+            const tx = await currentTokenContract.approve(await ensToAddress(networkName, toAddress), "0");
+            const symbol = await currentTokenContract.symbol();
+            await tx.wait();
 
-                    // eslint-disable-next-line max-len
-                    // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
-                    trackEvent("APPROVED_REVOKE_SENT", {
-                        location: window.location.href,
-                        source: "Send Page",
-                        chainId: networkToId[networkName],
-                        txHash,
-                        fromAddress: address,
-                        toAddress,
-                        tokenAddress: currentToken?.token_address,
-                        tokenSymbol: symbol,
-                    });
-                });
+            addSuccessNotification("Success", "Cancel allowance completed");
+            // eslint-disable-next-line max-len
+            // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+            trackEvent("APPROVED_REVOKE_SENT", {
+                location: window.location.href,
+                source: "Send Page",
+                chainId: networkToId[networkName],
+                txHash: tx.hash,
+                fromAddress: address,
+                toAddress,
+                tokenAddress: currentToken?.token_address,
+                tokenSymbol: symbol,
+            });
             setAllowance(undefined);
         } catch (error) {
             // @ts-ignore
@@ -285,44 +288,40 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const handleApprove = async () => {
-        if (currentToken && value && toAddress && address && web3 && networkName) {
+        if (currentToken && currentTokenContract && value && toAddress && address && networkName) {
             setGenUrl(undefined);
             setTrxHash("");
             setTrxLink("");
             setIsApproveLoading(true);
 
             const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
-            const tokenContract = getTokenContract(currentToken.token_address);
             const ensAddress = await ensToAddress(networkName, toAddress);
             try {
-                await tokenContract?.methods
-                    .approve(ensAddress, valueBN)
-                    .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
-                    .on("transactionHash", (hash: string) => {
-                        setTrxHash(hash);
-                        setTrxLink(getTrxHashLink(hash, networkName));
-                        setGenUrl(
-                            generateUrl({
-                                address: currentToken?.token_address,
-                                from: address ?? "",
-                                to: toAddress ?? "",
-                                value: fromHRToBN(value ?? 0, +currentToken.decimals).toString(),
-                                chain: networkName,
-                            })
-                        );
-                        // eslint-disable-next-line max-len
-                        // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
-                        trackEvent("APPROVE_SENT", {
-                            location: window.location.href,
-                            chainId: networkToId[networkName],
-                            txHash: hash,
-                            fromAddress: address,
-                            toAddress,
-                            tokenAddress: currentToken?.token_address,
-                            tokenSymbol: getTokenName(selectedToken),
-                            tokenAmount: value,
-                        });
-                    });
+                const tx = await currentTokenContract.approve(ensAddress, valueBN);
+                setTrxHash(tx.hash);
+                setTrxLink(getTrxHashLink(tx.hash, networkName));
+                setGenUrl(
+                    generateUrl({
+                        address: currentToken?.token_address,
+                        from: address ?? "",
+                        to: ensAddress ?? "",
+                        value: fromHRToBN(value ?? 0, +currentToken.decimals).toString(),
+                        chain: networkName,
+                    })
+                );
+                // eslint-disable-next-line max-len
+                // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                trackEvent("APPROVE_SENT", {
+                    location: window.location.href,
+                    chainId: networkToId[networkName],
+                    txHash: tx.hash,
+                    fromAddress: address,
+                    toAddress: ensAddress,
+                    tokenAddress: currentToken?.token_address,
+                    tokenSymbol: getTokenName(selectedToken),
+                    tokenAmount: value,
+                });
+                await tx.wait();
                 onSuccessApprove();
             } catch (error) {
                 // @ts-ignore
@@ -348,14 +347,12 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const setAllowanceAsync = async () => {
-        if (isCorrectData && currentToken && networkName) {
-            const tokenContract = getTokenContract(currentToken.token_address);
-            if (tokenContract) {
-                const allowanceFromContract = await tokenContract.methods
-                    .allowance(address, await ensToAddress(networkName, toAddress))
-                    .call();
-                setAllowance(allowanceFromContract.toString());
-            }
+        if (isCorrectData && currentToken && currentTokenContract && networkName) {
+            const allowanceFromContract = await currentTokenContract.allowance(
+                address,
+                await ensToAddress(networkName, toAddress)
+            );
+            setAllowance(allowanceFromContract.toString());
         } else {
             setAllowance(undefined);
         }
