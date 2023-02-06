@@ -6,7 +6,7 @@ import axios from "axios";
 import * as Sentry from "@sentry/browser";
 
 import { fetchBalance } from "@wagmi/core";
-import { useContract, useProvider, useSigner, useSwitchNetwork } from "wagmi";
+import { useAccount, useContract, useNetwork, useProvider, useSigner, useSwitchNetwork } from "wagmi";
 
 import {
     changeNetworkAtMetamask,
@@ -66,8 +66,10 @@ interface ApproveFormProps {
 
 const SendForm = ({ onConnect }: ApproveFormProps) => {
     const { data: signer } = useSigner();
-    const { address, chainId, newCustomToken } = useContext(StateContext);
-    const networkName = chainId ? idToNetwork[chainId] : undefined;
+    const { address } = useAccount();
+    const { chain } = useNetwork();
+    const networkName = chain?.id ? idToNetwork[chain?.id] : undefined;
+    const { newCustomToken } = useContext(StateContext);
     const [toAddress, setToAddress] = useState<string>();
     const [value, setValue] = useState<number>();
     const [selectedToken, setSelectedToken] = useState<string>(); // address
@@ -115,7 +117,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const hasAllowance = !!(allowance && allowance !== "0");
 
     const onMount = async () => {
-        if (chainId && address && !requestTokenData?.token) {
+        if (chain && address && !requestTokenData?.token) {
             let longRequestTimeoutId;
             try {
                 setIsBalanceRequestLoading(true);
@@ -123,7 +125,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     Sentry.captureMessage("Long Covalent request");
                 }, 10000);
 
-                const response = await axios.get(getCovalentUrl(chainId, address));
+                const response = await axios.get(getCovalentUrl(chain.id, address));
                 clearTimeout(longRequestTimeoutId);
                 setIsBalanceRequestLoading(false);
 
@@ -206,7 +208,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     useEffect(() => {
         onMount();
-    }, [chainId, address, requestToken]);
+    }, [networkName, address, requestToken]);
 
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);

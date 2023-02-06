@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import cn from "classnames";
 
-import { useContract } from "wagmi";
+import { useAccount, useContract, useNetwork } from "wagmi";
 import {
     NetworkType,
     getAddressLink,
@@ -46,14 +46,15 @@ const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: Token
         : tokenData.value;
 
 const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
-    const { address, chainId } = useContext(StateContext);
+    const { address } = useAccount();
+    const { chain } = useNetwork();
     const [tokenMetadata, setTokenMetadata] = useState<undefined | TokenMetadataType>(undefined);
     const [isTransferFetching, setIsTransferFetching] = useState(false);
     const [isCancelFetching, setIsCancelFetching] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
-    const networkName = chainId ? idToNetwork[chainId] : undefined;
+    const networkName = chain?.id ? idToNetwork[chain?.id] : undefined;
 
     const { tokenData, token } = useReceiveToken();
     const tokenDataContract = useContract({

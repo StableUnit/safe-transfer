@@ -1,18 +1,18 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { TextField } from "@mui/material";
 
-import { useTransaction } from "wagmi";
+import { useAccount, useNetwork, useTransaction } from "wagmi";
 import { idToNetwork } from "../../utils/network";
 import { addErrorNotification } from "../../utils/notifications";
 import Button from "../../ui-kit/components/Button/Button";
-import { StateContext } from "../../reducer/constants";
 
 import "./RestoreForm.scss";
 import GenUrl from "../GenUrl";
 
 const RestoreForm = () => {
-    const { address, chainId } = useContext(StateContext);
-    const networkName = chainId ? idToNetwork[chainId] : undefined;
+    const { address } = useAccount();
+    const { chain } = useNetwork();
+    const networkName = chain?.id ? idToNetwork[chain?.id] : undefined;
     const [restoreHash, setRestoreHash] = useState<undefined | string>(undefined);
     const [isRestoreLoading, setIsRestoreLoading] = useState(false);
     const [genUrl, setGenUrl] = useState<undefined | string>(undefined);

@@ -1,9 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import cn from "classnames";
 
+import { useAccount } from "wagmi";
 import { getShortAddress } from "../../utils/wallet";
-import { StateContext } from "../../reducer/constants";
 import { GradientHref } from "../../ui-kit/components/GradientHref";
 import { useDevice } from "../../hooks/useDimensions";
 import { BurgerIcon } from "../../ui-kit/images/icons";
@@ -42,7 +42,7 @@ const LINKS = [
 ] as LinkType[];
 
 const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
-    const { address } = useContext(StateContext);
+    const { address } = useAccount();
     const [isMenuModalVisible, setIsMenuModalVisible] = useState(false);
     const { isMobile } = useDevice();
     const location = useLocation();
