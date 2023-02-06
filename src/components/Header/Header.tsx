@@ -81,7 +81,8 @@ const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
                 )}
                 {address ? (
                     <div className="header__address" onClick={onDisconnect}>
-                        {getShortAddress(address)}
+                        <span className="header__address-text">{getShortAddress(address)}</span>
+                        <span className="header__address-disconnect">Disconnect</span>
                     </div>
                 ) : (
                     <div className="header__button" onClick={onConnect} id="connect-button">
