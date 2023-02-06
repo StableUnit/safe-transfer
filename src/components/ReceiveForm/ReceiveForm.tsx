@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import cn from "classnames";
 
-import { useAccount, useContract, useNetwork } from "wagmi";
+import { useAccount, useContract, useNetwork, useSigner } from "wagmi";
 import {
     NetworkType,
     getAddressLink,
@@ -24,7 +24,6 @@ import { ReactComponent as MetamaskIcon } from "../../ui-kit/images/metamask.svg
 import Button from "../../ui-kit/components/Button/Button";
 import { InfoCell } from "../InfoCell/InfoCell";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
-import { StateContext } from "../../reducer/constants";
 import RestoreForm from "../RestoreForm/RestoreForm";
 import { ensToAddress } from "../../utils/wallet";
 import { PageNotFound } from "../PageNotFound";
@@ -46,6 +45,7 @@ const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: Token
         : tokenData.value;
 
 const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
+    const { data: signer } = useSigner();
     const { address } = useAccount();
     const { chain } = useNetwork();
     const [tokenMetadata, setTokenMetadata] = useState<undefined | TokenMetadataType>(undefined);
@@ -60,6 +60,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     const tokenDataContract = useContract({
         address: tokenData?.address,
         abi: CONTRACT_ERC20,
+        signerOrProvider: signer,
     });
 
     const [isToAddressRequesting, setIsToAddressRequesting] = useState(false);
@@ -118,30 +119,28 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
 
         try {
             if (tokenData && tokenDataContract && networkName && toAddress) {
-                await tokenDataContract
-                    .transferFrom(tokenData.from, tokenData.to, tokenData.value)
-                    .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
-                    .on("transactionHash", (hash: string) => {
-                        setTrxHash(hash);
-                        const eventData = {
-                            location: window.location.href,
-                            chainId: networkToId[networkName],
-                            txHash: hash,
-                            fromAddress: tokenData.from,
-                            toAddress: tokenData.to,
-                            tokenAddress: tokenData.address,
-                            tokenSymbol: tokenMetadata?.symbol,
-                            tokenAmount: getValue(tokenMetadata, tokenData),
-                        };
-                        sendAddTransferEvent(eventData);
-                        // eslint-disable-next-line max-len
-                        // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
-                        trackEvent("TRANSFER_FROM_SENT", eventData);
-                    });
+                const tx = await tokenDataContract.transferFrom(tokenData.from, tokenData.to, tokenData.value);
+                setTrxHash(tx.hash);
+                const eventData = {
+                    location: window.location.href,
+                    chainId: networkToId[networkName],
+                    txHash: tx.hash,
+                    fromAddress: tokenData.from,
+                    toAddress: tokenData.to,
+                    tokenAddress: tokenData.address,
+                    tokenSymbol: tokenMetadata?.symbol,
+                    tokenAmount: getValue(tokenMetadata, tokenData),
+                };
+                sendAddTransferEvent(eventData);
+                // eslint-disable-next-line max-len
+                // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                trackEvent("TRANSFER_FROM_SENT", eventData);
 
+                await tx.wait();
                 addSuccessNotification("Success", "Transfer from transaction completed");
                 setIsSuccess(true);
                 setIsTransferFetching(false);
+                await updateAllowance();
             }
         } catch (e) {
             console.log(e);
@@ -156,26 +155,23 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
 
         try {
             if (tokenData && tokenDataContract && networkName && toAddress) {
-                await tokenDataContract
-                    .approve(toAddress, "0")
-                    .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
-                    .on("transactionHash", async (txHash: string) => {
-                        const symbol = await tokenDataContract.symbol().call();
+                const tx = await tokenDataContract.approve(toAddress, "0");
+                const symbol = await tokenDataContract.symbol();
 
-                        // eslint-disable-next-line max-len
-                        // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
-                        trackEvent("APPROVED_REVOKE_SENT", {
-                            location: window.location.href,
-                            source: "Receive Page",
-                            chainId: networkToId[networkName],
-                            txHash,
-                            fromAddress: tokenData.from,
-                            toAddress: tokenData.to,
-                            tokenAddress: tokenData.address,
-                            tokenSymbol: symbol,
-                        });
-                    });
+                // eslint-disable-next-line max-len
+                // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                trackEvent("APPROVED_REVOKE_SENT", {
+                    location: window.location.href,
+                    source: "Receive Page",
+                    chainId: networkToId[networkName],
+                    txHash: tx.hash,
+                    fromAddress: tokenData.from,
+                    toAddress: tokenData.to,
+                    tokenAddress: tokenData.address,
+                    tokenSymbol: symbol,
+                });
 
+                await tx.wait();
                 addSuccessNotification("Success", "Cancel allowance completed");
                 setIsCancelFetching(false);
                 await updateAllowance();

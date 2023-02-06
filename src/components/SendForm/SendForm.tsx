@@ -6,7 +6,7 @@ import axios from "axios";
 import * as Sentry from "@sentry/browser";
 
 import { fetchBalance } from "@wagmi/core";
-import { useAccount, useContract, useNetwork, useProvider, useSigner, useSwitchNetwork } from "wagmi";
+import { useAccount, useContract, useNetwork, useSigner } from "wagmi";
 
 import {
     changeNetworkAtMetamask,
@@ -87,13 +87,11 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const hasRequestToken = !!requestTokenData;
 
     const currentToken = useCurrentTokenData(balances, selectedToken, requestTokenData);
-    console.log(signer);
     const currentTokenContract = useContract({
         address: currentToken?.token_address,
         abi: CONTRACT_ERC20,
         signerOrProvider: signer,
     });
-    console.log(currentTokenContract);
 
     useEffect(() => {
         if (hasRequestToken && currentToken) {
@@ -212,6 +210,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);
+        // useSwitchNetwork?
     }, []);
 
     const handleAddressChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -246,33 +245,31 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const cancelApprove = async () => {
-        if (!networkName) {
+        if (!networkName || !currentTokenContract) {
             addErrorNotification("Error", "No network");
             return;
         }
 
         try {
             setIsCancelApproveLoading(true);
-            // await tokenContract.methods
-            //     .approve(await ensToAddress(networkName, toAddress), "0")
-            //     .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
-            //     .on("transactionHash", async (txHash: string) => {
-            //         const symbol = await tokenContract.methods.symbol().call();
-            //
+            const tx = await currentTokenContract.approve(await ensToAddress(networkName, toAddress), "0");
+            const symbol = await currentTokenContract.symbol();
+            await tx.wait();
+
+            addSuccessNotification("Success", "Cancel allowance completed");
             // eslint-disable-next-line max-len
-            //         // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
-            //         trackEvent("APPROVED_REVOKE_SENT", {
-            //             location: window.location.href,
-            //             source: "Send Page",
-            //             chainId: networkToId[networkName],
-            //             txHash,
-            //             fromAddress: address,
-            //             toAddress,
-            //             tokenAddress: currentToken?.token_address,
-            //             tokenSymbol: symbol,
-            //         });
-            //     });
-            // setAllowance(undefined);
+            // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+            trackEvent("APPROVED_REVOKE_SENT", {
+                location: window.location.href,
+                source: "Send Page",
+                chainId: networkToId[networkName],
+                txHash: tx.hash,
+                fromAddress: address,
+                toAddress,
+                tokenAddress: currentToken?.token_address,
+                tokenSymbol: symbol,
+            });
+            setAllowance(undefined);
         } catch (error) {
             // @ts-ignore
             const replacedHash = error?.replacement?.hash;
@@ -291,7 +288,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const handleApprove = async () => {
-        console.log(currentToken && currentTokenContract && value && toAddress && address && networkName);
         if (currentToken && currentTokenContract && value && toAddress && address && networkName) {
             setGenUrl(undefined);
             setTrxHash("");
@@ -301,41 +297,32 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
             const ensAddress = await ensToAddress(networkName, toAddress);
             try {
-                console.log(currentTokenContract);
-                const tx = await currentTokenContract.approve(toAddress, valueBN);
-                console.log(tx);
-                await tx.wait();
-                addSuccessNotification("Success", "Approve transaction completed");
-                console.log(1);
-                // await tokenContract?.methods
-                //     .approve(ensAddress, valueBN)
-                //     .send({ from: address, maxPriorityFeePerGas: null, maxFeePerGas: null })
-                //     .on("transactionHash", (hash: string) => {
-                //         setTrxHash(hash);
-                //         setTrxLink(getTrxHashLink(hash, networkName));
-                //         setGenUrl(
-                //             generateUrl({
-                //                 address: currentToken?.token_address,
-                //                 from: address ?? "",
-                //                 to: toAddress ?? "",
-                //                 value: fromHRToBN(value ?? 0, +currentToken.decimals).toString(),
-                //                 chain: networkName,
-                //             })
-                //         );
+                const tx = await currentTokenContract.approve(ensAddress, valueBN);
+                setTrxHash(tx.hash);
+                setTrxLink(getTrxHashLink(tx.hash, networkName));
+                setGenUrl(
+                    generateUrl({
+                        address: currentToken?.token_address,
+                        from: address ?? "",
+                        to: ensAddress ?? "",
+                        value: fromHRToBN(value ?? 0, +currentToken.decimals).toString(),
+                        chain: networkName,
+                    })
+                );
                 // eslint-disable-next-line max-len
-                //         // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
-                //         trackEvent("APPROVE_SENT", {
-                //             location: window.location.href,
-                //             chainId: networkToId[networkName],
-                //             txHash: hash,
-                //             fromAddress: address,
-                //             toAddress,
-                //             tokenAddress: currentToken?.token_address,
-                //             tokenSymbol: getTokenName(selectedToken),
-                //             tokenAmount: value,
-                //         });
-                //     });
-                // onSuccessApprove();
+                // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                trackEvent("APPROVE_SENT", {
+                    location: window.location.href,
+                    chainId: networkToId[networkName],
+                    txHash: tx.hash,
+                    fromAddress: address,
+                    toAddress: ensAddress,
+                    tokenAddress: currentToken?.token_address,
+                    tokenSymbol: getTokenName(selectedToken),
+                    tokenAmount: value,
+                });
+                await tx.wait();
+                onSuccessApprove();
             } catch (error) {
                 // @ts-ignore
                 const replacedHash = error?.replacement?.hash;
@@ -365,7 +352,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                 address,
                 await ensToAddress(networkName, toAddress)
             );
-            console.log("allowance:", allowanceFromContract);
             setAllowance(allowanceFromContract.toString());
         } else {
             setAllowance(undefined);

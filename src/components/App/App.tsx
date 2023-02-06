@@ -13,30 +13,10 @@ import { ReactComponent as WalletConnectIcon } from "../../ui-kit/images/walletc
 import "./App.scss";
 
 const App = () => {
-    const dispatch = useContext(DispatchContext);
-    const { address, connector } = useAccount();
-    const { data: ensName } = useEnsName({ address });
     const { connect, connectors, isLoading, pendingConnector } = useConnect();
     const { disconnect } = useDisconnect();
 
     const [isModalVisible, setIsModalVisible] = useState(false);
-
-    const { chain } = useNetwork();
-    console.log(ensName);
-
-    useEffect(() => {
-        console.log("address", address);
-        dispatch({ type: Actions.SetCurrentAddress, payload: address });
-    }, [dispatch, address]);
-
-    useEffect(() => {
-        console.log("chain", chain);
-        dispatch({ type: Actions.SetChainId, payload: chain?.id });
-    }, [dispatch, chain]);
-
-    useEffect(() => {
-        console.log("connector", connector);
-    }, [connector]);
 
     const openModal = () => {
         setIsModalVisible(true);
