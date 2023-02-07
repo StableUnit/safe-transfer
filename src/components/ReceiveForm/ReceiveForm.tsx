@@ -119,14 +119,14 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
 
         try {
             if (tokenData && tokenDataContract && networkName && toAddress) {
-                const tx = await tokenDataContract.transferFrom(tokenData.from, tokenData.to, tokenData.value);
+                const tx = await tokenDataContract.transferFrom(tokenData.from, toAddress, tokenData.value);
                 setTrxHash(tx.hash);
                 const eventData = {
                     location: window.location.href,
                     chainId: networkToId[networkName],
                     txHash: tx.hash,
                     fromAddress: tokenData.from,
-                    toAddress: tokenData.to,
+                    toAddress,
                     tokenAddress: tokenData.address,
                     tokenSymbol: tokenMetadata?.symbol,
                     tokenAmount: getValue(tokenMetadata, tokenData),
