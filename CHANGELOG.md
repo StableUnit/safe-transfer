@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.25](https://github.com/StableUnit/safe-transfer/compare/v0.4.24...v0.4.25) (2023-02-07)
+
+
+### Features
+
+* change revoke url ([39998cf](https://github.com/StableUnit/safe-transfer/commit/39998cfeb011e5dd66ca9d06b7b5f9ec78f6de59))
+* remove web3 ([aa3a825](https://github.com/StableUnit/safe-transfer/commit/aa3a82593cd347d64a8d2ef68c986e0f3d200ecf))
+* use wagmi ([52d714f](https://github.com/StableUnit/safe-transfer/commit/52d714f526325c2c8df8992df212581c9df157e2))
+
+
+### Bug Fixes
+
+* ens address receive ([030744d](https://github.com/StableUnit/safe-transfer/commit/030744dd0acf2f1b104624fd3b6c452f60b7e9aa))
+* listen account and chain ([837a0c3](https://github.com/StableUnit/safe-transfer/commit/837a0c3b5cda3cd815de2ae8d8702ecf5ff08d93))
+* method calls ([bf1e047](https://github.com/StableUnit/safe-transfer/commit/bf1e0473bdd29fd8ff4cb4bdf02dad66c91de3d2))
+* restore form ([f117474](https://github.com/StableUnit/safe-transfer/commit/f117474853ac9412a5d1e8d5bb2b489bb66068b4))
+
 ### [0.4.24](https://github.com/StableUnit/safe-transfer/compare/v0.4.23...v0.4.24) (2023-02-01)
 
 
