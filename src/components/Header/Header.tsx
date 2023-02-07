@@ -34,11 +34,6 @@ const LINKS = [
         href: "/request",
         text: "Request",
     },
-    {
-        isExternal: true,
-        href: "https://revoke.cash/",
-        text: "Revoke",
-    },
 ] as LinkType[];
 
 const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
@@ -53,6 +48,8 @@ const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
     const closeMenuModal = () => {
         setIsMenuModalVisible(false);
     };
+
+    const revokeUrl = address ? `https://revoke.cash/address/${address}` : "https://revoke.cash/";
 
     return (
         <div className="header">
@@ -77,6 +74,15 @@ const Header = ({ onConnect, onDisconnect }: NavbarProps) => {
                                 </GradientHref>
                             );
                         })}
+                        <GradientHref
+                            id="links-revoke"
+                            className="header__link"
+                            href={revokeUrl}
+                            isExternal
+                            target="_blank"
+                        >
+                            Revoke
+                        </GradientHref>
                     </div>
                 )}
                 {address ? (
