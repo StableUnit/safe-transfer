@@ -76,6 +76,12 @@
     &__label {
         color: $gray4;
         padding-left: 16px;
+
+        &-additional {
+            font-weight: bold;
+            font-size: 13px;
+            opacity: 0.5;
+        }
     }
 
     & &__network-form,
@@ -269,6 +275,15 @@
     .Mui-disabled {
         opacity: 0.3 !important;
         -webkit-text-fill-color: white !important;
+    }
+
+    &__warning {
+        font-weight: 700;
+        font-size: 12px;
+        line-height: 16px;
+        color: #FEFBDA;
+        text-align: center;
+        padding-bottom: 8px;
     }
 
     &__error {

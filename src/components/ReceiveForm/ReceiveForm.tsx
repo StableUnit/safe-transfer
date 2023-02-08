@@ -70,7 +70,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         if (tokenData?.to && !toAddress && networkName) {
             try {
                 setIsToAddressRequesting(true);
-                const newToAddress = await ensToAddress(networkName, tokenData.to);
+                const newToAddress = await ensToAddress(tokenData.to);
                 if (!newToAddress) {
                     addErrorNotification("Invalid ENS address");
                 }

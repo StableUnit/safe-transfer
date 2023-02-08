@@ -4,7 +4,6 @@ import cn from "classnames";
 import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
-
 import { fetchBalance } from "@wagmi/core";
 import { useAccount, useContract, useNetwork, useSigner } from "wagmi";
 
@@ -17,7 +16,7 @@ import {
     networkToId,
     getAddressLink,
 } from "../../utils/network";
-import { ensToAddress, isAddress } from "../../utils/wallet";
+import { getShortAddress } from "../../utils/wallet";
 import {
     beautifyTokenBalance,
     CUSTOM_TOKENS,
@@ -46,6 +45,7 @@ import { useCurrentTokenData } from "../../hooks/useCurrentTokenData";
 import { GradientHref } from "../../ui-kit/components/GradientHref";
 import GenUrlPopup from "../GenUrlPopup";
 import CONTRACT_ERC20 from "../../contracts/ERC20.json";
+import { useEns } from "../../hooks/useEns";
 
 import "./SendForm.scss";
 
@@ -81,6 +81,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<string>();
     const [allowance, setAllowance] = useState<string>();
+    const { isEnsAddress, isEnsName, ensName, ensAddress, isEnsNameLoading } = useEns(toAddress);
 
     const { requestTokenData, requestToken } = useRequestToken();
     const isDisabledByToken = requestTokenData && networkName !== requestTokenData.networkName;
@@ -108,7 +109,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         }
     }, [requestToken]);
 
-    const isCorrectData = isAddress(toAddress) && (value ?? 0) > 0 && selectedToken;
     const currentTokenBalance = currentToken
         ? toHRNumberFloat(new BN(currentToken.balance), +currentToken.decimals)
         : 0;
@@ -252,7 +252,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
         try {
             setIsCancelApproveLoading(true);
-            const tx = await currentTokenContract.approve(await ensToAddress(networkName, toAddress), "0");
+            const tx = await currentTokenContract.approve(ensAddress, "0");
             const symbol = await currentTokenContract.symbol();
             await tx.wait();
 
@@ -295,7 +295,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             setIsApproveLoading(true);
 
             const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
-            const ensAddress = await ensToAddress(networkName, toAddress);
             try {
                 const tx = await currentTokenContract.approve(ensAddress, valueBN);
                 setTrxHash(tx.hash);
@@ -347,11 +346,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const setAllowanceAsync = async () => {
-        if (isCorrectData && currentToken && currentTokenContract && networkName) {
-            const allowanceFromContract = await currentTokenContract.allowance(
-                address,
-                await ensToAddress(networkName, toAddress)
-            );
+        if (address && currentToken && currentTokenContract && ensAddress) {
+            const allowanceFromContract = await currentTokenContract.allowance(address, ensAddress);
             setAllowance(allowanceFromContract.toString());
         } else {
             setAllowance(undefined);
@@ -360,7 +356,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     useEffect(() => {
         setAllowanceAsync();
-    }, [isCorrectData]);
+    }, [address, ensAddress, currentToken]);
 
     if (requestToken && !requestTokenData) {
         return <PageNotFound />;
@@ -411,7 +407,15 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                             </Select>
                         </FormControl>
 
-                        <div className="send-form__label">Recipient address</div>
+                        <div className="send-form__label">
+                            Recipient address
+                            <span className="send-form__label-additional">
+                                {isEnsName && ensAddress && ` (${getShortAddress(ensAddress)})`}
+                            </span>
+                            <span className="send-form__label-additional">
+                                {isEnsAddress && ensName && ` (${ensName})`}
+                            </span>
+                        </div>
                         <TextField
                             value={toAddress}
                             disabled={hasRequestToken}
@@ -511,7 +515,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                             <Button
                                 onClick={cancelApprove}
                                 className="send-form__button"
-                                disabled={isCancelApproveLoading}
+                                disabled={isCancelApproveLoading || !ensAddress}
                             >
                                 {isCancelApproveLoading ? "Loading..." : "Cancel Approve"}
                             </Button>
@@ -522,7 +526,14 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         <Button
                             onClick={handleApprove}
                             className="send-form__button"
-                            disabled={!isCorrectData || isApproveLoading || hasAllowance || isDisabledByToken}
+                            disabled={
+                                !value ||
+                                !selectedToken ||
+                                !ensAddress ||
+                                isApproveLoading ||
+                                hasAllowance ||
+                                isDisabledByToken
+                            }
                         >
                             {isApproveLoading ? "Loading..." : "Approve"}
                         </Button>
@@ -533,6 +544,13 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     )}
                     {requestTokenData && requestTokenData.networkName !== networkName && (
                         <div className="send-form__error">Please change network to {requestTokenData.networkName}</div>
+                    )}
+                    {toAddress && !isEnsAddress && !isEnsName && (
+                        <div className="send-form__error">Please write correct recipient address</div>
+                    )}
+                    {isEnsNameLoading && <div className="send-form__warning">ENS resolve in progress</div>}
+                    {isEnsName && !ensAddress && !isEnsNameLoading && (
+                        <div className="send-form__error">Can't resolve ENS address</div>
                     )}
                 </div>
             </div>
