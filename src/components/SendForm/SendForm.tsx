@@ -95,6 +95,10 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     });
 
     useEffect(() => {
+        trackEvent("openSendPage", { address });
+    }, [address]);
+
+    useEffect(() => {
         if (hasRequestToken && currentToken) {
             setBalances([currentToken]);
         }
@@ -211,6 +215,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);
         // useSwitchNetwork?
+        trackEvent("NetworkChanged", { address, network: event.target.value });
     }, []);
 
     const handleAddressChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -219,6 +224,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     const handleTokenChange = (event: SelectChangeEvent) => {
         setSelectedToken(event.target.value);
+        trackEvent("TokenChanged", { address, token: event.target.value });
     };
 
     const handleValueChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

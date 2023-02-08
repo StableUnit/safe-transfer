@@ -11,6 +11,7 @@ import { ReactComponent as MetamaskIcon } from "../../ui-kit/images/metamask-cir
 import { ReactComponent as WalletConnectIcon } from "../../ui-kit/images/walletconnect.svg";
 
 import "./App.scss";
+import { trackEvent } from "../../utils/events";
 
 const App = () => {
     const { connect, connectors, isLoading, pendingConnector } = useConnect();
@@ -18,14 +19,21 @@ const App = () => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
+    useEffect(() => {
+        trackEvent("pageLoaded");
+    }, []);
+
     const openModal = () => {
+        trackEvent("openModal");
         setIsModalVisible(true);
     };
     const closeModal = () => {
+        trackEvent("closeModal");
         setIsModalVisible(false);
     };
 
     const handleConnect = (selectedConnector: any) => () => {
+        trackEvent("connect-wallet", selectedConnector.name);
         connect({ connector: selectedConnector });
         closeModal();
     };
