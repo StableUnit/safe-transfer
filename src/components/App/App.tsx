@@ -69,7 +69,7 @@ const App = () => {
                 <div className="connect-modal">
                     <div className="connect-modal__card">
                         {connectors.map((selectedConnector) => (
-                            <div className="connect-modal__provider-wrapper">
+                            <div className="connect-modal__provider-wrapper" key={selectedConnector.id}>
                                 <div
                                     className="connect-modal__provider-container"
                                     key={selectedConnector.id}

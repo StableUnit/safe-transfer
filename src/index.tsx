@@ -22,11 +22,13 @@ import { wagmiCustomNetworks } from "./utils/network";
 import "./index.scss";
 import "react-notifications-component/dist/theme.css";
 
-Sentry.init({
-    dsn: "https://7a6df39090c749e3a39eb6bce2d5fad8@o922999.ingest.sentry.io/6543522",
-    integrations: [new Integrations.BrowserTracing(), new Sentry.Integrations.Breadcrumbs({ console: false })],
-    tracesSampleRate: 1.0,
-});
+if (process.env.REACT_APP_ENV === "production" || process.env.REACT_APP_ENV === "beta") {
+    Sentry.init({
+        dsn: "https://7a6df39090c749e3a39eb6bce2d5fad8@o922999.ingest.sentry.io/6543522",
+        integrations: [new Integrations.BrowserTracing(), new Sentry.Integrations.Breadcrumbs({ console: false })],
+        tracesSampleRate: 1.0,
+    });
+}
 
 amplitude.getInstance().init("33269ec4443fd55fdcb0c426627ec40f");
 

@@ -20,7 +20,7 @@ export const getVolume = async () => {
         const response = await axios.get(`${BACKEND_URL}/v1/getVolume`);
         return response.data;
     } catch (e: any) {
-        console.error(e.message);
+        console.warn(e.message);
         return 0;
     }
 };
