@@ -99,7 +99,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     }, [tokenData, tokenMetadata]);
 
     const updateAllowance = async () => {
-        if (tokenData && toAddress && !allowance) {
+        if (tokenData && toAddress) {
             const allowanceFromContract = await getCustomTokenAllowance(
                 tokenData.chain as NetworkType,
                 tokenData.address,
@@ -111,7 +111,9 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     };
 
     useEffect(() => {
-        updateAllowance();
+        if (!allowance) {
+            updateAllowance();
+        }
     }, [tokenData, toAddress, allowance]);
 
     const handleTransfer = async () => {
