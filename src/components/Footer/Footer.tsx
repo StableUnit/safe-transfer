@@ -8,7 +8,8 @@ export const Footer = () => {
     const [lastCommitDate, setLastCommitDate] = useState<string>();
 
     const updateLastCommitDate = async () => {
-        const data = await axios.get("https://api.github.com/repos/stableunit/safe-transfer/branches/master");
+        const branch = process.env.REACT_APP_ENV === "production" ? "production" : "master";
+        const data = await axios.get(`https://api.github.com/repos/stableunit/safe-transfer/branches/${branch}`);
         const date = data.data?.commit?.commit?.author?.date;
         if (date) {
             setLastCommitDate(new Date(date).toLocaleString());
