@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.28](https://github.com/StableUnit/safe-transfer/compare/v0.4.27...v0.4.28) (2023-02-08)
+
+
+### Features
+
+* load ens address ([6038690](https://github.com/StableUnit/safe-transfer/commit/603869023dc2817cbc59dc8ce04fdb6a5bc98d06))
+
 ### [0.4.27](https://github.com/StableUnit/safe-transfer/compare/v0.4.26...v0.4.27) (2023-02-08)
 
 
