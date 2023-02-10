@@ -40,9 +40,11 @@ const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModa
                 return;
             }
 
-            setTokenMetadata(undefined);
             if (Web3.utils.isAddress(tokenAddress)) {
-                setTokenMetadata(await getCustomTokenMetadata(networkName, tokenAddress, address));
+                if (tokenMetadata?.address !== tokenAddress) {
+                    setTokenMetadata(undefined);
+                    setTokenMetadata(await getCustomTokenMetadata(networkName, tokenAddress, address));
+                }
             } else {
                 addErrorNotification("Error", "Address is not correct");
             }

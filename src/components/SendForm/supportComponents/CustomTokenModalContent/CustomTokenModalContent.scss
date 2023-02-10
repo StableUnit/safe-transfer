@@ -12,19 +12,40 @@
   flex-direction: column;
   justify-content: center;
 
+  @media screen and (max-width: 500px) {
+    width: calc(100% - 20px);
+    box-sizing: border-box;
+    min-width: 200px;
+    padding: 16px;
+  }
+
   &__title {
     font-size: 24px;
     text-align: center;
     padding-bottom: 12px;
+
+    @media screen and (max-width: 500px) {
+      font-size: 20px;
+      padding-bottom: 8px;
+    }
   }
 
   &__label {
     padding: 12px 0;
     color: #7A7A7A;
+
+    @media screen and (max-width: 500px) {
+      padding: 8px 0;
+      font-size: 16px;
+    }
   }
 
   &__address {
     margin-bottom: 12px !important;
+
+    @media screen and (max-width: 500px) {
+      margin-bottom: 8px !important;
+    }
   }
 
   input {
@@ -35,8 +56,18 @@
     display: flex;
     justify-content: space-between;
 
+    @media screen and (max-width: 500px) {
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-around;
+    }
+
     .info-cell {
       width: auto;
+
+      @media screen and (max-width: 500px) {
+        min-width: 80px;
+      }
     }
   }
 
@@ -47,5 +78,11 @@
     color: #FC7557;
     text-align: center;
     padding-bottom: 8px;
+
+    @media screen and (max-width: 500px) {
+      font-size: 11px;
+      line-height: 14px;
+      padding-bottom: 6px;
+    }
   }
 }
