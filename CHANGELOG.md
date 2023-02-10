@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.30](https://github.com/StableUnit/safe-transfer/compare/v0.4.29...v0.4.30) (2023-02-10)
+
+
+### Features
+
+* disable unsupported button in connect wallet popup ([6f6c184](https://github.com/StableUnit/safe-transfer/commit/6f6c184694e8e531335a0669edf93cf432989c19))
+
 ### [0.4.29](https://github.com/StableUnit/safe-transfer/compare/v0.4.28...v0.4.29) (2023-02-10)
 
 
