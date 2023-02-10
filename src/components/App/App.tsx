@@ -1,17 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useAccount, useConnect, useDisconnect, useEnsName, useNetwork } from "wagmi";
+import React, { useEffect, useState } from "react";
+import { useConnect, useDisconnect } from "wagmi";
+import cn from "classnames";
 
 import Header from "../Header/Header";
 import { Footer } from "../Footer/Footer";
 import { Routes } from "../Routes";
-import { DispatchContext } from "../../reducer/constants";
-import { Actions } from "../../reducer";
 import { BugIcon } from "../../ui-kit/images/icons";
 import { ReactComponent as MetamaskIcon } from "../../ui-kit/images/metamask-circle.svg";
 import { ReactComponent as WalletConnectIcon } from "../../ui-kit/images/walletconnect.svg";
+import { trackEvent } from "../../utils/events";
 
 import "./App.scss";
-import { trackEvent } from "../../utils/events";
 
 const App = () => {
     const { connect, connectors, isLoading, pendingConnector } = useConnect();
@@ -71,7 +70,9 @@ const App = () => {
                         {connectors.map((selectedConnector) => (
                             <div className="connect-modal__provider-wrapper" key={selectedConnector.id}>
                                 <div
-                                    className="connect-modal__provider-container"
+                                    className={cn("connect-modal__provider-container", {
+                                        "connect-modal__provider-container--disabled": !selectedConnector.ready,
+                                    })}
                                     key={selectedConnector.id}
                                     onClick={handleConnect(selectedConnector)}
                                 >
@@ -80,7 +81,6 @@ const App = () => {
                                     </div>
                                     <div className="connect-modal__provider-name">
                                         {selectedConnector.name}
-                                        {!selectedConnector.ready && " (unsupported)"}
                                         {isLoading && selectedConnector.id === pendingConnector?.id && " (connecting)"}
                                     </div>
                                 </div>
