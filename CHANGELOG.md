@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.29](https://github.com/StableUnit/safe-transfer/compare/v0.4.28...v0.4.29) (2023-02-10)
+
+
+### Features
+
+* add some events ([dd8972a](https://github.com/StableUnit/safe-transfer/commit/dd8972ae9d894b29ae5717e48d38961ebfbc24f6))
+* use sentry only for beta and production ([2417f8b](https://github.com/StableUnit/safe-transfer/commit/2417f8b42746b4f67ee98cdecbd8d1e074921d0f))
+
+
+### Bug Fixes
+
+* custom token media-query ([e5d1e14](https://github.com/StableUnit/safe-transfer/commit/e5d1e14e585d6649a232ff79f2fcebd2a6762e02))
+
 ### [0.4.28](https://github.com/StableUnit/safe-transfer/compare/v0.4.27...v0.4.28) (2023-02-08)
 
 
