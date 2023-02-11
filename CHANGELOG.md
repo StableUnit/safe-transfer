@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.31](https://github.com/StableUnit/safe-transfer/compare/v0.4.30...v0.4.31) (2023-02-11)
+
+
+### Features
+
+* add AVAX name support ([303db72](https://github.com/StableUnit/safe-transfer/commit/303db72fe5f76a914704d819ea2e0f6b0ba040f1))
+
 ### [0.4.30](https://github.com/StableUnit/safe-transfer/compare/v0.4.29...v0.4.30) (2023-02-10)
 
 
