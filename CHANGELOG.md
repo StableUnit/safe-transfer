@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.32](https://github.com/StableUnit/safe-transfer/compare/v0.4.31...v0.4.32) (2023-02-11)
+
+
+### Features
+
+* remove goerli from some tracking events ([84f11a3](https://github.com/StableUnit/safe-transfer/commit/84f11a372d948237ef38458f9ca23ee27c90d947))
+
 ### [0.4.31](https://github.com/StableUnit/safe-transfer/compare/v0.4.30...v0.4.31) (2023-02-11)
 
 
