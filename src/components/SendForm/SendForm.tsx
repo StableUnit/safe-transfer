@@ -7,6 +7,7 @@ import * as Sentry from "@sentry/browser";
 import { fetchBalance } from "@wagmi/core";
 import { useAccount, useContract, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
 
+import Web3 from "web3";
 import {
     changeNetworkAtMetamask,
     NetworkType,
@@ -15,6 +16,7 @@ import {
     networkNames,
     networkToId,
     getAddressLink,
+    NETWORK,
 } from "../../utils/network";
 import { getShortAddress } from "../../utils/wallet";
 import {
@@ -214,15 +216,19 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         onMount();
     }, [networkName, address, requestToken]);
 
-    const handleNetworkChange = useCallback((event) => {
-        changeNetworkAtMetamask(event.target.value);
-        // @ts-ignore
-        const chainId = networkToId[event.target.value];
-        if (switchNetwork && chainId) {
-            switchNetwork(chainId);
-        }
-        trackEvent("NetworkChanged", { address, network: event.target.value });
-    }, []);
+    const handleNetworkChange = useCallback(
+        (event) => {
+            // @ts-ignore
+            const chainId = networkToId[event.target.value];
+            const hexChainId = Web3.utils.toHex(chainId);
+            if (switchNetwork && hexChainId) {
+                // @ts-ignore
+                switchNetwork(hexChainId);
+                trackEvent("NetworkChanged", { address, network: event.target.value });
+            }
+        },
+        [switchNetwork, address]
+    );
 
     const handleAddressChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setToAddress(event.target.value);
