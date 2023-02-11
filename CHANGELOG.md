@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.33](https://github.com/StableUnit/safe-transfer/compare/v0.4.32...v0.4.33) (2023-02-11)
+
+
+### Bug Fixes
+
+* switchNetwork ([cf869e7](https://github.com/StableUnit/safe-transfer/commit/cf869e79eac012f446842872ba91633feeffafa6))
+
 ### [0.4.32](https://github.com/StableUnit/safe-transfer/compare/v0.4.31...v0.4.32) (2023-02-11)
 
 
