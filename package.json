@@ -8,6 +8,7 @@
         "dist"
     ],
     "dependencies": {
+        "@avvy/client": "^3.3.2",
         "@chainsafe/dappeteer": "2.3.0",
         "@emotion/react": "^11.8.1",
         "@emotion/styled": "^11.8.1",

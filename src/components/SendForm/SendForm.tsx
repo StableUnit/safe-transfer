@@ -81,7 +81,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<string>();
     const [allowance, setAllowance] = useState<string>();
-    const { isEnsAddress, isEnsName, ensName, ensAddress, isEnsNameLoading } = useEns(toAddress);
+    const { isEnsAddress, isEnsName, ensName, ensAddress, isEnsNameLoading, isAvvyNameLoading, isAvvyName, avvyName } =
+        useEns(toAddress);
 
     const { requestTokenData, requestToken } = useRequestToken();
     const isDisabledByToken = requestTokenData && networkName !== requestTokenData.networkName;
@@ -416,10 +417,11 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         <div className="send-form__label">
                             Recipient address
                             <span className="send-form__label-additional">
-                                {isEnsName && ensAddress && ` (${getShortAddress(ensAddress)})`}
+                                {(isEnsName || isAvvyName) && ensAddress && ` (${getShortAddress(ensAddress)})`}
                             </span>
                             <span className="send-form__label-additional">
                                 {isEnsAddress && ensName && ` (${ensName})`}
+                                {isEnsAddress && avvyName && ` (${avvyName})`}
                             </span>
                         </div>
                         <TextField
@@ -551,12 +553,16 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     {requestTokenData && requestTokenData.networkName !== networkName && (
                         <div className="send-form__error">Please change network to {requestTokenData.networkName}</div>
                     )}
-                    {toAddress && !isEnsAddress && !isEnsName && (
+                    {toAddress && !isEnsAddress && !isEnsName && !isAvvyName && (
                         <div className="send-form__error">Please write correct recipient address</div>
                     )}
                     {isEnsNameLoading && <div className="send-form__warning">ENS resolve in progress</div>}
+                    {isAvvyNameLoading && <div className="send-form__warning">AVAX resolve in progress</div>}
                     {isEnsName && !ensAddress && !isEnsNameLoading && (
                         <div className="send-form__error">Can't resolve ENS address</div>
+                    )}
+                    {isAvvyName && !ensAddress && !isAvvyNameLoading && (
+                        <div className="send-form__error">Can't resolve AVAX address</div>
                     )}
                 </div>
             </div>
