@@ -4,6 +4,9 @@ import axios from "axios";
 const BACKEND_URL = "http://146.190.27.205:4000";
 
 export const trackEvent = (event: string, data?: Record<string, any>) => {
+    if (data?.chainId === 5) {
+        return;
+    }
     amplitude.getInstance().logEvent(event, data);
 };
 
