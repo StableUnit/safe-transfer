@@ -5,7 +5,7 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 import { fetchBalance } from "@wagmi/core";
-import { useAccount, useContract, useNetwork, useSigner } from "wagmi";
+import { useAccount, useContract, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
 
 import {
     changeNetworkAtMetamask,
@@ -68,6 +68,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const { data: signer } = useSigner();
     const { address } = useAccount();
     const { chain } = useNetwork();
+    const { switchNetwork } = useSwitchNetwork();
     const networkName = chain?.id ? idToNetwork[chain?.id] : undefined;
     const { newCustomToken } = useContext(StateContext);
     const [toAddress, setToAddress] = useState<string>();
@@ -215,7 +216,11 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     const handleNetworkChange = useCallback((event) => {
         changeNetworkAtMetamask(event.target.value);
-        // useSwitchNetwork?
+        // @ts-ignore
+        const chainId = networkToId[event.target.value];
+        if (switchNetwork && chainId) {
+            switchNetwork(chainId);
+        }
         trackEvent("NetworkChanged", { address, network: event.target.value });
     }, []);
 
