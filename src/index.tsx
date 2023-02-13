@@ -32,7 +32,7 @@ if (process.env.REACT_APP_ENV === "production" || process.env.REACT_APP_ENV === 
 
 amplitude.getInstance().init("33269ec4443fd55fdcb0c426627ec40f");
 
-const redirectFrom = "safe-transfer.stableunit.org";
+export const redirectFrom = "safe-transfer.stableunit.org";
 const redirectTo = "safetransfer.cash";
 
 if (window?.location?.host === redirectFrom) {

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.38](https://github.com/StableUnit/safe-transfer/compare/v0.4.37...v0.4.38) (2023-02-13)
+
+
+### Features
+
+* remove events from safe-transfer ([3c30d82](https://github.com/StableUnit/safe-transfer/commit/3c30d82c2affb1804570c58612d4d5d4610055fa))
+
 ### [0.4.37](https://github.com/StableUnit/safe-transfer/compare/v0.4.36...v0.4.37) (2023-02-13)
 
 
