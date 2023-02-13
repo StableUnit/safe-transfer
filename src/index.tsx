@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useReducer } from "react";
 import ReactDOM from "react-dom";
 import { ReactNotifications } from "react-notifications-component";
 import * as Sentry from "@sentry/react";
@@ -35,13 +35,11 @@ amplitude.getInstance().init("33269ec4443fd55fdcb0c426627ec40f");
 const redirectFrom = "safe-transfer.stableunit.org";
 const redirectTo = "safetransfer.cash";
 
-const AppContainer = () => {
-    useEffect(() => {
-        if (window?.location?.host === redirectFrom) {
-            window.open(window.location.href.replace(redirectFrom, redirectTo), "_self");
-        }
-    }, []);
+if (window?.location?.host === redirectFrom) {
+    window.open(window.location.href.replace(redirectFrom, redirectTo), "_self");
+}
 
+const AppContainer = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
     const chains = [
