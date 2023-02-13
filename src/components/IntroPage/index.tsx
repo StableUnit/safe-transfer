@@ -7,7 +7,8 @@ import "./styles.scss";
 import { TwitterPosts } from "../TwitterPosts";
 import { twitterPosts } from "../Twitter";
 
-const problemLink = "https://medium.com/@0xUsamaro/42a255b44ce";
+const instructionLink =
+    "https://medium.com/stableunit/if-it-can-happen-to-experts-it-can-happen-to-you-42a255b44ce#986c";
 
 const IntroPage = () => (
     <>
@@ -17,7 +18,7 @@ const IntroPage = () => (
                 <div className="intro-page__section__title">Problem</div>
                 <div className="intro-page__section__description">
                     There are over $60M worth of tokens are{" "}
-                    <GradientHref href={problemLink} isExternal target="_blank">
+                    <GradientHref href="https://medium.com/@0xUsamaro/42a255b44ce" isExternal target="_blank">
                         lost forever
                     </GradientHref>{" "}
                     because they were sent on wrong address, directly to smart-contact, undeployed multisig or wrong
@@ -48,7 +49,7 @@ const IntroPage = () => (
                     any interaction with 3rd party contacts or services, and works on every evm-compatible blockchain
                     such as ethereum, polygons, binance smart chain, arbitrum, optimism and others. In fact, you can do
                     a safe-transfer pattern without this app directly on etherescan (
-                    <GradientHref href={problemLink} isExternal target="_blank">
+                    <GradientHref href={instructionLink} isExternal target="_blank">
                         instruction
                     </GradientHref>
                     ) however with many steps and great inconvenience. It works great with gnosis-safe multisig,
