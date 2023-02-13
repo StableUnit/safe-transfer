@@ -7,8 +7,7 @@ import "./styles.scss";
 import { TwitterPosts } from "../TwitterPosts";
 import { twitterPosts } from "../Twitter";
 
-const problemLink =
-    "https://medium.com/stableunit/avoid-sending-tokens-to-the-wrong-address-with-safe-transfer-7c649284496f";
+const problemLink = "https://medium.com/@0xUsamaro/42a255b44ce";
 
 const IntroPage = () => (
     <>
@@ -17,8 +16,9 @@ const IntroPage = () => (
             <div className="intro-page__section">
                 <div className="intro-page__section__title">Problem</div>
                 <div className="intro-page__section__description">
+                    There are over $60M worth of tokens are{" "}
                     <GradientHref href={problemLink} isExternal target="_blank">
-                        There over $60M worth of tokens are lost forever
+                        lost forever
                     </GradientHref>{" "}
                     because they were sent on wrong address, directly to smart-contact, undeployed multisig or wrong
                     chain. It is very stressful to send large sums of crypto and easy to make irreversible mistakes.
@@ -47,12 +47,13 @@ const IntroPage = () => (
                     their functionality, we developed this app. It’s a simple open-source solution that doesn’t require
                     any interaction with 3rd party contacts or services, and works on every evm-compatible blockchain
                     such as ethereum, polygons, binance smart chain, arbitrum, optimism and others. In fact, you can do
-                    a safe-transfer pattern without this app directly on{" "}
+                    a safe-transfer pattern without this app directly on etherescan (
                     <GradientHref href={problemLink} isExternal target="_blank">
-                        etherescan
-                    </GradientHref>{" "}
-                    however with many steps and great inconvenience. It works great with gnosis-safe multisig, hardware
-                    wallets and might be a good solution for DAOs, VCs and other cases of large capital transfers.
+                        instruction
+                    </GradientHref>
+                    ) however with many steps and great inconvenience. It works great with gnosis-safe multisig,
+                    hardware wallets and might be a good solution for DAOs, VCs and other cases of large capital
+                    transfers.
                 </div>
                 <div className="intro-page__section__description">
                     Please consider supporting us with your word on{" "}
