@@ -47,6 +47,22 @@
         margin-left: 20px;
         width: 120px;
         height: 40px;
+
+        &-text {
+            display: block;
+        }
+        &-disconnect {
+            display: none;
+        }
+
+        &:hover {
+            .header__address-text {
+                display: none;
+            }
+            .header__address-disconnect {
+                display: block;
+            }
+        }
     }
 
     &__navbar {

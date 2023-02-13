@@ -2,6 +2,7 @@ import React, { ChangeEvent, useContext, useState } from "react";
 import { TextField } from "@mui/material";
 import Web3 from "web3";
 
+import { useAccount } from "wagmi";
 import { InfoCell } from "../../../InfoCell/InfoCell";
 import {
     beautifyTokenBalance,
@@ -15,7 +16,7 @@ import "./CustomTokenModalContent.scss";
 import { NetworkType } from "../../../../utils/network";
 import Button from "../../../../ui-kit/components/Button/Button";
 import { addToken, getTokens } from "../../../../utils/storage";
-import { DispatchContext, StateContext } from "../../../../reducer/constants";
+import { DispatchContext } from "../../../../reducer/constants";
 import { Actions } from "../../../../reducer";
 
 interface CustomTokenModalContentProps {
@@ -25,7 +26,7 @@ interface CustomTokenModalContentProps {
 
 const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModalContentProps>(
     ({ networkName, onClose }, ref) => {
-        const { address } = useContext(StateContext);
+        const { address } = useAccount();
         const dispatch = useContext(DispatchContext);
         const [tokenAddress, setTokenAddress] = useState<undefined | string>(undefined);
         const [tokenMetadata, setTokenMetadata] = useState<TokenMetadataType | undefined>(undefined);
@@ -39,9 +40,11 @@ const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModa
                 return;
             }
 
-            setTokenMetadata(undefined);
             if (Web3.utils.isAddress(tokenAddress)) {
-                setTokenMetadata(await getCustomTokenMetadata(networkName, tokenAddress, address));
+                if (tokenMetadata?.address !== tokenAddress) {
+                    setTokenMetadata(undefined);
+                    setTokenMetadata(await getCustomTokenMetadata(networkName, tokenAddress, address));
+                }
             } else {
                 addErrorNotification("Error", "Address is not correct");
             }

@@ -2,6 +2,106 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.36](https://github.com/StableUnit/safe-transfer/compare/v0.4.35...v0.4.36) (2023-02-13)
+
+
+### Bug Fixes
+
+* link ([ef4efb6](https://github.com/StableUnit/safe-transfer/commit/ef4efb691eae0c5e8a890282b327e1828e1b67a9))
+
+### [0.4.35](https://github.com/StableUnit/safe-transfer/compare/v0.4.34...v0.4.35) (2023-02-13)
+
+
+### Bug Fixes
+
+* Intro page ([4cfd37c](https://github.com/StableUnit/safe-transfer/commit/4cfd37c765e089702a04b3bcd43856bcb44848fe))
+
+### [0.4.34](https://github.com/StableUnit/safe-transfer/compare/v0.4.33...v0.4.34) (2023-02-11)
+
+
+### Bug Fixes
+
+* change network ([7cd0786](https://github.com/StableUnit/safe-transfer/commit/7cd07863d542cda8cf30995f7891626782f73328))
+
+### [0.4.33](https://github.com/StableUnit/safe-transfer/compare/v0.4.32...v0.4.33) (2023-02-11)
+
+
+### Bug Fixes
+
+* switchNetwork ([cf869e7](https://github.com/StableUnit/safe-transfer/commit/cf869e79eac012f446842872ba91633feeffafa6))
+
+### [0.4.32](https://github.com/StableUnit/safe-transfer/compare/v0.4.31...v0.4.32) (2023-02-11)
+
+
+### Features
+
+* remove goerli from some tracking events ([84f11a3](https://github.com/StableUnit/safe-transfer/commit/84f11a372d948237ef38458f9ca23ee27c90d947))
+
+### [0.4.31](https://github.com/StableUnit/safe-transfer/compare/v0.4.30...v0.4.31) (2023-02-11)
+
+
+### Features
+
+* add AVAX name support ([303db72](https://github.com/StableUnit/safe-transfer/commit/303db72fe5f76a914704d819ea2e0f6b0ba040f1))
+
+### [0.4.30](https://github.com/StableUnit/safe-transfer/compare/v0.4.29...v0.4.30) (2023-02-10)
+
+
+### Features
+
+* disable unsupported button in connect wallet popup ([6f6c184](https://github.com/StableUnit/safe-transfer/commit/6f6c184694e8e531335a0669edf93cf432989c19))
+
+### [0.4.29](https://github.com/StableUnit/safe-transfer/compare/v0.4.28...v0.4.29) (2023-02-10)
+
+
+### Features
+
+* add some events ([dd8972a](https://github.com/StableUnit/safe-transfer/commit/dd8972ae9d894b29ae5717e48d38961ebfbc24f6))
+* use sentry only for beta and production ([2417f8b](https://github.com/StableUnit/safe-transfer/commit/2417f8b42746b4f67ee98cdecbd8d1e074921d0f))
+
+
+### Bug Fixes
+
+* custom token media-query ([e5d1e14](https://github.com/StableUnit/safe-transfer/commit/e5d1e14e585d6649a232ff79f2fcebd2a6762e02))
+
+### [0.4.28](https://github.com/StableUnit/safe-transfer/compare/v0.4.27...v0.4.28) (2023-02-08)
+
+
+### Features
+
+* load ens address ([6038690](https://github.com/StableUnit/safe-transfer/commit/603869023dc2817cbc59dc8ce04fdb6a5bc98d06))
+
+### [0.4.27](https://github.com/StableUnit/safe-transfer/compare/v0.4.26...v0.4.27) (2023-02-08)
+
+
+### Bug Fixes
+
+* update allowance after receive ([fbc9798](https://github.com/StableUnit/safe-transfer/commit/fbc9798bde94edbccbe7be495207a70139c2a07a))
+
+### [0.4.26](https://github.com/StableUnit/safe-transfer/compare/v0.4.25...v0.4.26) (2023-02-08)
+
+
+### Features
+
+* condition on branch time ([36f9f53](https://github.com/StableUnit/safe-transfer/commit/36f9f53980f2d7bbf3396438ffbf07025f39a53b))
+
+### [0.4.25](https://github.com/StableUnit/safe-transfer/compare/v0.4.24...v0.4.25) (2023-02-07)
+
+
+### Features
+
+* change revoke url ([39998cf](https://github.com/StableUnit/safe-transfer/commit/39998cfeb011e5dd66ca9d06b7b5f9ec78f6de59))
+* remove web3 ([aa3a825](https://github.com/StableUnit/safe-transfer/commit/aa3a82593cd347d64a8d2ef68c986e0f3d200ecf))
+* use wagmi ([52d714f](https://github.com/StableUnit/safe-transfer/commit/52d714f526325c2c8df8992df212581c9df157e2))
+
+
+### Bug Fixes
+
+* ens address receive ([030744d](https://github.com/StableUnit/safe-transfer/commit/030744dd0acf2f1b104624fd3b6c452f60b7e9aa))
+* listen account and chain ([837a0c3](https://github.com/StableUnit/safe-transfer/commit/837a0c3b5cda3cd815de2ae8d8702ecf5ff08d93))
+* method calls ([bf1e047](https://github.com/StableUnit/safe-transfer/commit/bf1e0473bdd29fd8ff4cb4bdf02dad66c91de3d2))
+* restore form ([f117474](https://github.com/StableUnit/safe-transfer/commit/f117474853ac9412a5d1e8d5bb2b489bb66068b4))
+
 ### [0.4.24](https://github.com/StableUnit/safe-transfer/compare/v0.4.23...v0.4.24) (2023-02-01)
 
 

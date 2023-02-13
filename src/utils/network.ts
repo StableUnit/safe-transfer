@@ -1,4 +1,5 @@
 import Web3 from "web3";
+import { Chain } from "wagmi";
 
 export type NetworkType =
     | "eth"
@@ -29,8 +30,6 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     fantom: "fantom",
     avalanche: "avalanche",
 };
-
-export const DEFAULT_NETWORK = "mainnet"; // Name of NETWORK.eth in web3modal
 
 export const networkNames = {
     [NETWORK.eth]: "Ethereum",
@@ -100,8 +99,8 @@ export const networkInfo = {
     [NETWORK.optimism]: {
         chainName: "Optimism",
         chainId: Web3.utils.toHex(networkToId[NETWORK.optimism]),
-        rpcUrls: ["https://mainnet.optimism.io/"],
-        blockExplorerUrls: [`https://rpc.ankr.com/optimism/${process.env.REACT_APP_ANKR_KEY}`],
+        rpcUrls: ["https://mainnet.optimism.io/", `https://rpc.ankr.com/optimism/${process.env.REACT_APP_ANKR_KEY}`],
+        blockExplorerUrls: ["https://optimistic.etherscan.io"],
         nativeCurrency: {
             name: "KOR",
             symbol: "KOR",
@@ -182,7 +181,7 @@ export const networkInfo = {
     [NETWORK.bsc]: {
         chainName: "Binance Smart Chain Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.bsc]),
-        rpcUrls: [`https://rpc.ankr.com/bsc/${process.env.REACT_APP_ANKR_KEY}`],
+        rpcUrls: ["https://bsc-dataseed.binance.org/", `https://rpc.ankr.com/bsc/${process.env.REACT_APP_ANKR_KEY}`],
         blockExplorerUrls: ["https://bscscan.com"],
         nativeCurrency: {
             name: "BNB",
@@ -204,7 +203,7 @@ export const networkInfo = {
     [NETWORK.fantom]: {
         chainName: "Fantom Opera",
         chainId: Web3.utils.toHex(networkToId[NETWORK.fantom]),
-        rpcUrls: [`https://rpc.ankr.com/fantom/${process.env.REACT_APP_ANKR_KEY}`],
+        rpcUrls: ["https://rpc.ftm.tools/", `https://rpc.ankr.com/fantom/${process.env.REACT_APP_ANKR_KEY}`],
         blockExplorerUrls: ["https://ftmscan.com"],
         nativeCurrency: {
             name: "FTM",
@@ -226,7 +225,10 @@ export const networkInfo = {
     [NETWORK.avalanche]: {
         chainName: "Avalanche C-Chain",
         chainId: Web3.utils.toHex(networkToId[NETWORK.avalanche]),
-        rpcUrls: [`https://rpc.ankr.com/avalanche/${process.env.REACT_APP_ANKR_KEY}`],
+        rpcUrls: [
+            "https://api.avax.network/ext/bc/C/rpc",
+            `https://rpc.ankr.com/avalanche/${process.env.REACT_APP_ANKR_KEY}`,
+        ],
         blockExplorerUrls: ["https://snowtrace.io"],
         nativeCurrency: {
             name: "AVAX",
@@ -248,7 +250,7 @@ export const networkInfo = {
     [NETWORK.harmony]: {
         chainName: "Harmony Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.harmony]),
-        rpcUrls: [`https://rpc.ankr.com/harmony/${process.env.REACT_APP_ANKR_KEY}`],
+        rpcUrls: ["https://api.harmony.one", `https://rpc.ankr.com/harmony/${process.env.REACT_APP_ANKR_KEY}`],
         blockExplorerUrls: ["https://explorer.harmony.one/"],
         nativeCurrency: {
             name: "ONE",
@@ -256,6 +258,27 @@ export const networkInfo = {
             decimals: 18,
         },
     },
+};
+
+const generateWagmiCustomNetwork = (network: NetworkType) => ({
+    id: networkToId[network],
+    name: networkInfo[network].chainName,
+    network: networkInfo[network].chainName.toLowerCase(),
+    nativeCurrency: networkInfo[network].nativeCurrency,
+    rpcUrls: {
+        default: { http: networkInfo[network].rpcUrls },
+        public: { http: networkInfo[network].rpcUrls },
+    },
+    blockExplorers: {
+        default: { name: `${networkInfo[network].chainName}scan`, url: networkInfo[network].blockExplorerUrls[0] },
+    },
+});
+
+export const wagmiCustomNetworks: Record<string, Chain> = {
+    [NETWORK.cronos]: generateWagmiCustomNetwork(NETWORK.cronos),
+    [NETWORK.boba]: generateWagmiCustomNetwork(NETWORK.boba),
+    [NETWORK.aurora]: generateWagmiCustomNetwork(NETWORK.aurora),
+    [NETWORK.harmony]: generateWagmiCustomNetwork(NETWORK.harmony),
 };
 
 export const changeNetworkAtMetamask = async (networkName: NetworkType) => {
@@ -285,3 +308,5 @@ export const getTrxHashLink = (hash: string, chain: NetworkType) =>
 
 export const getAddressLink = (address: string, chain: NetworkType) =>
     `${networkInfo[chain].blockExplorerUrls}/token/${address}`;
+
+export const PROVIDER_URL_AVVY = "https://api.avax.network/ext/bc/C/rpc";
