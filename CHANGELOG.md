@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.43](https://github.com/StableUnit/safe-transfer/compare/v0.4.42...v0.4.43) (2023-02-14)
+
+
+### Features
+
+* add gnosis auto-connect ([24ec784](https://github.com/StableUnit/safe-transfer/commit/24ec78442a4dc065e25b6c96f5c2f2b88eb298d7))
+
 ### [0.4.42](https://github.com/StableUnit/safe-transfer/compare/v0.4.41...v0.4.42) (2023-02-14)
 
 
