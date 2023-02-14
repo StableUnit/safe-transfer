@@ -85,8 +85,6 @@ const AppContainer = () => {
         webSocketProvider,
     });
 
-    useAutoConnect();
-
     return (
         <StateContext.Provider value={state}>
             <DispatchContext.Provider value={dispatch}>
