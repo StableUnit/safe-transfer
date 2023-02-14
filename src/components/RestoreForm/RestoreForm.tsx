@@ -37,17 +37,23 @@ const RestoreForm = ({ onConnect }: RestoreFormProps) => {
                 return;
             }
             setIsRestoreLoading(true);
-            const valueBN = Web3.utils.hexToNumberString(transaction.logs[0].data);
-            const to = `0x${transaction.logs[0].topics[2]?.slice(-40)}`;
-            setGenUrl(
-                generateUrl({
-                    address: transaction.to,
-                    from: transaction.from,
-                    to,
-                    value: valueBN,
-                    chain: networkName,
-                })
-            );
+            const isMultiSigRequest = transaction.logs.length > 1;
+            const data = isMultiSigRequest
+                ? {
+                      address: transaction.logs[0].address,
+                      from: `0x${transaction.logs[0].topics[1]?.slice(-40)}`,
+                      to: `0x${transaction.logs[0].topics[2]?.slice(-40)}`,
+                      value: Web3.utils.hexToNumberString(transaction.logs[0].data),
+                      chain: networkName,
+                  }
+                : {
+                      address: transaction.to,
+                      from: transaction.from,
+                      to: `0x${transaction.logs[0].topics[2]?.slice(-40)}`,
+                      value: Web3.utils.hexToNumberString(transaction.logs[0].data),
+                      chain: networkName,
+                  };
+            setGenUrl(generateUrl(data));
             setIsRestoreLoading(false);
         } catch (e) {
             setIsRestoreLoading(false);
