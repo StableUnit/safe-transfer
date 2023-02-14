@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.41](https://github.com/StableUnit/safe-transfer/compare/v0.4.40...v0.4.41) (2023-02-14)
+
+
+### Features
+
+* add hotjar ([4553c01](https://github.com/StableUnit/safe-transfer/commit/4553c01a5d64d98669916accf4a5fb40bd114578))
+
+
+### Bug Fixes
+
+* multisig restore index ([9c59272](https://github.com/StableUnit/safe-transfer/commit/9c59272d6242037af9ca96bd50eb15baf527e0ef))
+
+### [0.4.40](https://github.com/StableUnit/safe-transfer/compare/v0.4.39...v0.4.40) (2023-02-14)
+
+
+### Bug Fixes
+
+* restore for multisig ([4c138ea](https://github.com/StableUnit/safe-transfer/commit/4c138ea7ca3a50886cde4729c9464f7c793528cd))
+
+### [0.4.39](https://github.com/StableUnit/safe-transfer/compare/v0.4.38...v0.4.39) (2023-02-14)
+
+
+### Bug Fixes
+
+* add connect button in RestoreForm ([c4f0c8e](https://github.com/StableUnit/safe-transfer/commit/c4f0c8e724a5bf8b2f7a071bee2d4f518ca416e5))
+
 ### [0.4.38](https://github.com/StableUnit/safe-transfer/compare/v0.4.37...v0.4.38) (2023-02-13)
 
 

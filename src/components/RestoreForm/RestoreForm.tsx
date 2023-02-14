@@ -11,7 +11,11 @@ import { generateUrl } from "../../utils/urlGenerator";
 
 import "./RestoreForm.scss";
 
-const RestoreForm = () => {
+interface RestoreFormProps {
+    onConnect: () => void;
+}
+
+const RestoreForm = ({ onConnect }: RestoreFormProps) => {
     const { address } = useAccount();
     const { chain } = useNetwork();
     const { connector } = useAccount();
@@ -33,17 +37,24 @@ const RestoreForm = () => {
                 return;
             }
             setIsRestoreLoading(true);
-            const valueBN = Web3.utils.hexToNumberString(transaction.logs[0].data);
-            const to = `0x${transaction.logs[0].topics[2]?.slice(-40)}`;
-            setGenUrl(
-                generateUrl({
-                    address: transaction.to,
-                    from: transaction.from,
-                    to,
-                    value: valueBN,
-                    chain: networkName,
-                })
-            );
+            const isMultiSigRequest = transaction.logs.length > 1;
+            const i = isMultiSigRequest ? transaction.logs.findIndex((v) => v.topics.length === 3) : 0;
+            const data = isMultiSigRequest
+                ? {
+                      address: transaction.logs[i].address,
+                      from: `0x${transaction.logs[i].topics[1]?.slice(-40)}`,
+                      to: `0x${transaction.logs[i].topics[2]?.slice(-40)}`,
+                      value: Web3.utils.hexToNumberString(transaction.logs[i].data),
+                      chain: networkName,
+                  }
+                : {
+                      address: transaction.to,
+                      from: transaction.from,
+                      to: `0x${transaction.logs[0].topics[2]?.slice(-40)}`,
+                      value: Web3.utils.hexToNumberString(transaction.logs[0].data),
+                      chain: networkName,
+                  };
+            setGenUrl(generateUrl(data));
             setIsRestoreLoading(false);
         } catch (e) {
             setIsRestoreLoading(false);
@@ -68,13 +79,19 @@ const RestoreForm = () => {
                         variant="outlined"
                         onChange={handleRestoreHashChange}
                     />
-                    <Button
-                        onClick={handleRestore}
-                        className="restore-form__button"
-                        disabled={isRestoreLoading || !address || !restoreHash}
-                    >
-                        {isRestoreLoading ? "Loading..." : "Restore"}
-                    </Button>
+                    {address ? (
+                        <Button
+                            onClick={handleRestore}
+                            className="restore-form__button"
+                            disabled={isRestoreLoading || !restoreHash}
+                        >
+                            {isRestoreLoading ? "Loading..." : "Restore"}
+                        </Button>
+                    ) : (
+                        <Button onClick={onConnect} className="restore-form__button">
+                            CONNECT WALLET
+                        </Button>
+                    )}
                 </div>
                 <GenUrl genUrl={genUrl} text="Link to receive:" />
             </div>

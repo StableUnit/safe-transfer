@@ -381,7 +381,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                         </IconButton>
                     </div>
                 )}
-                {!tokenData && <RestoreForm />}
+                {!tokenData && <RestoreForm onConnect={onConnect} />}
             </div>
             <Twitter />
         </>
