@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.40](https://github.com/StableUnit/safe-transfer/compare/v0.4.39...v0.4.40) (2023-02-14)
+
+
+### Bug Fixes
+
+* restore for multisig ([4c138ea](https://github.com/StableUnit/safe-transfer/commit/4c138ea7ca3a50886cde4729c9464f7c793528cd))
+
 ### [0.4.39](https://github.com/StableUnit/safe-transfer/compare/v0.4.38...v0.4.39) (2023-02-14)
 
 
