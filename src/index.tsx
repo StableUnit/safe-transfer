@@ -12,14 +12,13 @@ import { infuraProvider } from "wagmi/providers/infura";
 import { publicProvider } from "wagmi/providers/public";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
-import { SafeConnector } from "@wagmi/connectors/safe";
+import { SafeConnector } from "@gnosis.pm/safe-apps-wagmi";
 
 import App from "./components/App/App";
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 import { initialState, StateContext, DispatchContext } from "./reducer/constants";
 import reducer from "./reducer";
 import { wagmiCustomNetworks } from "./utils/network";
-import { useAutoConnect } from "./hooks/useAutoConnect";
 
 import "./index.scss";
 import "react-notifications-component/dist/theme.css";
