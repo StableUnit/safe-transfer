@@ -8,6 +8,7 @@ import { Routes } from "../Routes";
 import { BugIcon } from "../../ui-kit/images/icons";
 import { ReactComponent as MetamaskIcon } from "../../ui-kit/images/metamask-circle.svg";
 import { ReactComponent as WalletConnectIcon } from "../../ui-kit/images/walletconnect.svg";
+import { ReactComponent as GnosisSafeIcon } from "../../ui-kit/images/gnosis-safe.svg";
 import { trackEvent } from "../../utils/events";
 
 import "./App.scss";
@@ -51,6 +52,8 @@ const App = () => {
                 return <MetamaskIcon />;
             case "walletconnect":
                 return <WalletConnectIcon />;
+            case "safe":
+                return <GnosisSafeIcon />;
             default:
                 return null;
         }

@@ -12,6 +12,7 @@ import { infuraProvider } from "wagmi/providers/infura";
 import { publicProvider } from "wagmi/providers/public";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
+import { SafeConnector } from "@wagmi/connectors/safe";
 
 import App from "./components/App/App";
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
@@ -69,6 +70,13 @@ const AppContainer = () => {
                 chains,
                 options: {
                     qrcode: true,
+                },
+            }),
+            new SafeConnector({
+                chains,
+                options: {
+                    allowedDomains: [/gnosis-safe.io$/, /app.safe.global$/],
+                    debug: false,
                 },
             }),
         ],
