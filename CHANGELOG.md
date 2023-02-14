@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.44](https://github.com/StableUnit/safe-transfer/compare/v0.4.43...v0.4.44) (2023-02-14)
+
+
+### Bug Fixes
+
+* wagmi autoconnect ([6978f76](https://github.com/StableUnit/safe-transfer/commit/6978f762710e65711254d34c521a6fddaae716ac))
+
 ### [0.4.43](https://github.com/StableUnit/safe-transfer/compare/v0.4.42...v0.4.43) (2023-02-14)
 
 
