@@ -57,12 +57,12 @@ const App = () => {
     };
 
     return (
-        <div className="App">
+        <div className="App" id="app">
             <Header onConnect={openModal} onDisconnect={disconnect} />
             <div className="App__container">
                 <Routes onConnect={openModal} />
             </div>
-            <BugIcon className="bug-icon" onClick={onBugClick} />
+            <BugIcon className="bug-icon" id="bug-icon" onClick={onBugClick} />
             <Footer />
             {isModalVisible && (
                 <div className="connect-modal">
