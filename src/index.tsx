@@ -19,6 +19,7 @@ import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 import { initialState, StateContext, DispatchContext } from "./reducer/constants";
 import reducer from "./reducer";
 import { wagmiCustomNetworks } from "./utils/network";
+import { useAutoConnect } from "./hooks/useAutoConnect";
 
 import "./index.scss";
 import "react-notifications-component/dist/theme.css";
@@ -83,6 +84,8 @@ const AppContainer = () => {
         provider,
         webSocketProvider,
     });
+
+    useAutoConnect();
 
     return (
         <StateContext.Provider value={state}>
