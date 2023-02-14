@@ -11,7 +11,11 @@ import { generateUrl } from "../../utils/urlGenerator";
 
 import "./RestoreForm.scss";
 
-const RestoreForm = () => {
+interface RestoreFormProps {
+    onConnect: () => void;
+}
+
+const RestoreForm = ({ onConnect }: RestoreFormProps) => {
     const { address } = useAccount();
     const { chain } = useNetwork();
     const { connector } = useAccount();
@@ -68,13 +72,19 @@ const RestoreForm = () => {
                         variant="outlined"
                         onChange={handleRestoreHashChange}
                     />
-                    <Button
-                        onClick={handleRestore}
-                        className="restore-form__button"
-                        disabled={isRestoreLoading || !address || !restoreHash}
-                    >
-                        {isRestoreLoading ? "Loading..." : "Restore"}
-                    </Button>
+                    {address ? (
+                        <Button
+                            onClick={handleRestore}
+                            className="restore-form__button"
+                            disabled={isRestoreLoading || !restoreHash}
+                        >
+                            {isRestoreLoading ? "Loading..." : "Restore"}
+                        </Button>
+                    ) : (
+                        <Button onClick={onConnect} className="restore-form__button">
+                            CONNECT WALLET
+                        </Button>
+                    )}
                 </div>
                 <GenUrl genUrl={genUrl} text="Link to receive:" />
             </div>
