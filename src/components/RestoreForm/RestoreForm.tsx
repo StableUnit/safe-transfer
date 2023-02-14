@@ -38,12 +38,13 @@ const RestoreForm = ({ onConnect }: RestoreFormProps) => {
             }
             setIsRestoreLoading(true);
             const isMultiSigRequest = transaction.logs.length > 1;
+            const i = isMultiSigRequest ? transaction.logs.findIndex((v) => v.topics.length === 3) : 0;
             const data = isMultiSigRequest
                 ? {
-                      address: transaction.logs[0].address,
-                      from: `0x${transaction.logs[0].topics[1]?.slice(-40)}`,
-                      to: `0x${transaction.logs[0].topics[2]?.slice(-40)}`,
-                      value: Web3.utils.hexToNumberString(transaction.logs[0].data),
+                      address: transaction.logs[i].address,
+                      from: `0x${transaction.logs[i].topics[1]?.slice(-40)}`,
+                      to: `0x${transaction.logs[i].topics[2]?.slice(-40)}`,
+                      value: Web3.utils.hexToNumberString(transaction.logs[i].data),
                       chain: networkName,
                   }
                 : {
