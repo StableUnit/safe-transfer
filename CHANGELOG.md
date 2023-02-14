@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.39](https://github.com/StableUnit/safe-transfer/compare/v0.4.38...v0.4.39) (2023-02-14)
+
+
+### Bug Fixes
+
+* add connect button in RestoreForm ([c4f0c8e](https://github.com/StableUnit/safe-transfer/commit/c4f0c8e724a5bf8b2f7a071bee2d4f518ca416e5))
+
 ### [0.4.38](https://github.com/StableUnit/safe-transfer/compare/v0.4.37...v0.4.38) (2023-02-13)
 
 
