@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.42](https://github.com/StableUnit/safe-transfer/compare/v0.4.41...v0.4.42) (2023-02-14)
+
+
+### Features
+
+* add gnosis-safe ([d45107f](https://github.com/StableUnit/safe-transfer/commit/d45107f4ecfdeb0ba5b6e1872741562c62c5ded1))
+* add ids ([1e799f5](https://github.com/StableUnit/safe-transfer/commit/1e799f505094c4cd5fdc7b2518037b84bba95655))
+
 ### [0.4.41](https://github.com/StableUnit/safe-transfer/compare/v0.4.40...v0.4.41) (2023-02-14)
 
 
