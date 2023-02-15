@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/StableUnit/safe-transfer/compare/v0.4.46...v0.5.0) (2023-02-15)
+
 ### [0.4.46](https://github.com/StableUnit/safe-transfer/compare/v0.4.45...v0.4.46) (2023-02-15)
 
 
