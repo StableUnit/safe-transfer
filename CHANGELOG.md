@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.46](https://github.com/StableUnit/safe-transfer/compare/v0.4.45...v0.4.46) (2023-02-15)
+
+
+### Bug Fixes
+
+* genUrl in mobile ([9c9a354](https://github.com/StableUnit/safe-transfer/commit/9c9a3546453910b8c5931a1df223bf6ce7d99c0f))
+* short url for mobile ([36eab06](https://github.com/StableUnit/safe-transfer/commit/36eab06c908fb26478c94e6bb52c09941918e23c))
+* text ([9c1a7af](https://github.com/StableUnit/safe-transfer/commit/9c1a7af95ab7dbc241bcf6095e2c96c555d8d64b))
+
 ### [0.4.45](https://github.com/StableUnit/safe-transfer/compare/v0.4.44...v0.4.45) (2023-02-14)
 
 
