@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/StableUnit/safe-transfer/compare/v0.4.46...v0.5.0) (2023-02-15)
+
+### [0.4.46](https://github.com/StableUnit/safe-transfer/compare/v0.4.45...v0.4.46) (2023-02-15)
+
+
+### Bug Fixes
+
+* genUrl in mobile ([9c9a354](https://github.com/StableUnit/safe-transfer/commit/9c9a3546453910b8c5931a1df223bf6ce7d99c0f))
+* short url for mobile ([36eab06](https://github.com/StableUnit/safe-transfer/commit/36eab06c908fb26478c94e6bb52c09941918e23c))
+* text ([9c1a7af](https://github.com/StableUnit/safe-transfer/commit/9c1a7af95ab7dbc241bcf6095e2c96c555d8d64b))
+
+### [0.4.45](https://github.com/StableUnit/safe-transfer/compare/v0.4.44...v0.4.45) (2023-02-14)
+
+
+### Bug Fixes
+
+* change safe connector ([a7e50d1](https://github.com/StableUnit/safe-transfer/commit/a7e50d1de38c4e20bf1b30fc05b6e0ed20273e3a))
+
+### [0.4.44](https://github.com/StableUnit/safe-transfer/compare/v0.4.43...v0.4.44) (2023-02-14)
+
+
+### Bug Fixes
+
+* wagmi autoconnect ([6978f76](https://github.com/StableUnit/safe-transfer/commit/6978f762710e65711254d34c521a6fddaae716ac))
+
+### [0.4.43](https://github.com/StableUnit/safe-transfer/compare/v0.4.42...v0.4.43) (2023-02-14)
+
+
+### Features
+
+* add gnosis auto-connect ([24ec784](https://github.com/StableUnit/safe-transfer/commit/24ec78442a4dc065e25b6c96f5c2f2b88eb298d7))
+
+### [0.4.42](https://github.com/StableUnit/safe-transfer/compare/v0.4.41...v0.4.42) (2023-02-14)
+
+
+### Features
+
+* add gnosis-safe ([d45107f](https://github.com/StableUnit/safe-transfer/commit/d45107f4ecfdeb0ba5b6e1872741562c62c5ded1))
+* add ids ([1e799f5](https://github.com/StableUnit/safe-transfer/commit/1e799f505094c4cd5fdc7b2518037b84bba95655))
+
 ### [0.4.41](https://github.com/StableUnit/safe-transfer/compare/v0.4.40...v0.4.41) (2023-02-14)
 
 

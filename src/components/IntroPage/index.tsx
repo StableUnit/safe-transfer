@@ -17,7 +17,7 @@ const IntroPage = () => (
             <div className="intro-page__section">
                 <div className="intro-page__section__title">Problem</div>
                 <div className="intro-page__section__description">
-                    There are over $60M worth of tokens are{" "}
+                    There are over $500M worth of tokens are{" "}
                     <GradientHref href="https://medium.com/@0xUsamaro/42a255b44ce" isExternal target="_blank">
                         lost forever
                     </GradientHref>{" "}

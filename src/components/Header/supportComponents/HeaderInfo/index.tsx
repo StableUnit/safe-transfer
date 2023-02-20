@@ -10,8 +10,8 @@ export const HeaderInfo = () => {
     return (
         <div className="header-info">
             <div className="header-info__logo">
-                <a href="https://stableunit.org/" target="_blank" rel="noreferrer">
-                    <img src="https://stableunit.org/assets/img/logo.svg" />
+                <a href="https://safetransfer.cash/" target="_blank" rel="noreferrer">
+                    <img src="/logo.svg" />
                 </a>
             </div>
             {volume !== 0 && (
