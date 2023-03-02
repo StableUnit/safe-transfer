@@ -23,7 +23,7 @@ const App = () => {
     useAutoConnect();
 
     useEffect(() => {
-        trackEvent("pageLoaded");
+        trackEvent("pageLoaded", { location: window.location.href });
     }, []);
 
     const openModal = () => {
@@ -36,7 +36,7 @@ const App = () => {
     };
 
     const handleConnect = (selectedConnector: any) => () => {
-        trackEvent("connect-wallet", selectedConnector.name);
+        trackEvent("connect-wallet", { name: selectedConnector.name, location: window.location.href });
         connect({ connector: selectedConnector });
         closeModal();
     };
