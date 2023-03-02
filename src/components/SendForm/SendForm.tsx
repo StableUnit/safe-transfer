@@ -99,7 +99,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     });
 
     useEffect(() => {
-        trackEvent("openSendPage", { address });
+        trackEvent("openSendPage", { address, location: window.location.href });
     }, [address]);
 
     useEffect(() => {

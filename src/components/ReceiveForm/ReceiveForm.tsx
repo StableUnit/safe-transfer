@@ -57,7 +57,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     const networkName = chain?.id ? idToNetwork[chain?.id] : undefined;
 
     useEffect(() => {
-        trackEvent("openReceivePage", { address });
+        trackEvent("openReceivePage", { address, location: window.location.href });
     }, [address]);
 
     const { tokenData, token } = useReceiveToken();
