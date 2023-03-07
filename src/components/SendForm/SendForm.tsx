@@ -16,7 +16,7 @@ import {
     networkNames,
     networkToId,
     getAddressLink,
-    NETWORK,
+    networkInfo,
 } from "../../utils/network";
 import { getShortAddress } from "../../utils/wallet";
 import {
@@ -70,7 +70,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const { data: signer } = useSigner();
     const { address } = useAccount();
     const { chain } = useNetwork();
-    const { switchNetwork } = useSwitchNetwork();
+    const { switchNetworkAsync } = useSwitchNetwork();
     const networkName = chain?.id ? idToNetwork[chain?.id] : undefined;
     const { newCustomToken } = useContext(StateContext);
     const [toAddress, setToAddress] = useState<string>();
@@ -217,17 +217,29 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     }, [networkName, address, requestToken]);
 
     const handleNetworkChange = useCallback(
-        (event) => {
+        async (event) => {
             // @ts-ignore
             const chainId = networkToId[event.target.value];
             const hexChainId = Web3.utils.toHex(chainId);
-            if (switchNetwork && hexChainId) {
-                // @ts-ignore
-                switchNetwork(hexChainId);
-                trackEvent("NetworkChanged", { address, network: event.target.value });
+            if (switchNetworkAsync && hexChainId) {
+                try {
+                    // @ts-ignore
+                    await switchNetworkAsync(hexChainId);
+                    trackEvent("NetworkChanged", { address, network: event.target.value });
+                } catch (e: any) {
+                    try {
+                        await window.ethereum.request({
+                            method: "wallet_addEthereumChain",
+                            params: [networkInfo[event.target.value]],
+                        });
+                        trackEvent("NetworkAdded", { address, network: event.target.value });
+                    } catch (addError) {
+                        console.error(addError);
+                    }
+                }
             }
         },
-        [switchNetwork, address]
+        [switchNetworkAsync, address]
     );
 
     const handleAddressChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
