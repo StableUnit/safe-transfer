@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.1](https://github.com/StableUnit/safe-transfer/compare/v0.5.0...v0.5.1) (2023-03-07)
+
+
+### Features
+
+* add location to some events ([02519dc](https://github.com/StableUnit/safe-transfer/commit/02519dcc2fef328166d1145d600fa25737a01ca4))
+* redesign IntroPage ([a9e6a53](https://github.com/StableUnit/safe-transfer/commit/a9e6a53b2d9c52551366a75c91b1cf2de356fc90))
+
+
+### Bug Fixes
+
+* add network if metamask don't have it ([9808601](https://github.com/StableUnit/safe-transfer/commit/98086018098f967ea08333d012209779ac88931a))
+* logo ([ae8d954](https://github.com/StableUnit/safe-transfer/commit/ae8d954d042cf9f0cc921e757fced07d5ec607b8))
+
 ## [0.5.0](https://github.com/StableUnit/safe-transfer/compare/v0.4.46...v0.5.0) (2023-02-15)
 
 ### [0.4.46](https://github.com/StableUnit/safe-transfer/compare/v0.4.45...v0.4.46) (2023-02-15)
