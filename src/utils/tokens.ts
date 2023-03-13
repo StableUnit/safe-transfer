@@ -34,6 +34,38 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
     bsc: [],
     fantom: [],
     avalanche: [],
+    celo: [
+        {
+            id: "tether",
+            symbol: "USDT",
+            address: "0x617f3112bf5397d0467d315cc709ef968d9ba546",
+        },
+        {
+            id: "usdc",
+            symbol: "USDC",
+            address: "0xef4229c8c3250c675f21bcefa42f58efbff6002a",
+        },
+        {
+            id: "usdc-wormhole",
+            symbol: "USDC(Wormhole)",
+            address: "0x37f750b7cc259a2f741af45294f6a16572cf5cad",
+        },
+        {
+            id: "wbtc",
+            symbol: "WBTC",
+            address: "0xd629eb00deced2a080b7ec630ef6ac117e614f1b",
+        },
+        {
+            id: "celo",
+            symbol: "CELO",
+            address: "0x471ece3750da237f93b8e339c536989b8978a438",
+        },
+        {
+            id: "sushi",
+            symbol: "SUSHI",
+            address: "0x29dfce9c22003a4999930382fd00f9fd6133acd1",
+        },
+    ],
     aurora: [
         {
             id: "tether",

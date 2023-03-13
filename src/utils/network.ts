@@ -12,6 +12,7 @@ export type NetworkType =
     | "harmony"
     | "optimism"
     | "boba"
+    | "celo"
     // | "skale"
     | "cronos";
 
@@ -29,6 +30,7 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     bsc: "bsc",
     fantom: "fantom",
     avalanche: "avalanche",
+    celo: "celo",
 };
 
 export const networkNames = {
@@ -45,6 +47,7 @@ export const networkNames = {
     [NETWORK.boba]: "Boba",
     // [NETWORK.skale]: "Skale",
     [NETWORK.cronos]: "Cronos",
+    [NETWORK.celo]: "Celo",
 };
 
 const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj).map((a) => a.reverse()));
@@ -62,6 +65,7 @@ export const idToNetwork: Record<number, NetworkType> = {
     288: NETWORK.boba, // mainnet !!!
     // 338: NETWORK.cronos, // testnet
     // 42161: NETWORK.arbitrum,
+    42220: NETWORK.celo,
     43114: NETWORK.avalanche,
     // 1085866509: NETWORK.skale, // hackathon chainID
     1313161554: NETWORK.aurora, // !!!
@@ -258,6 +262,17 @@ export const networkInfo = {
             decimals: 18,
         },
     },
+    [NETWORK.celo]: {
+        chainName: "Celo Mainnet",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.celo]),
+        rpcUrls: ["https://forno.celo.org"],
+        blockExplorerUrls: ["https://celoscan.io"],
+        nativeCurrency: {
+            name: "CELO",
+            symbol: "CELO",
+            decimals: 18,
+        },
+    },
 };
 
 const generateWagmiCustomNetwork = (network: NetworkType) => ({
@@ -279,6 +294,7 @@ export const wagmiCustomNetworks: Record<string, Chain> = {
     [NETWORK.boba]: generateWagmiCustomNetwork(NETWORK.boba),
     [NETWORK.aurora]: generateWagmiCustomNetwork(NETWORK.aurora),
     [NETWORK.harmony]: generateWagmiCustomNetwork(NETWORK.harmony),
+    [NETWORK.celo]: generateWagmiCustomNetwork(NETWORK.celo),
 };
 
 export const changeNetworkAtMetamask = async (networkName: NetworkType) => {
