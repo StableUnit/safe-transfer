@@ -13,6 +13,7 @@ export type NetworkType =
     | "optimism"
     | "boba"
     | "celo"
+    | "okxchain"
     // | "skale"
     | "cronos";
 
@@ -31,6 +32,7 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     fantom: "fantom",
     avalanche: "avalanche",
     celo: "celo",
+    okxchain: "okxchain",
 };
 
 export const networkNames = {
@@ -48,6 +50,7 @@ export const networkNames = {
     // [NETWORK.skale]: "Skale",
     [NETWORK.cronos]: "Cronos",
     [NETWORK.celo]: "Celo",
+    [NETWORK.okxchain]: "OKXChain",
 };
 
 const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj).map((a) => a.reverse()));
@@ -59,6 +62,7 @@ export const idToNetwork: Record<number, NetworkType> = {
     25: NETWORK.cronos, // mainnet
     // 28: NETWORK.boba, // testnet
     56: NETWORK.bsc,
+    66: NETWORK.okxchain,
     // 69: NETWORK.optimism, // testnet
     137: NETWORK.polygon,
     250: NETWORK.fantom,
@@ -273,6 +277,17 @@ export const networkInfo = {
             decimals: 18,
         },
     },
+    [NETWORK.okxchain]: {
+        chainName: "OKXChain Mainnet",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.okxchain]),
+        rpcUrls: ["https://exchainrpc.okex.org"],
+        blockExplorerUrls: ["https://www.oklink.com/en/okc"],
+        nativeCurrency: {
+            name: "OKT",
+            symbol: "OKT",
+            decimals: 18,
+        },
+    },
 };
 
 const generateWagmiCustomNetwork = (network: NetworkType) => ({
@@ -295,6 +310,7 @@ export const wagmiCustomNetworks: Record<string, Chain> = {
     [NETWORK.aurora]: generateWagmiCustomNetwork(NETWORK.aurora),
     [NETWORK.harmony]: generateWagmiCustomNetwork(NETWORK.harmony),
     [NETWORK.celo]: generateWagmiCustomNetwork(NETWORK.celo),
+    [NETWORK.okxchain]: generateWagmiCustomNetwork(NETWORK.okxchain),
 };
 
 export const changeNetworkAtMetamask = async (networkName: NetworkType) => {

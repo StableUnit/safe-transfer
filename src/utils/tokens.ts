@@ -66,6 +66,33 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
             address: "0x29dfce9c22003a4999930382fd00f9fd6133acd1",
         },
     ],
+    okxchain: [
+        {
+            id: "tether",
+            symbol: "USDT",
+            address: "0x382bb369d343125bfb2117af9c149795c6c65c50",
+        },
+        {
+            id: "usdc",
+            symbol: "USDC",
+            address: "0xc946daf81b08146b1c7a8da2a851ddf2b3eaaf85",
+        },
+        {
+            id: "okb",
+            symbol: "OKB",
+            address: "0xdf54b6c6195ea4d948d03bfd818d365cf175cfc2",
+        },
+        {
+            id: "busd",
+            symbol: "BUSD",
+            address: "0x332730a4f6e03d9c55829435f10360e13cfa41ff",
+        },
+        {
+            id: "wokt",
+            symbol: "WOKT",
+            address: "0x8f8526dbfd6e38e3d8307702ca8469bae6c56c15",
+        },
+    ],
     aurora: [
         {
             id: "tether",

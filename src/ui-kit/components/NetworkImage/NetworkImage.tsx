@@ -12,6 +12,7 @@ import BobaImage from "../../images/boba.png";
 import SkaleImage from "../../images/skale.png";
 import CronosImage from "../../images/cronos.png";
 import CeloImage from "../../images/celo.jpg";
+import OKXChainImage from "../../images/okxchain.png";
 
 export type NetworkType =
     | "eth"
@@ -25,6 +26,7 @@ export type NetworkType =
     | "skale"
     | "cronos"
     | "celo"
+    | "okxchain"
     | string;
 
 interface NetworkImageProps {
@@ -61,6 +63,8 @@ const getNetworkImage = (network?: NetworkType) => {
             return CronosImage;
         case "celo":
             return CeloImage;
+        case "okxchain":
+            return OKXChainImage;
         default:
             return DefaultImage;
     }
