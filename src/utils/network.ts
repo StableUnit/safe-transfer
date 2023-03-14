@@ -14,6 +14,7 @@ export type NetworkType =
     | "boba"
     | "celo"
     | "okxchain"
+    | "gnosis"
     // | "skale"
     | "cronos";
 
@@ -33,6 +34,7 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     avalanche: "avalanche",
     celo: "celo",
     okxchain: "okxchain",
+    gnosis: "gnosis",
 };
 
 export const networkNames = {
@@ -51,6 +53,7 @@ export const networkNames = {
     [NETWORK.cronos]: "Cronos",
     [NETWORK.celo]: "Celo",
     [NETWORK.okxchain]: "OKXChain",
+    [NETWORK.gnosis]: "Gnosis",
 };
 
 const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj).map((a) => a.reverse()));
@@ -63,6 +66,7 @@ export const idToNetwork: Record<number, NetworkType> = {
     // 28: NETWORK.boba, // testnet
     56: NETWORK.bsc,
     66: NETWORK.okxchain,
+    100: NETWORK.gnosis,
     // 69: NETWORK.optimism, // testnet
     137: NETWORK.polygon,
     250: NETWORK.fantom,
@@ -288,6 +292,17 @@ export const networkInfo = {
             decimals: 18,
         },
     },
+    [NETWORK.gnosis]: {
+        chainName: "Gnosis",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.gnosis]),
+        rpcUrls: ["https://rpc.gnosischain.com"],
+        blockExplorerUrls: ["https://gnosisscan.io"],
+        nativeCurrency: {
+            name: "xDAI",
+            symbol: "xDAI",
+            decimals: 18,
+        },
+    },
 };
 
 const generateWagmiCustomNetwork = (network: NetworkType) => ({
@@ -311,6 +326,7 @@ export const wagmiCustomNetworks: Record<string, Chain> = {
     [NETWORK.harmony]: generateWagmiCustomNetwork(NETWORK.harmony),
     [NETWORK.celo]: generateWagmiCustomNetwork(NETWORK.celo),
     [NETWORK.okxchain]: generateWagmiCustomNetwork(NETWORK.okxchain),
+    [NETWORK.gnosis]: generateWagmiCustomNetwork(NETWORK.gnosis),
 };
 
 export const changeNetworkAtMetamask = async (networkName: NetworkType) => {

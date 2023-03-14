@@ -13,6 +13,7 @@ import SkaleImage from "../../images/skale.png";
 import CronosImage from "../../images/cronos.png";
 import CeloImage from "../../images/celo.jpg";
 import OKXChainImage from "../../images/okxchain.png";
+import GnosisImage from "../../images/gnosis.jpg";
 
 export type NetworkType =
     | "eth"
@@ -27,6 +28,7 @@ export type NetworkType =
     | "cronos"
     | "celo"
     | "okxchain"
+    | "gnosis"
     | string;
 
 interface NetworkImageProps {
@@ -65,6 +67,8 @@ const getNetworkImage = (network?: NetworkType) => {
             return CeloImage;
         case "okxchain":
             return OKXChainImage;
+        case "gnosis":
+            return GnosisImage;
         default:
             return DefaultImage;
     }

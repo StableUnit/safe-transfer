@@ -159,6 +159,48 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
             address: "0x4911b761993b9c8c0d14ba2d86902af6b0074f5b",
         },
     ],
+    gnosis: [
+        {
+            id: "tether",
+            symbol: "USDT",
+            address: "0x4ecaba5870353805a9f068101a40e0f32ed605c6",
+        },
+        {
+            id: "usdc",
+            symbol: "USDC",
+            address: "0xddafbb505ad214d7b80b1f830fccc89b60fb7a83",
+        },
+        {
+            id: "matic",
+            symbol: "MATIC",
+            address: "0x7122d7661c4564b7c6cd4878b06766489a6028a2",
+        },
+        {
+            id: "uni",
+            symbol: "UNI",
+            address: "0x4537e328bf7e4efa29d05caea260d7fe26af9d74",
+        },
+        {
+            id: "chainlink",
+            symbol: "LINK",
+            address: "0xe2e73a1c69ecf83f464efce6a5be353a37ca09b2",
+        },
+        {
+            id: "rpl",
+            symbol: "RPL",
+            address: "0x2f0e755efe6b58238a67db420ff3513ec1fb31ef",
+        },
+        {
+            id: "yearn",
+            symbol: "YFI",
+            address: "0xbf65bfcb5da067446cee6a706ba3fe2fb1a9fdfd",
+        },
+        {
+            id: "gno",
+            symbol: "GNO",
+            address: "0x9c58bacc331c9aa871afd802db6379a98e80cedb",
+        },
+    ],
     boba: [],
     cronos: [],
 };
