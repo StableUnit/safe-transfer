@@ -55,6 +55,9 @@ const AppContainer = () => {
         wagmiCustomNetworks.boba,
         wagmiCustomNetworks.aurora,
         wagmiCustomNetworks.harmony,
+        wagmiCustomNetworks.celo,
+        wagmiCustomNetworks.okxchain,
+        wagmiCustomNetworks.gnosis,
     ];
 
     const { provider, webSocketProvider } = configureChains(chains, [
@@ -69,7 +72,8 @@ const AppContainer = () => {
             new WalletConnectConnector({
                 chains,
                 options: {
-                    qrcode: true,
+                    projectId: "8bc6fb62be86919096fcd7486c9d70ad",
+                    showQrModal: true,
                 },
             }),
             new SafeConnector({

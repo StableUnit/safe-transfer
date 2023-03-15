@@ -7,11 +7,11 @@ export enum Actions {
 
 export type ActionType = {
     type: Actions.AddToken;
-    payload: TokenMetadataType;
+    payload: TokenMetadataType & { chainId: number };
 };
 
 export interface ReducerState {
-    newCustomToken?: TokenMetadataType;
+    newCustomToken?: TokenMetadataType & { chainId: number };
 }
 
 const reducer = (state: ReducerState, action: ActionType) => {

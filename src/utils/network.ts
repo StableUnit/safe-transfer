@@ -306,7 +306,7 @@ export const networkInfo = {
 };
 
 const generateWagmiCustomNetwork = (network: NetworkType) => ({
-    id: networkToId[network],
+    id: +networkToId[network],
     name: networkInfo[network].chainName,
     network: networkInfo[network].chainName.toLowerCase(),
     nativeCurrency: networkInfo[network].nativeCurrency,

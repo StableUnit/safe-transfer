@@ -2,7 +2,7 @@ import React, { ChangeEvent, useContext, useState } from "react";
 import { TextField } from "@mui/material";
 import Web3 from "web3";
 
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { InfoCell } from "../../../InfoCell/InfoCell";
 import {
     beautifyTokenBalance,
@@ -27,6 +27,7 @@ interface CustomTokenModalContentProps {
 const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModalContentProps>(
     ({ networkName, onClose }, ref) => {
         const { address } = useAccount();
+        const { chain } = useNetwork();
         const dispatch = useContext(DispatchContext);
         const [tokenAddress, setTokenAddress] = useState<undefined | string>(undefined);
         const [tokenMetadata, setTokenMetadata] = useState<TokenMetadataType | undefined>(undefined);
@@ -51,9 +52,9 @@ const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModa
         };
 
         const handleAddToken = () => {
-            if (tokenMetadata) {
-                addToken(tokenMetadata);
-                dispatch({ type: Actions.AddToken, payload: tokenMetadata });
+            if (tokenMetadata && chain?.id) {
+                addToken(tokenMetadata, chain.id);
+                dispatch({ type: Actions.AddToken, payload: { ...tokenMetadata, chainId: chain.id } });
                 addSuccessNotification("Success", "Token added");
                 onClose();
             }
@@ -101,7 +102,7 @@ const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModa
 
                 {hasTokenAdded && <div className="custom-token-modal__error">This address has already been added</div>}
 
-                <Button onClick={handleAddToken} disabled={!tokenMetadata || hasTokenAdded}>
+                <Button onClick={handleAddToken} disabled={!tokenMetadata || hasTokenAdded || !chain?.id}>
                     Add token
                 </Button>
             </div>
