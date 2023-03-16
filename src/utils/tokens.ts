@@ -34,6 +34,65 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
     bsc: [],
     fantom: [],
     avalanche: [],
+    celo: [
+        {
+            id: "tether",
+            symbol: "USDT",
+            address: "0x617f3112bf5397d0467d315cc709ef968d9ba546",
+        },
+        {
+            id: "usdc",
+            symbol: "USDC",
+            address: "0xef4229c8c3250c675f21bcefa42f58efbff6002a",
+        },
+        {
+            id: "usdc-wormhole",
+            symbol: "USDC(Wormhole)",
+            address: "0x37f750b7cc259a2f741af45294f6a16572cf5cad",
+        },
+        {
+            id: "wbtc",
+            symbol: "WBTC",
+            address: "0xd629eb00deced2a080b7ec630ef6ac117e614f1b",
+        },
+        {
+            id: "celo",
+            symbol: "CELO",
+            address: "0x471ece3750da237f93b8e339c536989b8978a438",
+        },
+        {
+            id: "sushi",
+            symbol: "SUSHI",
+            address: "0x29dfce9c22003a4999930382fd00f9fd6133acd1",
+        },
+    ],
+    okxchain: [
+        {
+            id: "tether",
+            symbol: "USDT",
+            address: "0x382bb369d343125bfb2117af9c149795c6c65c50",
+        },
+        {
+            id: "usdc",
+            symbol: "USDC",
+            address: "0xc946daf81b08146b1c7a8da2a851ddf2b3eaaf85",
+        },
+        {
+            id: "okb",
+            symbol: "OKB",
+            address: "0xdf54b6c6195ea4d948d03bfd818d365cf175cfc2",
+        },
+        {
+            id: "busd",
+            symbol: "BUSD",
+            address: "0x332730a4f6e03d9c55829435f10360e13cfa41ff",
+        },
+        {
+            id: "wokt",
+            symbol: "WOKT",
+            address: "0x8f8526dbfd6e38e3d8307702ca8469bae6c56c15",
+        },
+    ],
     aurora: [
         {
             id: "tether",
@@ -98,6 +157,48 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
             id: "link",
             symbol: "LINK",
             address: "0x4911b761993b9c8c0d14ba2d86902af6b0074f5b",
+        },
+    ],
+    gnosis: [
+        {
+            id: "tether",
+            symbol: "USDT",
+            address: "0x4ecaba5870353805a9f068101a40e0f32ed605c6",
+        },
+        {
+            id: "usdc",
+            symbol: "USDC",
+            address: "0xddafbb505ad214d7b80b1f830fccc89b60fb7a83",
+        },
+        {
+            id: "matic",
+            symbol: "MATIC",
+            address: "0x7122d7661c4564b7c6cd4878b06766489a6028a2",
+        },
+        {
+            id: "uni",
+            symbol: "UNI",
+            address: "0x4537e328bf7e4efa29d05caea260d7fe26af9d74",
+        },
+        {
+            id: "chainlink",
+            symbol: "LINK",
+            address: "0xe2e73a1c69ecf83f464efce6a5be353a37ca09b2",
+        },
+        {
+            id: "rpl",
+            symbol: "RPL",
+            address: "0x2f0e755efe6b58238a67db420ff3513ec1fb31ef",
+        },
+        {
+            id: "yearn",
+            symbol: "YFI",
+            address: "0xbf65bfcb5da067446cee6a706ba3fe2fb1a9fdfd",
+        },
+        {
+            id: "gno",
+            symbol: "GNO",
+            address: "0x9c58bacc331c9aa871afd802db6379a98e80cedb",
         },
     ],
     boba: [],

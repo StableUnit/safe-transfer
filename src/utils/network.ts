@@ -12,6 +12,9 @@ export type NetworkType =
     | "harmony"
     | "optimism"
     | "boba"
+    | "celo"
+    | "okxchain"
+    | "gnosis"
     // | "skale"
     | "cronos";
 
@@ -29,6 +32,9 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     bsc: "bsc",
     fantom: "fantom",
     avalanche: "avalanche",
+    celo: "celo",
+    okxchain: "okxchain",
+    gnosis: "gnosis",
 };
 
 export const networkNames = {
@@ -45,6 +51,9 @@ export const networkNames = {
     [NETWORK.boba]: "Boba",
     // [NETWORK.skale]: "Skale",
     [NETWORK.cronos]: "Cronos",
+    [NETWORK.celo]: "Celo",
+    [NETWORK.okxchain]: "OKXChain",
+    [NETWORK.gnosis]: "Gnosis",
 };
 
 const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj).map((a) => a.reverse()));
@@ -56,12 +65,15 @@ export const idToNetwork: Record<number, NetworkType> = {
     25: NETWORK.cronos, // mainnet
     // 28: NETWORK.boba, // testnet
     56: NETWORK.bsc,
+    66: NETWORK.okxchain,
+    100: NETWORK.gnosis,
     // 69: NETWORK.optimism, // testnet
     137: NETWORK.polygon,
     250: NETWORK.fantom,
     288: NETWORK.boba, // mainnet !!!
     // 338: NETWORK.cronos, // testnet
     // 42161: NETWORK.arbitrum,
+    42220: NETWORK.celo,
     43114: NETWORK.avalanche,
     // 1085866509: NETWORK.skale, // hackathon chainID
     1313161554: NETWORK.aurora, // !!!
@@ -258,10 +270,43 @@ export const networkInfo = {
             decimals: 18,
         },
     },
+    [NETWORK.celo]: {
+        chainName: "Celo Mainnet",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.celo]),
+        rpcUrls: ["https://forno.celo.org"],
+        blockExplorerUrls: ["https://celoscan.io"],
+        nativeCurrency: {
+            name: "CELO",
+            symbol: "CELO",
+            decimals: 18,
+        },
+    },
+    [NETWORK.okxchain]: {
+        chainName: "OKXChain Mainnet",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.okxchain]),
+        rpcUrls: ["https://exchainrpc.okex.org"],
+        blockExplorerUrls: ["https://www.oklink.com/en/okc"],
+        nativeCurrency: {
+            name: "OKT",
+            symbol: "OKT",
+            decimals: 18,
+        },
+    },
+    [NETWORK.gnosis]: {
+        chainName: "Gnosis",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.gnosis]),
+        rpcUrls: ["https://rpc.gnosischain.com"],
+        blockExplorerUrls: ["https://gnosisscan.io"],
+        nativeCurrency: {
+            name: "xDAI",
+            symbol: "xDAI",
+            decimals: 18,
+        },
+    },
 };
 
 const generateWagmiCustomNetwork = (network: NetworkType) => ({
-    id: networkToId[network],
+    id: +networkToId[network],
     name: networkInfo[network].chainName,
     network: networkInfo[network].chainName.toLowerCase(),
     nativeCurrency: networkInfo[network].nativeCurrency,
@@ -279,6 +324,9 @@ export const wagmiCustomNetworks: Record<string, Chain> = {
     [NETWORK.boba]: generateWagmiCustomNetwork(NETWORK.boba),
     [NETWORK.aurora]: generateWagmiCustomNetwork(NETWORK.aurora),
     [NETWORK.harmony]: generateWagmiCustomNetwork(NETWORK.harmony),
+    [NETWORK.celo]: generateWagmiCustomNetwork(NETWORK.celo),
+    [NETWORK.okxchain]: generateWagmiCustomNetwork(NETWORK.okxchain),
+    [NETWORK.gnosis]: generateWagmiCustomNetwork(NETWORK.gnosis),
 };
 
 export const changeNetworkAtMetamask = async (networkName: NetworkType) => {

@@ -158,35 +158,38 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
             const tokens = [
                 ...CUSTOM_TOKENS[networkName as NetworkType],
-                ...getTokens().map((token) => ({
-                    address: token.address,
-                    id: token.name,
-                    symbol: token.symbol,
-                    decimals: token.decimals,
-                })),
+                ...getTokens()
+                    .filter((v) => v.chainId === chain.id)
+                    .map((token) => ({
+                        address: token.address,
+                        id: token.name,
+                        symbol: token.symbol,
+                        decimals: token.decimals,
+                    })),
             ];
             for (const token of tokens) {
                 try {
                     // @ts-ignore
-                    const balance = await fetchBalance({ address, token: token.address });
-
-                    const newTokenBalance = {
-                        token_address: token.address,
-                        name: token.id,
-                        symbol: token.symbol,
-                        decimals: token.decimals,
-                        balance: balance.value.toString(),
-                    } as BalanceType;
-                    setBalances((oldBalances) => {
-                        const newBalances = arrayUniqueByKey(
-                            [...oldBalances, newTokenBalance].map((v) => ({
-                                ...v,
-                                token_address: v.token_address.toLowerCase(),
-                            })),
-                            "token_address"
-                        );
-                        return sortByBalance(newBalances);
-                    });
+                    const balance = await fetchBalance({ address, chainId: chain.id, token: token.address });
+                    if (balance?.value?.gt(0)) {
+                        const newTokenBalance = {
+                            token_address: token.address,
+                            name: token.id,
+                            symbol: token.symbol,
+                            decimals: token.decimals ?? balance.decimals,
+                            balance: balance.value.toString(),
+                        } as BalanceType;
+                        setBalances((oldBalances) => {
+                            const newBalances = arrayUniqueByKey(
+                                [...oldBalances, newTokenBalance].map((v) => ({
+                                    ...v,
+                                    token_address: v.token_address.toLowerCase(),
+                                })),
+                                "token_address"
+                            );
+                            return sortByBalance(newBalances);
+                        });
+                    }
                     // eslint-disable-next-line no-empty
                 } catch (e: any) {}
             }
@@ -194,7 +197,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     useEffect(() => {
-        if (newCustomToken) {
+        if (newCustomToken && newCustomToken?.chainId === chain?.id) {
             const newTokenBalance = {
                 token_address: newCustomToken.address,
                 name: newCustomToken.name,
@@ -490,7 +493,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                         <MenuItem key={token.token_address} value={token.token_address}>
                                             <img
                                                 className="send-form__token-form__logo"
-                                                src={token.logo}
+                                                src={token.logo ?? "/default.svg"}
                                                 onError={({ currentTarget }) => {
                                                     // eslint-disable-next-line no-param-reassign
                                                     currentTarget.onerror = null; // prevents looping

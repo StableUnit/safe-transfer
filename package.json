@@ -1,6 +1,6 @@
 {
     "name": "safetransfer",
-    "version": "0.5.1",
+    "version": "0.5.3",
     "private": true,
     "files": [
         "jest-preset.js",
@@ -48,7 +48,7 @@
         "react-twitter-embed": "^4.0.4",
         "swiper": "^8.4.5",
         "typescript": "^4.5.2",
-        "wagmi": "^0.11.4",
+        "wagmi": "^0.12.1",
         "web3": "^1.7.1",
         "web3-eth-contract": "^1.7.1",
         "web3-eth-ens": "^1.8.2"

@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.3](https://github.com/StableUnit/safe-transfer/compare/v0.5.2...v0.5.3) (2023-03-15)
+
+
+### Features
+
+* add Gnosis chain ([dcd3bfe](https://github.com/StableUnit/safe-transfer/commit/dcd3bfe7d70879a822735abcc0e63c7f92fa85ae))
+* add OKXChain support ([4f1c786](https://github.com/StableUnit/safe-transfer/commit/4f1c7868898f541e9e5d2533d19f159a49cdbba6))
+
+
+### Bug Fixes
+
+* custom network sendings ([40a8b5a](https://github.com/StableUnit/safe-transfer/commit/40a8b5ac4afd4bdbd00e0b3341b2295effdcbf4c))
+
+### [0.5.2](https://github.com/StableUnit/safe-transfer/compare/v0.5.1...v0.5.2) (2023-03-13)
+
+
+### Features
+
+* add Celo support ([0b3898a](https://github.com/StableUnit/safe-transfer/commit/0b3898ad1ff544680ca05bc0e99dcc6b7dd86843))
+
 ### [0.5.1](https://github.com/StableUnit/safe-transfer/compare/v0.5.0...v0.5.1) (2023-03-07)
 
 
