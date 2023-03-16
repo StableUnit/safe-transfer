@@ -26,4 +26,7 @@ export const rpcList = createRPC([
     "harmony",
     "boba",
     "cronos",
+    "celo",
+    "okxchain",
+    "gnosis",
 ]);
