@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.4](https://github.com/StableUnit/safe-transfer/compare/v0.5.3...v0.5.4) (2023-03-16)
+
+
+### Bug Fixes
+
+* get allowance and decimals from custom networks ([1d4392d](https://github.com/StableUnit/safe-transfer/commit/1d4392d24cca51d40ae6ab82d1f5d0b260d9b267))
+
 ### [0.5.3](https://github.com/StableUnit/safe-transfer/compare/v0.5.2...v0.5.3) (2023-03-15)
 
 
