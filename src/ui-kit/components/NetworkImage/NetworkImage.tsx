@@ -14,6 +14,7 @@ import CronosImage from "../../images/cronos.png";
 import CeloImage from "../../images/celo.jpg";
 import OKXChainImage from "../../images/okxchain.png";
 import GnosisImage from "../../images/gnosis.jpg";
+import ZkSyncImage from "../../images/zkSync.png";
 
 export type NetworkType =
     | "eth"
@@ -29,6 +30,7 @@ export type NetworkType =
     | "celo"
     | "okxchain"
     | "gnosis"
+    | "zkSync"
     | string;
 
 interface NetworkImageProps {
@@ -69,6 +71,8 @@ const getNetworkImage = (network?: NetworkType) => {
             return OKXChainImage;
         case "gnosis":
             return GnosisImage;
+        case "zkSync":
+            return ZkSyncImage;
         default:
             return DefaultImage;
     }

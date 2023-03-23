@@ -203,6 +203,28 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
     ],
     boba: [],
     cronos: [],
+    zkSync: [
+        {
+            id: "usdc",
+            symbol: "USDC",
+            address: "0x0faF6df7054946141266420b43783387A78d82A9",
+        },
+        {
+            id: "dai",
+            symbol: "DAI",
+            address: "0x3e7676937A7E96CFB7616f255b9AD9FF47363D4b",
+        },
+        {
+            id: "wbtc",
+            symbol: "wBTC",
+            address: "0x0BfcE1D53451B4a8175DD94e6e029F7d8a701e9c",
+        },
+        {
+            id: "link",
+            symbol: "LINK",
+            address: "0x40609141Db628BeEE3BfAB8034Fc2D8278D0Cc78",
+        },
+    ],
 };
 
 export const beautifyTokenBalance = (balance: string, decimals: number, fraction = 5) => {
