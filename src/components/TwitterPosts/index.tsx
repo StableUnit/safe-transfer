@@ -1,5 +1,4 @@
 import React from "react";
-import { TwitterTweetEmbed } from "react-twitter-embed";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Keyboard, Pagination, Navigation } from "swiper";
 
@@ -10,6 +9,10 @@ import "./styles.scss";
 interface Props {
     ids: string[];
 }
+
+const handleTwitterClick = (tweetId: string) => () => {
+    window.open(`https://twitter.com/twitter/status/${tweetId}`, "_blank");
+};
 
 export const TwitterPosts = ({ ids }: Props) => (
     <Swiper
@@ -43,7 +46,9 @@ export const TwitterPosts = ({ ids }: Props) => (
     >
         {ids.map((tweetId) => (
             <SwiperSlide key={tweetId}>
-                <TwitterTweetEmbed tweetId={tweetId} />
+                <div className="twitter-post__container" onClick={handleTwitterClick(tweetId)}>
+                    <img src={`/images/twitter/${tweetId}.png`} />
+                </div>
             </SwiperSlide>
         ))}
     </Swiper>
