@@ -69,7 +69,7 @@ const AppContainer = () => {
     const client = createClient({
         autoConnect: true,
         connectors: [
-            new MetaMaskConnector({ chains }),
+            new MetaMaskConnector({ chains, options: { shimDisconnect: true } }),
             new WalletConnectConnector({
                 chains,
                 options: {

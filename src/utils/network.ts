@@ -93,7 +93,7 @@ export const networkInfo = {
         chainName: "Ethereum Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.eth]),
         blockExplorerUrls: ["https://etherscan.io"],
-        rpcUrls: [`https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`],
+        rpcUrls: ["https://eth.llamarpc.com", `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`],
         nativeCurrency: {
             name: "ETH",
             symbol: "ETH",
@@ -208,7 +208,10 @@ export const networkInfo = {
     [NETWORK.polygon]: {
         chainName: "Polygon Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.polygon]),
-        rpcUrls: [`https://polygon-mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`],
+        rpcUrls: [
+            "https://polygon-rpc.com/",
+            `https://polygon-mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`,
+        ],
         blockExplorerUrls: ["https://polygonscan.com/"],
         nativeCurrency: {
             name: "MATIC Token",
