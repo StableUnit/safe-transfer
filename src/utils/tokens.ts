@@ -1,5 +1,4 @@
 import BN from "bn.js";
-import Web3 from "web3";
 
 import { networkToId, NetworkType } from "./network";
 import CONTRACT_ERC20 from "../contracts/ERC20.json";
@@ -203,6 +202,28 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
     ],
     boba: [],
     cronos: [],
+    zkSync: [
+        {
+            id: "usdc",
+            symbol: "USDC",
+            address: "0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4",
+        },
+        {
+            id: "mute",
+            symbol: "MUTE",
+            address: "0x0e97C7a0F8B2C9885C8ac9fC6136e829CbC21d42",
+        },
+        {
+            id: "combo",
+            symbol: "COMBO",
+            address: "0xc2B13Bb90E33F1E191b8aA8F44Ce11534D5698E3",
+        },
+        {
+            id: "perp",
+            symbol: "PERP",
+            address: "0x42c1c56be243c250AB24D2ecdcC77F9cCAa59601",
+        },
+    ],
 };
 
 export const beautifyTokenBalance = (balance: string, decimals: number, fraction = 5) => {

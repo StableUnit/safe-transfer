@@ -29,4 +29,5 @@ export const rpcList = createRPC([
     "celo",
     "okxchain",
     "gnosis",
+    "zkSync",
 ]);
