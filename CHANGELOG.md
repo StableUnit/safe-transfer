@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.5](https://github.com/StableUnit/safe-transfer/compare/v0.5.4...v0.5.5) (2023-04-04)
+
+
+### Features
+
+* add ZkSync Era Mainnet ([0858f61](https://github.com/StableUnit/safe-transfer/commit/0858f61e33323b858262d9e4ae37b9ba8256ba44))
+* add ZkSync testnet ([951229c](https://github.com/StableUnit/safe-transfer/commit/951229c6e42a4de7cf62e38e165a582ed57430bb))
+
 ### [0.5.4](https://github.com/StableUnit/safe-transfer/compare/v0.5.3...v0.5.4) (2023-03-16)
 
 
