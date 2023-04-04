@@ -5,18 +5,18 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 import { fetchBalance } from "@wagmi/core";
-import { useAccount, useContract, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
+import { useAccount, useConnect, useContract, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
 
 import Web3 from "web3";
 import {
     changeNetworkAtMetamask,
-    NetworkType,
+    getAddressLink,
     getTrxHashLink,
     idToNetwork,
+    networkInfo,
     networkNames,
     networkToId,
-    getAddressLink,
-    networkInfo,
+    NetworkType,
 } from "../../utils/network";
 import { getShortAddress } from "../../utils/wallet";
 import {
@@ -34,7 +34,7 @@ import { addErrorNotification, addSuccessNotification } from "../../utils/notifi
 import Button from "../../ui-kit/components/Button/Button";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
 import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
-import { StateContext } from "../../reducer/constants";
+import { DispatchContext, StateContext } from "../../reducer/constants";
 import { arrayUniqueByKey, sortByBalance, sortBySymbol } from "../../utils/array";
 import { getTokens } from "../../utils/storage";
 import { trackEvent } from "../../utils/events";
@@ -50,6 +50,7 @@ import CONTRACT_ERC20 from "../../contracts/ERC20.json";
 import { useEns } from "../../hooks/useEns";
 
 import "./SendForm.scss";
+import { Actions } from "../../reducer";
 
 export type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -68,11 +69,12 @@ interface ApproveFormProps {
 
 const SendForm = ({ onConnect }: ApproveFormProps) => {
     const { data: signer } = useSigner();
-    const { address } = useAccount();
+    const { address, connector } = useAccount();
     const { chain } = useNetwork();
     const { switchNetworkAsync } = useSwitchNetwork();
-    const networkName = chain?.id ? idToNetwork[chain?.id] : undefined;
-    const { newCustomToken } = useContext(StateContext);
+    const { newCustomToken, uiSelectedChainId } = useContext(StateContext);
+    const networkName = chain?.id ? idToNetwork[chain?.id] : idToNetwork[uiSelectedChainId];
+    const dispatch = useContext(DispatchContext);
     const [toAddress, setToAddress] = useState<string>();
     const [value, setValue] = useState<number>();
     const [selectedToken, setSelectedToken] = useState<string>(); // address
@@ -222,20 +224,22 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const handleNetworkChange = useCallback(
         async (event) => {
             // @ts-ignore
-            const chainId = networkToId[event.target.value];
-            const hexChainId = Web3.utils.toHex(chainId);
-            if (switchNetworkAsync && hexChainId) {
+            const chainId = +networkToId[event.target.value];
+            dispatch({ type: Actions.SetUISelectedChainId, payload: chainId });
+            if (switchNetworkAsync && connector?.switchChain) {
                 try {
-                    // @ts-ignore
-                    await switchNetworkAsync(hexChainId);
+                    await connector.switchChain(chainId);
                     trackEvent("NetworkChanged", { address, network: event.target.value });
                 } catch (e: any) {
                     try {
-                        await window.ethereum.request({
-                            method: "wallet_addEthereumChain",
-                            params: [networkInfo[event.target.value]],
-                        });
-                        trackEvent("NetworkAdded", { address, network: event.target.value });
+                        // if user not rejected the request (https://eips.ethereum.org/EIPS/eip-1193#error-standards)
+                        if (e.code !== 4001) {
+                            await window.ethereum.request({
+                                method: "wallet_addEthereumChain",
+                                params: [networkInfo[event.target.value]],
+                            });
+                            trackEvent("NetworkAdded", { address, network: event.target.value });
+                        }
                     } catch (addError) {
                         console.error(addError);
                     }

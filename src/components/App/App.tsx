@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useConnect, useDisconnect } from "wagmi";
 import cn from "classnames";
 
@@ -11,11 +11,13 @@ import { ReactComponent as WalletConnectIcon } from "../../ui-kit/images/walletc
 import { ReactComponent as GnosisSafeIcon } from "../../ui-kit/images/gnosis-safe.svg";
 import { trackEvent } from "../../utils/events";
 import { useAutoConnect } from "../../hooks/useAutoConnect";
+import { StateContext } from "../../reducer/constants";
 
 import "./App.scss";
 
 const App = () => {
-    const { connect, connectors, isLoading, pendingConnector } = useConnect();
+    const { uiSelectedChainId } = useContext(StateContext);
+    const { connectAsync, connectors, isLoading, pendingConnector } = useConnect({ chainId: uiSelectedChainId });
     const { disconnect } = useDisconnect();
 
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -35,9 +37,12 @@ const App = () => {
         setIsModalVisible(false);
     };
 
-    const handleConnect = (selectedConnector: any) => () => {
+    const handleConnect = (selectedConnector: any) => async () => {
         trackEvent("connect-wallet", { name: selectedConnector.name, location: window.location.href });
-        connect({ connector: selectedConnector });
+        await connectAsync({
+            connector: selectedConnector,
+            chainId: uiSelectedChainId,
+        });
         closeModal();
     };
 
