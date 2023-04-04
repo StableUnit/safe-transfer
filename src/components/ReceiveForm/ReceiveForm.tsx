@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import cn from "classnames";
 
@@ -34,6 +34,8 @@ import "../PageNotFound/styles.scss";
 import "./ReceiveForm.scss";
 import { useReceiveToken } from "../../hooks/useReceiveToken";
 import CONTRACT_ERC20 from "../../contracts/ERC20.json";
+import { Actions } from "../../reducer";
+import { DispatchContext } from "../../reducer/constants";
 
 interface TransferFormProps {
     onConnect: () => void;
@@ -45,6 +47,7 @@ const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: Token
         : tokenData.value;
 
 const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
+    const dispatch = useContext(DispatchContext);
     const { data: signer } = useSigner();
     const { address } = useAccount();
     const { chain } = useNetwork();
@@ -66,6 +69,12 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         abi: CONTRACT_ERC20,
         signerOrProvider: signer,
     });
+
+    useEffect(() => {
+        if (tokenData?.chain && dispatch) {
+            dispatch({ type: Actions.SetUISelectedChainId, payload: +networkToId[tokenData.chain] });
+        }
+    }, [tokenData?.chain, dispatch]);
 
     const [isToAddressRequesting, setIsToAddressRequesting] = useState(false);
     const [toAddress, setToAddress] = useState<string | null>();
