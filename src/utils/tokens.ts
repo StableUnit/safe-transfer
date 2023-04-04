@@ -1,5 +1,4 @@
 import BN from "bn.js";
-import Web3 from "web3";
 
 import { networkToId, NetworkType } from "./network";
 import CONTRACT_ERC20 from "../contracts/ERC20.json";
@@ -207,22 +206,22 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
         {
             id: "usdc",
             symbol: "USDC",
-            address: "0x0faF6df7054946141266420b43783387A78d82A9",
+            address: "0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4",
         },
         {
-            id: "dai",
-            symbol: "DAI",
-            address: "0x3e7676937A7E96CFB7616f255b9AD9FF47363D4b",
+            id: "mute",
+            symbol: "MUTE",
+            address: "0x0e97C7a0F8B2C9885C8ac9fC6136e829CbC21d42",
         },
         {
-            id: "wbtc",
-            symbol: "wBTC",
-            address: "0x0BfcE1D53451B4a8175DD94e6e029F7d8a701e9c",
+            id: "combo",
+            symbol: "COMBO",
+            address: "0xc2B13Bb90E33F1E191b8aA8F44Ce11534D5698E3",
         },
         {
-            id: "link",
-            symbol: "LINK",
-            address: "0x40609141Db628BeEE3BfAB8034Fc2D8278D0Cc78",
+            id: "perp",
+            symbol: "PERP",
+            address: "0x42c1c56be243c250AB24D2ecdcC77F9cCAa59601",
         },
     ],
 };

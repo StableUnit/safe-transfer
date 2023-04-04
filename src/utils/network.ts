@@ -56,7 +56,7 @@ export const networkNames = {
     [NETWORK.celo]: "Celo",
     [NETWORK.okxchain]: "OKXChain",
     [NETWORK.gnosis]: "Gnosis",
-    [NETWORK.zkSync]: "ZkSync Testnet",
+    [NETWORK.zkSync]: "ZkSync Era Mainnet",
 };
 
 const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj).map((a) => a.reverse()));
@@ -73,8 +73,8 @@ export const idToNetwork: Record<number, NetworkType> = {
     // 69: NETWORK.optimism, // testnet
     137: NETWORK.polygon,
     250: NETWORK.fantom,
-    280: NETWORK.zkSync,
     288: NETWORK.boba, // mainnet !!!
+    324: NETWORK.zkSync,
     // 338: NETWORK.cronos, // testnet
     // 42161: NETWORK.arbitrum,
     42220: NETWORK.celo,
@@ -308,10 +308,10 @@ export const networkInfo = {
         },
     },
     [NETWORK.zkSync]: {
-        chainName: "ZkSync Testnet",
+        chainName: "ZkSync Era Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.zkSync]),
-        rpcUrls: ["https://zksync2-testnet.zksync.dev"],
-        blockExplorerUrls: ["https://goerli.explorer.zksync.io"],
+        rpcUrls: ["https://mainnet.era.zksync.io"],
+        blockExplorerUrls: ["https://explorer.zksync.io"],
         nativeCurrency: {
             name: "ETH",
             symbol: "ETH",
