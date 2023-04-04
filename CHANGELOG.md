@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.7](https://github.com/StableUnit/safe-transfer/compare/v0.5.6...v0.5.7) (2023-04-04)
+
+
+### Features
+
+* connect wallet while receive ([1867cdf](https://github.com/StableUnit/safe-transfer/commit/1867cdf4b825c5603607e204b3a24edc05c85ac9))
+
+
+### Bug Fixes
+
+* update domain ([f431019](https://github.com/StableUnit/safe-transfer/commit/f431019ef68865afee8b6e7651b3d4e9f4b8ba0f))
+* walletconnect with direct chain to connect ([bdbb51b](https://github.com/StableUnit/safe-transfer/commit/bdbb51bd413814396ee1c047112cb1933abc3f67))
+
 ### [0.5.6](https://github.com/StableUnit/safe-transfer/compare/v0.5.5...v0.5.6) (2023-04-04)
 
 
