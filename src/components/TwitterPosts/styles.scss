@@ -27,13 +27,6 @@
     width: 100%;
     border-radius: 12px;
   }
-
-  .twitter-tweet {
-    margin-top: 0 !important;
-    max-height: 247px;
-    overflow: auto;
-    border-radius: 12px;
-  }
 }
 
 .swiper-pagination {
@@ -53,4 +46,19 @@
   background: $black;
   box-shadow: 0 0 10px 5px rgba(32,32,29,0.8);
   color: $gradient-fallback;
+}
+
+.twitter-post {
+  &__container {
+    margin-top: 0 !important;
+    max-height: 234px;
+    overflow: scroll;
+    border-radius: 12px;
+    cursor: pointer;
+
+    & > img {
+      width: 100%;
+      margin-bottom: -6px;
+    }
+  }
 }

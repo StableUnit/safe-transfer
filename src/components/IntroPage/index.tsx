@@ -1,11 +1,10 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import React from "react";
 
 import { GradientHref } from "../../ui-kit/components/GradientHref";
 import { SOCIAL_NETWORKS } from "../../ui-kit/components/SocialNetwork/SocialNetwork";
 
 import "./styles.scss";
-import { TwitterPosts } from "../TwitterPosts";
-import { twitterPosts } from "../Twitter";
+import Twitter from "../Twitter";
 import IntroSection from "./supportComponents/IntroSection";
 import { useDimensions } from "../../hooks/useDimensions";
 
@@ -90,7 +89,7 @@ const IntroPage = () => {
                     </div>
                 </IntroSection>
             </div>
-            <TwitterPosts ids={twitterPosts} />
+            <Twitter />
         </>
     );
 };
