@@ -113,13 +113,14 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     }, [hasRequestToken, currentToken]);
 
     useEffect(() => {
-        if (requestTokenData) {
+        if (requestTokenData && dispatch) {
+            dispatch({ type: Actions.SetUISelectedChainId, payload: +networkToId[requestTokenData.networkName] });
             changeNetworkAtMetamask(requestTokenData.networkName);
             setValue(requestTokenData.value);
             setToAddress(requestTokenData.to);
             setSelectedToken(requestTokenData.token);
         }
-    }, [requestToken]);
+    }, [requestToken, dispatch]);
 
     const currentTokenBalance = currentToken
         ? toHRNumberFloat(new BN(currentToken.balance), +currentToken.decimals)
