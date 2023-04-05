@@ -30,7 +30,7 @@ const Twitter = React.memo(() => {
                 <div className="twitter__title">Tell us how you feel about Safe Transfer</div>
                 <TwitterShareButton
                     url="https://safetransfer.cash/"
-                    options={{ text: "#safetransfer is awesome", via: "stableUnit", size: "large" }}
+                    options={{ text: "#safetransfer is awesome", via: "StableUnitDAO", size: "large" }}
                 />
             </div>
             <TwitterPosts ids={twitterPosts} />
