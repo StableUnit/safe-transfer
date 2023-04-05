@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.8](https://github.com/StableUnit/safe-transfer/compare/v0.5.7...v0.5.8) (2023-04-05)
+
+
+### Features
+
+* remove bug button ([63c8c37](https://github.com/StableUnit/safe-transfer/commit/63c8c37ce79e0c721b36f45f1ecc4a81d3df2e8a))
+
 ### [0.5.7](https://github.com/StableUnit/safe-transfer/compare/v0.5.6...v0.5.7) (2023-04-04)
 
 
