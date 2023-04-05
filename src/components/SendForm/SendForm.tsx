@@ -5,9 +5,8 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 import { fetchBalance } from "@wagmi/core";
-import { useAccount, useConnect, useContract, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
+import { useAccount, useContract, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
 
-import Web3 from "web3";
 import {
     changeNetworkAtMetamask,
     getAddressLink,
@@ -51,6 +50,7 @@ import { useEns } from "../../hooks/useEns";
 
 import "./SendForm.scss";
 import { Actions } from "../../reducer";
+import { rpcList } from "../../utils/rpc";
 
 export type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -66,6 +66,8 @@ export type BalanceType = {
 interface ApproveFormProps {
     onConnect: () => void;
 }
+
+const MAX_APPROVE_TIMEOUT = 15000;
 
 const SendForm = ({ onConnect }: ApproveFormProps) => {
     const { data: signer } = useSigner();
@@ -324,6 +326,20 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         return balances.find((v) => v.token_address === tokenAddress)?.symbol ?? tokenAddress;
     };
 
+    const updateGenUrl = () => {
+        if (currentToken && value && address && networkName) {
+            setGenUrl(
+                generateUrl({
+                    address: currentToken?.token_address,
+                    from: address ?? "",
+                    to: ensAddress ?? "",
+                    value: fromHRToBN(value ?? 0, +currentToken.decimals).toString(),
+                    chain: networkName,
+                })
+            );
+        }
+    };
+
     const handleApprove = async () => {
         if (currentToken && currentTokenContract && value && toAddress && address && networkName) {
             setGenUrl(undefined);
@@ -332,19 +348,19 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             setIsApproveLoading(true);
 
             const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
+            // In case of work with gnosis-safe via WalletConnect
+            const timer = setTimeout(() => {
+                if (connector?.name.toLowerCase() === "walletconnect") {
+                    updateGenUrl();
+                    setIsApproveLoading(false);
+                }
+            }, MAX_APPROVE_TIMEOUT);
             try {
                 const tx = await currentTokenContract.approve(ensAddress, valueBN);
                 setTrxHash(tx.hash);
                 setTrxLink(getTrxHashLink(tx.hash, networkName));
-                setGenUrl(
-                    generateUrl({
-                        address: currentToken?.token_address,
-                        from: address ?? "",
-                        to: ensAddress ?? "",
-                        value: fromHRToBN(value ?? 0, +currentToken.decimals).toString(),
-                        chain: networkName,
-                    })
-                );
+                clearTimeout(timer);
+                updateGenUrl();
                 // eslint-disable-next-line max-len
                 // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
                 trackEvent("APPROVE_SENT", {
@@ -370,6 +386,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     console.error(error);
                     addErrorNotification("Error", "Approve transaction failed");
                     setIsApproveLoading(false);
+                    clearTimeout(timer);
+                    setGenUrl(undefined);
                 }
             }
         }
@@ -384,7 +402,12 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     const setAllowanceAsync = async () => {
         if (address && currentToken && currentTokenContract && ensAddress) {
-            const allowanceFromContract = await currentTokenContract.allowance(address, ensAddress);
+            const tokenContract = new rpcList[networkName].eth.Contract(
+                CONTRACT_ERC20 as any,
+                currentToken?.token_address
+            );
+
+            const allowanceFromContract = await tokenContract.methods.allowance(address, ensAddress).call();
             setAllowance(allowanceFromContract.toString());
         } else {
             setAllowance(undefined);
