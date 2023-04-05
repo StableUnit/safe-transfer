@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.9](https://github.com/StableUnit/safe-transfer/compare/v0.5.8...v0.5.9) (2023-04-05)
+
+
+### Bug Fixes
+
+* allowance + add approve timer in case of WalletConnect ([325c573](https://github.com/StableUnit/safe-transfer/commit/325c573c113d3d627f2424c549ed6e4183ded350))
+
 ### [0.5.8](https://github.com/StableUnit/safe-transfer/compare/v0.5.7...v0.5.8) (2023-04-05)
 
 
