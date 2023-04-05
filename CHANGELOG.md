@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.10](https://github.com/StableUnit/safe-transfer/compare/v0.5.9...v0.5.10) (2023-04-05)
+
+
+### Bug Fixes
+
+* update disabled color in requested widget ([4a05b50](https://github.com/StableUnit/safe-transfer/commit/4a05b50d1b70b12002357ab6dfdfe1deef0b9c7d))
+* update via for retweet ([0a6b271](https://github.com/StableUnit/safe-transfer/commit/0a6b27155d2181b5f35fd2da2687aad73e2dadcd))
+
 ### [0.5.9](https://github.com/StableUnit/safe-transfer/compare/v0.5.8...v0.5.9) (2023-04-05)
 
 
