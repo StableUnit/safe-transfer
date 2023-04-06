@@ -5,7 +5,16 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 import { fetchBalance } from "@wagmi/core";
-import { useAccount, useContract, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
+import {
+    useAccount,
+    useContract,
+    useContractWrite,
+    useFeeData,
+    useNetwork,
+    usePrepareContractWrite,
+    useSigner,
+    useSwitchNetwork,
+} from "wagmi";
 
 import {
     changeNetworkAtMetamask,
@@ -101,6 +110,15 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         abi: CONTRACT_ERC20,
         signerOrProvider: signer,
     });
+    const fee = useFeeData({ chainId: chain?.id });
+    const { writeAsync: approve } = useContractWrite({
+        mode: "recklesslyUnprepared",
+        address: currentToken?.token_address as `0x${string}`,
+        abi: CONTRACT_ERC20,
+        chainId: chain?.id,
+        functionName: "approve",
+    });
+    const gasPrice = networkName === "zkSync" ? fee.data?.gasPrice ?? undefined : undefined;
 
     useEffect(() => {
         trackEvent("openSendPage", { address, location: window.location.href });
@@ -285,14 +303,17 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const cancelApprove = async () => {
-        if (!networkName || !currentTokenContract) {
+        if (!networkName || !currentTokenContract || !approve) {
             addErrorNotification("Error", "No network");
             return;
         }
 
         try {
             setIsCancelApproveLoading(true);
-            const tx = await currentTokenContract.approve(ensAddress, "0");
+            const tx = await approve({
+                recklesslySetUnpreparedArgs: [ensAddress, "0"],
+                recklesslySetUnpreparedOverrides: { gasPrice },
+            });
             const symbol = await currentTokenContract.symbol();
             await tx.wait();
 
@@ -342,7 +363,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const handleApprove = async () => {
-        if (currentToken && currentTokenContract && value && toAddress && address && networkName) {
+        if (currentToken && approve && value && toAddress && address && networkName) {
             setGenUrl(undefined);
             setTrxHash("");
             setTrxLink("");
@@ -357,7 +378,10 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                 }
             }, MAX_APPROVE_TIMEOUT);
             try {
-                const tx = await currentTokenContract.approve(ensAddress, valueBN);
+                const tx = await approve({
+                    recklesslySetUnpreparedArgs: [ensAddress, valueBN],
+                    recklesslySetUnpreparedOverrides: { gasPrice },
+                });
                 setTrxHash(tx.hash);
                 setTrxLink(getTrxHashLink(tx.hash, networkName));
                 clearTimeout(timer);
