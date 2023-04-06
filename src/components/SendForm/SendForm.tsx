@@ -5,16 +5,7 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 import { fetchBalance } from "@wagmi/core";
-import {
-    useAccount,
-    useContract,
-    useContractWrite,
-    useFeeData,
-    useNetwork,
-    usePrepareContractWrite,
-    useSigner,
-    useSwitchNetwork,
-} from "wagmi";
+import { useAccount, useContract, useContractWrite, useFeeData, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
 
 import {
     changeNetworkAtMetamask,
@@ -60,6 +51,7 @@ import { useEns } from "../../hooks/useEns";
 import "./SendForm.scss";
 import { Actions } from "../../reducer";
 import { rpcList } from "../../utils/rpc";
+import { useGasPrice } from "../../hooks/useGasPrice";
 
 export type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -110,7 +102,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         abi: CONTRACT_ERC20,
         signerOrProvider: signer,
     });
-    const fee = useFeeData({ chainId: chain?.id });
     const { writeAsync: approve } = useContractWrite({
         mode: "recklesslyUnprepared",
         address: currentToken?.token_address as `0x${string}`,
@@ -118,7 +109,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         chainId: chain?.id,
         functionName: "approve",
     });
-    const gasPrice = networkName === "zkSync" ? fee.data?.gasPrice ?? undefined : undefined;
+    const gasPrice = useGasPrice(chain?.id);
 
     useEffect(() => {
         trackEvent("openSendPage", { address, location: window.location.href });
