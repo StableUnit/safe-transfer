@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.11](https://github.com/StableUnit/safe-transfer/compare/v0.5.10...v0.5.11) (2023-04-07)
+
+
+### Features
+
+* add approve fees ([d28c0d2](https://github.com/StableUnit/safe-transfer/commit/d28c0d2d05e3a15eb536678a4f2eccd70e41ec46))
+* change network in case of request ([2800354](https://github.com/StableUnit/safe-transfer/commit/2800354db884d207deeda61b07cd4e405f3c2968))
+* suggest gas fee in receive page ([4fa92a5](https://github.com/StableUnit/safe-transfer/commit/4fa92a59355b1e28e629d8649da38f533ed88192))
+
 ### [0.5.10](https://github.com/StableUnit/safe-transfer/compare/v0.5.9...v0.5.10) (2023-04-05)
 
 
