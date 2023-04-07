@@ -22,15 +22,20 @@ export const TwitterPosts = ({ ids }: Props) => (
             // when window width is >= 0px
             0: {
                 slidesPerView: 1,
-                spaceBetween: 20,
+                spaceBetween: 15,
             },
             // when window width is >= 480px
             480: {
                 slidesPerView: 2,
-                spaceBetween: 30,
+                spaceBetween: 20,
             },
             // when window width is >= 640px
             640: {
+                slidesPerView: 3,
+                spaceBetween: 15,
+            },
+            // when window width is >= 1000px
+            1000: {
                 slidesPerView: 4,
                 spaceBetween: 15,
             },
