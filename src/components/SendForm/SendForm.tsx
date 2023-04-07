@@ -5,18 +5,17 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 import { fetchBalance } from "@wagmi/core";
-import { useAccount, useContract, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
+import { useAccount, useContract, useContractWrite, useFeeData, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
 
-import Web3 from "web3";
 import {
     changeNetworkAtMetamask,
-    NetworkType,
+    getAddressLink,
     getTrxHashLink,
     idToNetwork,
+    networkInfo,
     networkNames,
     networkToId,
-    getAddressLink,
-    networkInfo,
+    NetworkType,
 } from "../../utils/network";
 import { getShortAddress } from "../../utils/wallet";
 import {
@@ -34,7 +33,7 @@ import { addErrorNotification, addSuccessNotification } from "../../utils/notifi
 import Button from "../../ui-kit/components/Button/Button";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
 import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
-import { StateContext } from "../../reducer/constants";
+import { DispatchContext, StateContext } from "../../reducer/constants";
 import { arrayUniqueByKey, sortByBalance, sortBySymbol } from "../../utils/array";
 import { getTokens } from "../../utils/storage";
 import { trackEvent } from "../../utils/events";
@@ -50,6 +49,9 @@ import CONTRACT_ERC20 from "../../contracts/ERC20.json";
 import { useEns } from "../../hooks/useEns";
 
 import "./SendForm.scss";
+import { Actions } from "../../reducer";
+import { rpcList } from "../../utils/rpc";
+import { useGasPrice } from "../../hooks/useGasPrice";
 
 export type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -66,13 +68,16 @@ interface ApproveFormProps {
     onConnect: () => void;
 }
 
+const MAX_APPROVE_TIMEOUT = 15000;
+
 const SendForm = ({ onConnect }: ApproveFormProps) => {
     const { data: signer } = useSigner();
-    const { address } = useAccount();
+    const { address, connector } = useAccount();
     const { chain } = useNetwork();
     const { switchNetworkAsync } = useSwitchNetwork();
-    const networkName = chain?.id ? idToNetwork[chain?.id] : undefined;
-    const { newCustomToken } = useContext(StateContext);
+    const { newCustomToken, uiSelectedChainId } = useContext(StateContext);
+    const networkName = chain?.id ? idToNetwork[chain?.id] : idToNetwork[uiSelectedChainId];
+    const dispatch = useContext(DispatchContext);
     const [toAddress, setToAddress] = useState<string>();
     const [value, setValue] = useState<number>();
     const [selectedToken, setSelectedToken] = useState<string>(); // address
@@ -97,6 +102,14 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         abi: CONTRACT_ERC20,
         signerOrProvider: signer,
     });
+    const { writeAsync: approve } = useContractWrite({
+        mode: "recklesslyUnprepared",
+        address: currentToken?.token_address as `0x${string}`,
+        abi: CONTRACT_ERC20,
+        chainId: chain?.id,
+        functionName: "approve",
+    });
+    const gasPrice = useGasPrice(chain?.id);
 
     useEffect(() => {
         trackEvent("openSendPage", { address, location: window.location.href });
@@ -109,13 +122,14 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     }, [hasRequestToken, currentToken]);
 
     useEffect(() => {
-        if (requestTokenData) {
+        if (requestTokenData && dispatch) {
+            dispatch({ type: Actions.SetUISelectedChainId, payload: +networkToId[requestTokenData.networkName] });
             changeNetworkAtMetamask(requestTokenData.networkName);
             setValue(requestTokenData.value);
             setToAddress(requestTokenData.to);
             setSelectedToken(requestTokenData.token);
         }
-    }, [requestToken]);
+    }, [requestToken, dispatch]);
 
     const currentTokenBalance = currentToken
         ? toHRNumberFloat(new BN(currentToken.balance), +currentToken.decimals)
@@ -222,20 +236,22 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const handleNetworkChange = useCallback(
         async (event) => {
             // @ts-ignore
-            const chainId = networkToId[event.target.value];
-            const hexChainId = Web3.utils.toHex(chainId);
-            if (switchNetworkAsync && hexChainId) {
+            const chainId = +networkToId[event.target.value];
+            dispatch({ type: Actions.SetUISelectedChainId, payload: chainId });
+            if (switchNetworkAsync && connector?.switchChain) {
                 try {
-                    // @ts-ignore
-                    await switchNetworkAsync(hexChainId);
+                    await connector.switchChain(chainId);
                     trackEvent("NetworkChanged", { address, network: event.target.value });
                 } catch (e: any) {
                     try {
-                        await window.ethereum.request({
-                            method: "wallet_addEthereumChain",
-                            params: [networkInfo[event.target.value]],
-                        });
-                        trackEvent("NetworkAdded", { address, network: event.target.value });
+                        // if user not rejected the request (https://eips.ethereum.org/EIPS/eip-1193#error-standards)
+                        if (e.code !== 4001) {
+                            await window.ethereum.request({
+                                method: "wallet_addEthereumChain",
+                                params: [networkInfo[event.target.value]],
+                            });
+                            trackEvent("NetworkAdded", { address, network: event.target.value });
+                        }
                     } catch (addError) {
                         console.error(addError);
                     }
@@ -278,14 +294,17 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     };
 
     const cancelApprove = async () => {
-        if (!networkName || !currentTokenContract) {
+        if (!networkName || !currentTokenContract || !approve) {
             addErrorNotification("Error", "No network");
             return;
         }
 
         try {
             setIsCancelApproveLoading(true);
-            const tx = await currentTokenContract.approve(ensAddress, "0");
+            const tx = await approve({
+                recklesslySetUnpreparedArgs: [ensAddress, "0"],
+                recklesslySetUnpreparedOverrides: { gasPrice },
+            });
             const symbol = await currentTokenContract.symbol();
             await tx.wait();
 
@@ -320,27 +339,44 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         return balances.find((v) => v.token_address === tokenAddress)?.symbol ?? tokenAddress;
     };
 
+    const updateGenUrl = () => {
+        if (currentToken && value && address && networkName) {
+            setGenUrl(
+                generateUrl({
+                    address: currentToken?.token_address,
+                    from: address ?? "",
+                    to: ensAddress ?? "",
+                    value: fromHRToBN(value ?? 0, +currentToken.decimals).toString(),
+                    chain: networkName,
+                })
+            );
+        }
+    };
+
     const handleApprove = async () => {
-        if (currentToken && currentTokenContract && value && toAddress && address && networkName) {
+        if (currentToken && approve && value && toAddress && address && networkName) {
             setGenUrl(undefined);
             setTrxHash("");
             setTrxLink("");
             setIsApproveLoading(true);
 
             const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
+            // In case of work with gnosis-safe via WalletConnect
+            const timer = setTimeout(() => {
+                if (connector?.name.toLowerCase() === "walletconnect") {
+                    updateGenUrl();
+                    setIsApproveLoading(false);
+                }
+            }, MAX_APPROVE_TIMEOUT);
             try {
-                const tx = await currentTokenContract.approve(ensAddress, valueBN);
+                const tx = await approve({
+                    recklesslySetUnpreparedArgs: [ensAddress, valueBN],
+                    recklesslySetUnpreparedOverrides: { gasPrice },
+                });
                 setTrxHash(tx.hash);
                 setTrxLink(getTrxHashLink(tx.hash, networkName));
-                setGenUrl(
-                    generateUrl({
-                        address: currentToken?.token_address,
-                        from: address ?? "",
-                        to: ensAddress ?? "",
-                        value: fromHRToBN(value ?? 0, +currentToken.decimals).toString(),
-                        chain: networkName,
-                    })
-                );
+                clearTimeout(timer);
+                updateGenUrl();
                 // eslint-disable-next-line max-len
                 // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
                 trackEvent("APPROVE_SENT", {
@@ -366,6 +402,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     console.error(error);
                     addErrorNotification("Error", "Approve transaction failed");
                     setIsApproveLoading(false);
+                    clearTimeout(timer);
+                    setGenUrl(undefined);
                 }
             }
         }
@@ -380,7 +418,12 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
 
     const setAllowanceAsync = async () => {
         if (address && currentToken && currentTokenContract && ensAddress) {
-            const allowanceFromContract = await currentTokenContract.allowance(address, ensAddress);
+            const tokenContract = new rpcList[networkName].eth.Contract(
+                CONTRACT_ERC20 as any,
+                currentToken?.token_address
+            );
+
+            const allowanceFromContract = await tokenContract.methods.allowance(address, ensAddress).call();
             setAllowance(allowanceFromContract.toString());
         } else {
             setAllowance(undefined);

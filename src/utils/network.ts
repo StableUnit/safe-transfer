@@ -15,6 +15,7 @@ export type NetworkType =
     | "celo"
     | "okxchain"
     | "gnosis"
+    | "zkSync"
     // | "skale"
     | "cronos";
 
@@ -35,6 +36,7 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     celo: "celo",
     okxchain: "okxchain",
     gnosis: "gnosis",
+    zkSync: "zkSync",
 };
 
 export const networkNames = {
@@ -54,6 +56,7 @@ export const networkNames = {
     [NETWORK.celo]: "Celo",
     [NETWORK.okxchain]: "OKXChain",
     [NETWORK.gnosis]: "Gnosis",
+    [NETWORK.zkSync]: "ZkSync Era Mainnet",
 };
 
 const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj).map((a) => a.reverse()));
@@ -71,6 +74,7 @@ export const idToNetwork: Record<number, NetworkType> = {
     137: NETWORK.polygon,
     250: NETWORK.fantom,
     288: NETWORK.boba, // mainnet !!!
+    324: NETWORK.zkSync,
     // 338: NETWORK.cronos, // testnet
     // 42161: NETWORK.arbitrum,
     42220: NETWORK.celo,
@@ -89,7 +93,7 @@ export const networkInfo = {
         chainName: "Ethereum Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.eth]),
         blockExplorerUrls: ["https://etherscan.io"],
-        rpcUrls: [`https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`],
+        rpcUrls: ["https://eth.llamarpc.com", `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`],
         nativeCurrency: {
             name: "ETH",
             symbol: "ETH",
@@ -204,7 +208,10 @@ export const networkInfo = {
     [NETWORK.polygon]: {
         chainName: "Polygon Mainnet",
         chainId: Web3.utils.toHex(networkToId[NETWORK.polygon]),
-        rpcUrls: [`https://polygon-mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`],
+        rpcUrls: [
+            "https://polygon-rpc.com/",
+            `https://polygon-mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`,
+        ],
         blockExplorerUrls: ["https://polygonscan.com/"],
         nativeCurrency: {
             name: "MATIC Token",
@@ -303,6 +310,17 @@ export const networkInfo = {
             decimals: 18,
         },
     },
+    [NETWORK.zkSync]: {
+        chainName: "ZkSync Era Mainnet",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.zkSync]),
+        rpcUrls: ["https://mainnet.era.zksync.io"],
+        blockExplorerUrls: ["https://explorer.zksync.io"],
+        nativeCurrency: {
+            name: "ETH",
+            symbol: "ETH",
+            decimals: 18,
+        },
+    },
 };
 
 const generateWagmiCustomNetwork = (network: NetworkType) => ({
@@ -327,6 +345,7 @@ export const wagmiCustomNetworks: Record<string, Chain> = {
     [NETWORK.celo]: generateWagmiCustomNetwork(NETWORK.celo),
     [NETWORK.okxchain]: generateWagmiCustomNetwork(NETWORK.okxchain),
     [NETWORK.gnosis]: generateWagmiCustomNetwork(NETWORK.gnosis),
+    [NETWORK.zkSync]: generateWagmiCustomNetwork(NETWORK.zkSync),
 };
 
 export const changeNetworkAtMetamask = async (networkName: NetworkType) => {

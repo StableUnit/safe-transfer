@@ -2,6 +2,66 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.11](https://github.com/StableUnit/safe-transfer/compare/v0.5.10...v0.5.11) (2023-04-07)
+
+
+### Features
+
+* add approve fees ([d28c0d2](https://github.com/StableUnit/safe-transfer/commit/d28c0d2d05e3a15eb536678a4f2eccd70e41ec46))
+* change network in case of request ([2800354](https://github.com/StableUnit/safe-transfer/commit/2800354db884d207deeda61b07cd4e405f3c2968))
+* suggest gas fee in receive page ([4fa92a5](https://github.com/StableUnit/safe-transfer/commit/4fa92a59355b1e28e629d8649da38f533ed88192))
+
+### [0.5.10](https://github.com/StableUnit/safe-transfer/compare/v0.5.9...v0.5.10) (2023-04-05)
+
+
+### Bug Fixes
+
+* update disabled color in requested widget ([4a05b50](https://github.com/StableUnit/safe-transfer/commit/4a05b50d1b70b12002357ab6dfdfe1deef0b9c7d))
+* update via for retweet ([0a6b271](https://github.com/StableUnit/safe-transfer/commit/0a6b27155d2181b5f35fd2da2687aad73e2dadcd))
+
+### [0.5.9](https://github.com/StableUnit/safe-transfer/compare/v0.5.8...v0.5.9) (2023-04-05)
+
+
+### Bug Fixes
+
+* allowance + add approve timer in case of WalletConnect ([325c573](https://github.com/StableUnit/safe-transfer/commit/325c573c113d3d627f2424c549ed6e4183ded350))
+
+### [0.5.8](https://github.com/StableUnit/safe-transfer/compare/v0.5.7...v0.5.8) (2023-04-05)
+
+
+### Features
+
+* remove bug button ([63c8c37](https://github.com/StableUnit/safe-transfer/commit/63c8c37ce79e0c721b36f45f1ecc4a81d3df2e8a))
+
+### [0.5.7](https://github.com/StableUnit/safe-transfer/compare/v0.5.6...v0.5.7) (2023-04-04)
+
+
+### Features
+
+* connect wallet while receive ([1867cdf](https://github.com/StableUnit/safe-transfer/commit/1867cdf4b825c5603607e204b3a24edc05c85ac9))
+
+
+### Bug Fixes
+
+* update domain ([f431019](https://github.com/StableUnit/safe-transfer/commit/f431019ef68865afee8b6e7651b3d4e9f4b8ba0f))
+* walletconnect with direct chain to connect ([bdbb51b](https://github.com/StableUnit/safe-transfer/commit/bdbb51bd413814396ee1c047112cb1933abc3f67))
+
+### [0.5.6](https://github.com/StableUnit/safe-transfer/compare/v0.5.5...v0.5.6) (2023-04-04)
+
+
+### Features
+
+* add new tweets ([5a441b8](https://github.com/StableUnit/safe-transfer/commit/5a441b8843619d6edc0ebe68526fa3bf04512b12))
+* update embeded Twitter post to screenshots ([3aefb07](https://github.com/StableUnit/safe-transfer/commit/3aefb072bf5c57c28c204128128e98e2cbfc71b5))
+
+### [0.5.5](https://github.com/StableUnit/safe-transfer/compare/v0.5.4...v0.5.5) (2023-04-04)
+
+
+### Features
+
+* add ZkSync Era Mainnet ([0858f61](https://github.com/StableUnit/safe-transfer/commit/0858f61e33323b858262d9e4ae37b9ba8256ba44))
+* add ZkSync testnet ([951229c](https://github.com/StableUnit/safe-transfer/commit/951229c6e42a4de7cf62e38e165a582ed57430bb))
+
 ### [0.5.4](https://github.com/StableUnit/safe-transfer/compare/v0.5.3...v0.5.4) (2023-03-16)
 
 

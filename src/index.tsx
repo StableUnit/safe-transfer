@@ -58,6 +58,7 @@ const AppContainer = () => {
         wagmiCustomNetworks.celo,
         wagmiCustomNetworks.okxchain,
         wagmiCustomNetworks.gnosis,
+        wagmiCustomNetworks.zkSync,
     ];
 
     const { provider, webSocketProvider } = configureChains(chains, [
@@ -68,7 +69,7 @@ const AppContainer = () => {
     const client = createClient({
         autoConnect: true,
         connectors: [
-            new MetaMaskConnector({ chains }),
+            new MetaMaskConnector({ chains, options: { shimDisconnect: true } }),
             new WalletConnectConnector({
                 chains,
                 options: {

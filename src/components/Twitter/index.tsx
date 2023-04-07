@@ -6,20 +6,21 @@ import { TwitterPosts } from "../TwitterPosts";
 import "./styles.scss";
 
 export const twitterPosts = [
-    "1595062904679956482",
-    "1594459327674425346",
-    "1543956221614489601",
+    "1618696780761415680",
+    "1623035727654035456",
     "1511317628576362502",
+    "1543956221614489601",
+    "1594459327674425346",
+    "1595062904679956482",
     "1613088718797295617",
     "1613201006312947712",
     "1614328400071491585",
-    "1614569695918841856",
-    "1620027014072893441",
-    "1619951155320332288",
-    "1619900299208163328",
-    "1619716983800623106",
+    "1614567537462882306",
     "1617836771357917184",
     "1619699902405292033",
+    "1619716983800623106",
+    "1619900299208163328",
+    "1619951155320332288",
 ];
 
 const Twitter = React.memo(() => {
@@ -28,8 +29,8 @@ const Twitter = React.memo(() => {
             <div className="twitter__header">
                 <div className="twitter__title">Tell us how you feel about Safe Transfer</div>
                 <TwitterShareButton
-                    url="https://safe-transfer.stableunit.org/"
-                    options={{ text: "#safetransfer is awesome", via: "stableUnit", size: "large" }}
+                    url="https://safetransfer.cash/"
+                    options={{ text: "#safetransfer is awesome", via: "StableUnitDAO", size: "large" }}
                 />
             </div>
             <TwitterPosts ids={twitterPosts} />
