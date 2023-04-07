@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import cn from "classnames";
 
-import { useAccount, useContract, useNetwork, useSigner } from "wagmi";
+import { useAccount, useContract, useContractWrite, useFeeData, useNetwork, useSigner } from "wagmi";
 import {
     NetworkType,
     getAddressLink,
@@ -36,6 +36,7 @@ import { useReceiveToken } from "../../hooks/useReceiveToken";
 import CONTRACT_ERC20 from "../../contracts/ERC20.json";
 import { Actions } from "../../reducer";
 import { DispatchContext } from "../../reducer/constants";
+import { useGasPrice } from "../../hooks/useGasPrice";
 
 interface TransferFormProps {
     onConnect: () => void;
@@ -64,11 +65,17 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     }, [address]);
 
     const { tokenData, token } = useReceiveToken();
-    const tokenDataContract = useContract({
-        address: tokenData?.address,
+
+    const config = {
+        mode: "recklesslyUnprepared" as "recklesslyUnprepared" | "prepared",
+        address: tokenData?.address as `0x${string}`,
         abi: CONTRACT_ERC20,
-        signerOrProvider: signer,
-    });
+        chainId: chain?.id,
+    };
+    const tokenDataContract = useContract({ ...config, signerOrProvider: signer });
+    const { writeAsync: approve } = useContractWrite({ ...config, functionName: "approve" });
+    const { writeAsync: transferFrom } = useContractWrite({ ...config, functionName: "transferFrom" });
+    const gasPrice = useGasPrice(chain?.id);
 
     useEffect(() => {
         if (tokenData?.chain && dispatch) {
@@ -133,8 +140,11 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         setIsTransferFetching(true);
 
         try {
-            if (tokenData && tokenDataContract && networkName && toAddress) {
-                const tx = await tokenDataContract.transferFrom(tokenData.from, toAddress, tokenData.value);
+            if (tokenData && transferFrom && networkName && toAddress) {
+                const tx = await transferFrom({
+                    recklesslySetUnpreparedArgs: [tokenData.from, toAddress, tokenData.value],
+                    recklesslySetUnpreparedOverrides: { gasPrice },
+                });
                 setTrxHash(tx.hash);
                 const eventData = {
                     location: window.location.href,
@@ -169,8 +179,11 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
         setIsCancelFetching(true);
 
         try {
-            if (tokenData && tokenDataContract && networkName && toAddress) {
-                const tx = await tokenDataContract.approve(toAddress, "0");
+            if (tokenData && tokenDataContract && approve && networkName && toAddress) {
+                const tx = await approve({
+                    recklesslySetUnpreparedArgs: [toAddress, "0"],
+                    recklesslySetUnpreparedOverrides: { gasPrice },
+                });
                 const symbol = await tokenDataContract.symbol();
 
                 // eslint-disable-next-line max-len
