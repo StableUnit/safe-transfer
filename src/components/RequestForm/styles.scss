@@ -66,10 +66,7 @@
     padding-left: 16px;
   }
 
-  & &__network-form,
-  & &__address,
-  & &__token-address,
-  & &__value {
+  & &__default-input {
     width: 352px;
     margin: 8px 0 18px;
     border: 1px solid #313131;
@@ -120,24 +117,6 @@
     left: 17px;
     font-size: 12px;
     top: -14px;
-  }
-
-  &__paper {
-    background-color: #313131 !important;
-    border-radius: 8px !important;
-    color: #FFFFFF !important;
-    font-weight: 500 !important;
-    font-size: 14px !important;
-    line-height: 18px !important;
-  }
-
-  &__list {
-    li {
-      padding-bottom: 12px;
-    }
-    img {
-      padding-right: 8px;
-    }
   }
 
   &__button  {

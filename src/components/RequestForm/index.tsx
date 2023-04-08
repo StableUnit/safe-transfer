@@ -1,18 +1,18 @@
-import React, { ChangeEvent, useMemo, useState } from "react";
-import { Autocomplete, FormControl, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import React, { ChangeEvent, useContext, useMemo, useState } from "react";
+import { Autocomplete, TextField } from "@mui/material";
 
-import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
-import { getAddressLink, networkNames, networkToId, NetworkType } from "../../utils/network";
-import Button from "../../ui-kit/components/Button/Button";
-import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
+import { getAddressLink, idToNetwork, networkToId, NetworkType } from "../../utils/network";
 import GenUrl from "../GenUrl";
 import Twitter from "../Twitter";
 import { generateRequestUrl } from "../../utils/urlGenerator";
-import { isAddress } from "../../utils/wallet";
 import TOKEN_LIST from "../../contracts/tokenlist.json";
+import { GradientHref } from "../../ui-kit/components/GradientHref";
+import { StateContext } from "../../reducer/constants";
+import NetworkInput from "./supportComponents/NetworkInput";
+import GenerateButton from "./supportComponents/GenerateButton";
+import RecipientInput from "./supportComponents/RecipientInput";
 
 import "./styles.scss";
-import { GradientHref } from "../../ui-kit/components/GradientHref";
 
 type TokenType = {
     label: string;
@@ -21,24 +21,31 @@ type TokenType = {
     name: string;
 };
 
-const RequestPage = React.memo(() => {
+interface RequestPageProps {
+    onConnect: () => void;
+}
+
+const RequestPage = ({ onConnect }: RequestPageProps) => {
     const [genUrl, setGenUrl] = useState<string>();
-    const [networkName, setNetworkName] = useState<NetworkType>();
+    const { uiSelectedChainId } = useContext(StateContext);
     const [toAddress, setToAddress] = useState<string>();
     const [token, setToken] = useState<TokenType>();
     const [value, setValue] = useState<number>();
 
-    const hasAllRequiredData = networkName && isAddress(toAddress);
+    const networkName = idToNetwork[uiSelectedChainId];
+
+    const isGenButtonDisabled = Boolean(!networkName || !toAddress || (token && !value) || (!token && value));
 
     const availableTokens = useMemo(() => {
-        if (networkName) {
+        // @ts-ignore
+        if (networkName && TOKEN_LIST[networkToId[networkName]]) {
             // @ts-ignore
             return TOKEN_LIST[networkToId[networkName]]
                 ?.map((v: any) => ({
                     label: v.symbol,
                     address: v.address,
                     name: v.name,
-                    logo: v.logoURI,
+                    logo: v.logoURI ?? "/default.svg",
                 }))
                 .sort((a: any, b: any) => a.label.localeCompare(b.label));
         }
@@ -47,7 +54,7 @@ const RequestPage = React.memo(() => {
     }, [networkName]);
 
     const onGenerate = () => {
-        if (hasAllRequiredData && toAddress) {
+        if (toAddress) {
             setGenUrl(
                 generateRequestUrl({
                     token: token?.address,
@@ -59,16 +66,10 @@ const RequestPage = React.memo(() => {
         }
     };
 
-    const handleNetworkChange = (event: SelectChangeEvent) => {
-        setNetworkName(event.target.value as NetworkType);
-    };
+    const handleAddressChange = (v?: string) => setToAddress(v);
 
     const handleTokenChange = (event: any, newValue: any) => {
         setToken(newValue);
-    };
-
-    const handleAddressChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setToAddress(event.target.value);
     };
 
     const handleValueChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -86,42 +87,14 @@ const RequestPage = React.memo(() => {
                     <div className="request-form__title">Request</div>
 
                     <div className="request-form__content">
-                        <div className="request-form__label required">Network</div>
-                        <FormControl className="request-form__network-form">
-                            <Select
-                                value={networkName || "placeholder-value"}
-                                onChange={handleNetworkChange}
-                                inputProps={{ "aria-label": "Without label" }}
-                                IconComponent={ArrowDownIcon}
-                                MenuProps={{ classes: { paper: "request-form__paper", list: "request-form__list" } }}
-                            >
-                                <MenuItem disabled value="placeholder-value">
-                                    <NetworkImage />
-                                    Select network
-                                </MenuItem>
-                                {Object.entries(networkNames).map(([id, name]) => (
-                                    <MenuItem key={id} value={id}>
-                                        <NetworkImage network={id} />
-                                        {name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                        <NetworkInput />
 
-                        <div className="request-form__label required">Recipient address</div>
-                        <TextField
-                            value={toAddress}
-                            id="address"
-                            className="request-form__address"
-                            placeholder="Paste your address here ..."
-                            variant="outlined"
-                            onChange={handleAddressChange}
-                        />
+                        <RecipientInput toAddress={toAddress} onAddressChange={handleAddressChange} />
 
                         <div className="request-form__label">Token address</div>
                         <Autocomplete
                             id="token-address"
-                            className="request-form__token-address"
+                            className="request-form__default-input"
                             placeholder="Select token"
                             options={availableTokens}
                             sx={{ width: 300 }}
@@ -172,14 +145,14 @@ const RequestPage = React.memo(() => {
                                 href={getAddressLink(token.address, networkName)}
                                 className="request-form__token-name"
                             >
-                                {token.name}
+                                {token.name ?? token.label}
                             </GradientHref>
                         )}
 
                         <div className="request-form__label">Requested value</div>
                         <TextField
                             id="value"
-                            className="request-form__value"
+                            className="request-form__default-input"
                             placeholder="0.00"
                             type="number"
                             onChange={handleValueChange}
@@ -190,15 +163,13 @@ const RequestPage = React.memo(() => {
                         />
                     </div>
 
-                    <Button onClick={onGenerate} className="request-form__button" disabled={!hasAllRequiredData}>
-                        Generate request link
-                    </Button>
+                    <GenerateButton onGenerate={onGenerate} onConnect={onConnect} disabled={isGenButtonDisabled} />
                 </div>
                 <GenUrl genUrl={genUrl} text="Request link:" />
             </div>
             <Twitter />
         </>
     );
-});
+};
 
 export default RequestPage;

@@ -52,6 +52,7 @@ import "./SendForm.scss";
 import { Actions } from "../../reducer";
 import { rpcList } from "../../utils/rpc";
 import { useGasPrice } from "../../hooks/useGasPrice";
+import { useNetworkChange } from "../../hooks/useNetworkChange";
 
 export type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -237,10 +238,10 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         async (event) => {
             // @ts-ignore
             const chainId = +networkToId[event.target.value];
-            dispatch({ type: Actions.SetUISelectedChainId, payload: chainId });
             if (switchNetworkAsync && connector?.switchChain) {
                 try {
                     await connector.switchChain(chainId);
+                    dispatch({ type: Actions.SetUISelectedChainId, payload: chainId });
                     trackEvent("NetworkChanged", { address, network: event.target.value });
                 } catch (e: any) {
                     try {
@@ -256,6 +257,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         console.error(addError);
                     }
                 }
+            } else {
+                dispatch({ type: Actions.SetUISelectedChainId, payload: chainId });
             }
         },
         [switchNetworkAsync, address]
