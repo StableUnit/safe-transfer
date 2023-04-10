@@ -5,7 +5,7 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 import { fetchBalance } from "@wagmi/core";
-import { useAccount, useContractWrite, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 
 import {
     changeNetworkAtMetamask,
@@ -44,13 +44,13 @@ import { PageNotFound } from "../PageNotFound";
 import { useCurrentTokenData } from "../../hooks/useCurrentTokenData";
 import { GradientHref } from "../../ui-kit/components/GradientHref";
 import GenUrlPopup from "../GenUrlPopup";
-import CONTRACT_ERC20 from "../../contracts/ERC20.json";
 import { useEns } from "../../hooks/useEns";
 import { Actions } from "../../reducer";
 import { useGasPrice } from "../../hooks/useGasPrice";
 import AllowanceChecker from "./supportComponents/AllowanceChecker";
 import SendFormButton from "./supportComponents/SendFormButton";
 import SendFormError from "./supportComponents/SendFormError";
+import { useErc20Write } from "../../hooks/useErc20Write";
 
 import "./SendForm.scss";
 
@@ -82,6 +82,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [value, setValue] = useState<number>();
     const [selectedToken, setSelectedToken] = useState<string>(); // address
     const [isApproveLoading, setIsApproveLoading] = useState(false);
+    const [isTransferLoading, setIsTransferLoading] = useState(false);
+    const [isTransferDone, setIsTransferDone] = useState(false);
     const [isBalanceRequestLoading, setIsBalanceRequestLoading] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [trxLink, setTrxLink] = useState("");
@@ -95,13 +97,8 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const hasRequestToken = !!requestTokenData;
 
     const currentToken = useCurrentTokenData(balances, selectedToken, requestTokenData);
-    const { writeAsync: approve } = useContractWrite({
-        mode: "recklesslyUnprepared",
-        address: currentToken?.token_address as `0x${string}`,
-        abi: CONTRACT_ERC20,
-        chainId: chain?.id,
-        functionName: "approve",
-    });
+    const approve = useErc20Write(currentToken?.token_address, "approve");
+    const transfer = useErc20Write(currentToken?.token_address, "transfer");
     const gasPrice = useGasPrice(chain?.id);
 
     useEffect(() => {
@@ -295,11 +292,15 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         }
     };
 
+    const updateTrx = (hash?: string) => {
+        setTrxHash(hash ?? "");
+        setTrxLink(hash ? getTrxHashLink(hash, networkName) : "");
+    };
+
     const handleApprove = async () => {
         if (currentToken && approve && value && toAddress && address && networkName) {
             setGenUrl(undefined);
-            setTrxHash("");
-            setTrxLink("");
+            updateTrx("");
             setIsApproveLoading(true);
 
             const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
@@ -315,8 +316,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     recklesslySetUnpreparedArgs: [ensAddress, valueBN],
                     recklesslySetUnpreparedOverrides: { gasPrice },
                 });
-                setTrxHash(tx.hash);
-                setTrxLink(getTrxHashLink(tx.hash, networkName));
+                updateTrx(tx.hash);
                 clearTimeout(timer);
                 updateGenUrl();
                 // eslint-disable-next-line max-len
@@ -337,8 +337,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                 // @ts-ignore
                 const replacedHash = error?.replacement?.hash;
                 if (replacedHash) {
-                    setTrxHash(replacedHash);
-                    setTrxLink(getTrxHashLink(replacedHash, networkName));
+                    updateTrx(replacedHash);
                     onSuccessApprove();
                 } else {
                     console.error(error);
@@ -347,6 +346,50 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                     clearTimeout(timer);
                     setGenUrl(undefined);
                 }
+            }
+        }
+    };
+
+    const handleTransfer = async () => {
+        if (transfer && hasRequestToken && value && currentToken) {
+            setIsTransferDone(false);
+            setIsTransferLoading(true);
+            const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
+
+            try {
+                const tx = await transfer({
+                    recklesslySetUnpreparedArgs: [ensAddress, valueBN],
+                    recklesslySetUnpreparedOverrides: { gasPrice },
+                });
+                updateTrx(tx.hash);
+                // eslint-disable-next-line max-len
+                // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
+                trackEvent("TRANSFER_SENT", {
+                    location: window.location.href,
+                    chainId: networkToId[networkName],
+                    txHash: tx.hash,
+                    fromAddress: address,
+                    toAddress: ensAddress,
+                    tokenAddress: currentToken?.token_address,
+                    tokenSymbol: getTokenName(selectedToken),
+                    tokenAmount: value,
+                });
+                await tx.wait();
+                addSuccessNotification("Success", "Transfer transaction completed");
+                setIsTransferLoading(false);
+                setIsTransferDone(true);
+            } catch (error) {
+                // @ts-ignore
+                const replacedHash = error?.replacement?.hash;
+                if (replacedHash) {
+                    updateTrx(replacedHash);
+                    addSuccessNotification("Success", "Transfer transaction completed");
+                } else {
+                    console.error(error);
+                    updateTrx("");
+                    addErrorNotification("Error", "Transfer transaction failed");
+                }
+                setIsTransferLoading(false);
             }
         }
     };
@@ -515,15 +558,20 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                             !selectedToken ||
                             !ensAddress ||
                             isApproveLoading ||
+                            isTransferLoading ||
                             hasAllowance ||
+                            isTransferDone ||
                             isDisabledByToken
                         }
                         onConnect={onConnect}
                         onApprove={handleApprove}
                         isApproveLoading={isApproveLoading}
+                        onTransfer={handleTransfer}
+                        isTransferLoading={isTransferLoading}
+                        isTransferDone={isTransferDone}
                     />
+                    <SendFormError toAddress={toAddress} networkName={networkName} />
                 </div>
-                <SendFormError toAddress={toAddress} networkName={networkName} />
             </div>
             <GenUrlPopup genUrl={genUrl} />
             <Twitter />
