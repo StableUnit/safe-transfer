@@ -5,7 +5,7 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 import { fetchBalance } from "@wagmi/core";
-import { useAccount, useContract, useContractWrite, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
+import { useAccount, useContractWrite, useNetwork, useSwitchNetwork } from "wagmi";
 
 import {
     changeNetworkAtMetamask,
@@ -30,12 +30,11 @@ import { generateUrl, getShortHash, handleCopyUrl } from "../../utils/urlGenerat
 import { ReactComponent as ArrowDownIcon } from "../../ui-kit/images/arrow-down.svg";
 import { ReactComponent as ContentCopyIcon } from "../../ui-kit/images/copy.svg";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
-import Button from "../../ui-kit/components/Button/Button";
 import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage";
 import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
 import { DispatchContext, StateContext } from "../../reducer/constants";
 import { arrayUniqueByKey, sortByBalance, sortBySymbol } from "../../utils/array";
-import { getChainCustomTokens, getTokens } from "../../utils/storage";
+import { getChainCustomTokens } from "../../utils/storage";
 import { trackEvent } from "../../utils/events";
 import { LoaderLine } from "../../ui-kit/components/LoaderLine";
 import Twitter from "../Twitter";
@@ -47,11 +46,13 @@ import { GradientHref } from "../../ui-kit/components/GradientHref";
 import GenUrlPopup from "../GenUrlPopup";
 import CONTRACT_ERC20 from "../../contracts/ERC20.json";
 import { useEns } from "../../hooks/useEns";
+import { Actions } from "../../reducer";
+import { useGasPrice } from "../../hooks/useGasPrice";
+import AllowanceChecker from "./supportComponents/AllowanceChecker";
+import SendFormButton from "./supportComponents/SendFormButton";
+import SendFormError from "./supportComponents/SendFormError";
 
 import "./SendForm.scss";
-import { Actions } from "../../reducer";
-import { rpcList } from "../../utils/rpc";
-import { useGasPrice } from "../../hooks/useGasPrice";
 
 export type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -71,7 +72,6 @@ interface ApproveFormProps {
 const MAX_APPROVE_TIMEOUT = 15000;
 
 const SendForm = ({ onConnect }: ApproveFormProps) => {
-    const { data: signer } = useSigner();
     const { address, connector } = useAccount();
     const { chain } = useNetwork();
     const { switchNetworkAsync } = useSwitchNetwork();
@@ -82,26 +82,19 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [value, setValue] = useState<number>();
     const [selectedToken, setSelectedToken] = useState<string>(); // address
     const [isApproveLoading, setIsApproveLoading] = useState(false);
-    const [isCancelApproveLoading, setIsCancelApproveLoading] = useState(false);
     const [isBalanceRequestLoading, setIsBalanceRequestLoading] = useState(false);
     const [trxHash, setTrxHash] = useState("");
     const [trxLink, setTrxLink] = useState("");
+    const [hasAllowance, setHasAllowance] = useState(false);
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<string>();
-    const [allowance, setAllowance] = useState<string>();
-    const { isEnsAddress, isEnsName, ensName, ensAddress, isEnsNameLoading, isAvvyNameLoading, isAvvyName, avvyName } =
-        useEns(toAddress);
+    const { isEnsAddress, isEnsName, ensName, ensAddress, isAvvyName, avvyName } = useEns(toAddress);
 
     const { requestTokenData, requestToken } = useRequestToken();
     const isDisabledByToken = requestTokenData && networkName !== requestTokenData.networkName;
     const hasRequestToken = !!requestTokenData;
 
     const currentToken = useCurrentTokenData(balances, selectedToken, requestTokenData);
-    const currentTokenContract = useContract({
-        address: currentToken?.token_address,
-        abi: CONTRACT_ERC20,
-        signerOrProvider: signer,
-    });
     const { writeAsync: approve } = useContractWrite({
         mode: "recklesslyUnprepared",
         address: currentToken?.token_address as `0x${string}`,
@@ -134,7 +127,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const currentTokenBalance = currentToken
         ? toHRNumberFloat(new BN(currentToken.balance), +currentToken.decimals)
         : 0;
-    const hasAllowance = !!(allowance && allowance !== "0");
 
     const onMount = async () => {
         if (chain && address && !requestTokenData?.token) {
@@ -285,48 +277,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         setIsApproveLoading(false);
     };
 
-    const cancelApprove = async () => {
-        if (!networkName || !currentTokenContract || !approve) {
-            addErrorNotification("Error", "No network");
-            return;
-        }
-
-        try {
-            setIsCancelApproveLoading(true);
-            const tx = await approve({
-                recklesslySetUnpreparedArgs: [ensAddress, "0"],
-                recklesslySetUnpreparedOverrides: { gasPrice },
-            });
-            const symbol = await currentTokenContract.symbol();
-            await tx.wait();
-
-            addSuccessNotification("Success", "Cancel allowance completed");
-            // eslint-disable-next-line max-len
-            // Disclaimer: since all data above are always public on blockchain, so there’s no compromise of privacy. Beware however, that underlying infrastructure on users, such as wallets or Infura might log sensitive data, such as IP addresses, device fingerprint and others.
-            trackEvent("APPROVED_REVOKE_SENT", {
-                location: window.location.href,
-                source: "Send Page",
-                chainId: networkToId[networkName],
-                txHash: tx.hash,
-                fromAddress: address,
-                toAddress,
-                tokenAddress: currentToken?.token_address,
-                tokenSymbol: symbol,
-            });
-            setAllowance(undefined);
-        } catch (error) {
-            // @ts-ignore
-            const replacedHash = error?.replacement?.hash;
-            if (replacedHash) {
-                setAllowance(undefined);
-            } else {
-                console.error(error);
-                addErrorNotification("Error", "Cancel approve transaction failed");
-            }
-            setIsCancelApproveLoading(false);
-        }
-    };
-
     const getTokenName = (tokenAddress?: string) => {
         return balances.find((v) => v.token_address === tokenAddress)?.symbol ?? tokenAddress;
     };
@@ -407,24 +357,6 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
         }
         setValue(+currentTokenBalance);
     };
-
-    const setAllowanceAsync = async () => {
-        if (address && currentToken && currentTokenContract && ensAddress) {
-            const tokenContract = new rpcList[networkName].eth.Contract(
-                CONTRACT_ERC20 as any,
-                currentToken?.token_address
-            );
-
-            const allowanceFromContract = await tokenContract.methods.allowance(address, ensAddress).call();
-            setAllowance(allowanceFromContract.toString());
-        } else {
-            setAllowance(undefined);
-        }
-    };
-
-    useEffect(() => {
-        setAllowanceAsync();
-    }, [address, ensAddress, currentToken]);
 
     if (requestToken && !requestTokenData) {
         return <PageNotFound />;
@@ -571,61 +503,27 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                         )}
                     </div>
 
-                    {hasAllowance && currentToken && (
-                        <div className="send-form__allowance">
-                            <div className="send-form__allowance__text">
-                                <span>Allowance for selected address is </span>
-                                <span>
-                                    {beautifyTokenBalance(allowance, +currentToken.decimals)} {currentToken.symbol}
-                                </span>
-                                <br />
-                                Please cancel this approve.
-                            </div>
-                            <Button
-                                onClick={cancelApprove}
-                                className="send-form__button"
-                                disabled={isCancelApproveLoading || !ensAddress}
-                            >
-                                {isCancelApproveLoading ? "Loading..." : "Cancel Approve"}
-                            </Button>
-                        </div>
-                    )}
+                    <AllowanceChecker
+                        ensAddress={ensAddress}
+                        onHasAllowanceChange={(v) => setHasAllowance(v)}
+                        currentToken={currentToken}
+                    />
 
-                    {address ? (
-                        <Button
-                            onClick={handleApprove}
-                            className="send-form__button"
-                            disabled={
-                                !value ||
-                                !selectedToken ||
-                                !ensAddress ||
-                                isApproveLoading ||
-                                hasAllowance ||
-                                isDisabledByToken
-                            }
-                        >
-                            {isApproveLoading ? "Loading..." : "Approve"}
-                        </Button>
-                    ) : (
-                        <Button onClick={onConnect} className="send-form__button">
-                            CONNECT WALLET
-                        </Button>
-                    )}
-                    {requestTokenData && requestTokenData.networkName !== networkName && (
-                        <div className="send-form__error">Please change network to {requestTokenData.networkName}</div>
-                    )}
-                    {toAddress && !isEnsAddress && !isEnsName && !isAvvyName && (
-                        <div className="send-form__error">Please write correct recipient address</div>
-                    )}
-                    {isEnsNameLoading && <div className="send-form__warning">ENS resolve in progress</div>}
-                    {isAvvyNameLoading && <div className="send-form__warning">AVAX resolve in progress</div>}
-                    {isEnsName && !ensAddress && !isEnsNameLoading && (
-                        <div className="send-form__error">Can't resolve ENS address</div>
-                    )}
-                    {isAvvyName && !ensAddress && !isAvvyNameLoading && (
-                        <div className="send-form__error">Can't resolve AVAX address</div>
-                    )}
+                    <SendFormButton
+                        disabled={
+                            !value ||
+                            !selectedToken ||
+                            !ensAddress ||
+                            isApproveLoading ||
+                            hasAllowance ||
+                            isDisabledByToken
+                        }
+                        onConnect={onConnect}
+                        onApprove={handleApprove}
+                        isApproveLoading={isApproveLoading}
+                    />
                 </div>
+                <SendFormError toAddress={toAddress} networkName={networkName} />
             </div>
             <GenUrlPopup genUrl={genUrl} />
             <Twitter />
