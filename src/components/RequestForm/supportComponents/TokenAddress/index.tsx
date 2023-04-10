@@ -1,13 +1,15 @@
 import React, { useContext, useMemo } from "react";
 import { Autocomplete, TextField } from "@mui/material";
 import { GradientHref } from "../../../../ui-kit/components/GradientHref";
-import { getAddressLink, idToNetwork, networkToId } from "../../../../utils/network";
+import { getAddressLink, idToNetwork, networkToId, NetworkType } from "../../../../utils/network";
 import TOKEN_LIST from "../../../../contracts/tokenlist.json";
 import { StateContext } from "../../../../reducer/constants";
 import { TokenType } from "../../index";
 
 import "./styles.scss";
 import CustomTokenButton from "../CustomTokenButton";
+import { CUSTOM_TOKENS } from "../../../../utils/tokens";
+import { getChainCustomTokens } from "../../../../utils/storage";
 
 type TokenAddressProps = {
     token?: TokenType;
@@ -15,25 +17,28 @@ type TokenAddressProps = {
 };
 
 const TokenAddress = ({ token, onTokenChange }: TokenAddressProps) => {
-    const { uiSelectedChainId } = useContext(StateContext);
+    const { uiSelectedChainId, newCustomToken } = useContext(StateContext);
     const networkName = idToNetwork[uiSelectedChainId];
 
     const availableTokens = useMemo(() => {
-        // @ts-ignore
-        if (networkName && TOKEN_LIST[networkToId[networkName]]) {
-            // @ts-ignore
-            return TOKEN_LIST[networkToId[networkName]]
-                ?.map((v: any) => ({
-                    label: v.symbol,
-                    address: v.address,
-                    name: v.name,
-                    logo: v.logoURI ?? "/default.svg",
-                }))
-                .sort((a: any, b: any) => a.label.localeCompare(b.label));
+        if (networkName) {
+            const customTokens = getChainCustomTokens(uiSelectedChainId).map((v) => ({ ...v, isCustomToken: true }));
+
+            const tokensFromList =
+                // @ts-ignore
+                TOKEN_LIST[networkToId[networkName]]?.sort((a: any, b: any) => a.symbol.localeCompare(b.symbol)) ?? [];
+
+            return [...customTokens, ...tokensFromList].map((v) => ({
+                label: v.symbol,
+                address: v.address,
+                name: v.name || v.id,
+                logo: v.logoURI ?? "/default.svg",
+                isCustomToken: v.isCustomToken,
+            }));
         }
 
         return [];
-    }, [networkName]);
+    }, [networkName, uiSelectedChainId, newCustomToken]);
 
     const handleTokenChange = (event: any, newValue: any) => {
         onTokenChange(newValue);
@@ -64,7 +69,10 @@ const TokenAddress = ({ token, onTokenChange }: TokenAddressProps) => {
                                         currentTarget.src = "/default.svg";
                                     }}
                                 />
-                                <div>{option.label}</div>
+                                <div>
+                                    {option.label}
+                                    {option.isCustomToken ? " (custom)" : ""}
+                                </div>
                             </li>
                         );
                     }}

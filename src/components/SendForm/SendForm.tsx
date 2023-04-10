@@ -35,7 +35,7 @@ import { NetworkImage } from "../../ui-kit/components/NetworkImage/NetworkImage"
 import CustomTokenMenuItem from "./supportComponents/CustomTokenMenuItem/CustomTokenMenuItem";
 import { DispatchContext, StateContext } from "../../reducer/constants";
 import { arrayUniqueByKey, sortByBalance, sortBySymbol } from "../../utils/array";
-import { getTokens } from "../../utils/storage";
+import { getChainCustomTokens, getTokens } from "../../utils/storage";
 import { trackEvent } from "../../utils/events";
 import { LoaderLine } from "../../ui-kit/components/LoaderLine";
 import Twitter from "../Twitter";
@@ -170,17 +170,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                 Sentry.captureMessage(`Catch Covalent error: ${e?.message?.toString()}`);
             }
 
-            const tokens = [
-                ...CUSTOM_TOKENS[networkName as NetworkType],
-                ...getTokens()
-                    .filter((v) => v.chainId === chain.id)
-                    .map((token) => ({
-                        address: token.address,
-                        id: token.name,
-                        symbol: token.symbol,
-                        decimals: token.decimals,
-                    })),
-            ];
+            const tokens = [...CUSTOM_TOKENS[networkName as NetworkType], ...getChainCustomTokens(chain.id)];
             for (const token of tokens) {
                 try {
                     // @ts-ignore

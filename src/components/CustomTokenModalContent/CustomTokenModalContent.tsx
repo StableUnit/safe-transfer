@@ -55,15 +55,15 @@ const CustomTokenModalContent = React.forwardRef<HTMLDivElement, CustomTokenModa
         }
     };
 
-    const hasTokenAdded = !!(
+    const hasTokenAdded = Boolean(
         tokenAddress &&
-        (getTokens().find((customToken) => customToken.address === tokenAddress) ||
-            CUSTOM_TOKENS[networkName].find((customToken) => customToken.address === tokenAddress))
+            (getTokens().find((customToken) => customToken.address === tokenAddress) ||
+                CUSTOM_TOKENS[networkName].find((customToken) => customToken.address === tokenAddress))
     );
 
     return (
         <div className="custom-token-modal" ref={ref}>
-            <div className="custom-token-modal__title">Custom Token for {networkNames[networkName]}</div>
+            <div className="custom-token-modal__title">Add Custom Token for {networkNames[networkName]}</div>
 
             <div className="custom-token-modal__label">New token address</div>
             <TextField
