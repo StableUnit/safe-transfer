@@ -1,15 +1,11 @@
 import React from "react";
 import { Backdrop, Fade, MenuItem, Modal } from "@mui/material";
-import { NetworkType } from "../../../../utils/network";
-import CustomTokenModalContent from "../CustomTokenModalContent/CustomTokenModalContent";
+
+import CustomTokenModalContent from "../../../CustomTokenModalContent/CustomTokenModalContent";
 
 import "./CustomTokenMenuItem.scss";
 
-interface CustomTokenMenuItemProps {
-    networkName: NetworkType;
-}
-
-const CustomTokenMenuItem = ({ networkName }: CustomTokenMenuItemProps) => {
+const CustomTokenMenuItem = () => {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -31,7 +27,7 @@ const CustomTokenMenuItem = ({ networkName }: CustomTokenMenuItemProps) => {
                 }}
             >
                 <Fade in={open}>
-                    <CustomTokenModalContent networkName={networkName as NetworkType} onClose={handleClose} />
+                    <CustomTokenModalContent onClose={handleClose} />
                 </Fade>
             </Modal>
         </div>

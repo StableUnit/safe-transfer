@@ -7,6 +7,7 @@ import { StateContext } from "../../../../reducer/constants";
 import { TokenType } from "../../index";
 
 import "./styles.scss";
+import CustomTokenButton from "../CustomTokenButton";
 
 type TokenAddressProps = {
     token?: TokenType;
@@ -41,37 +42,19 @@ const TokenAddress = ({ token, onTokenChange }: TokenAddressProps) => {
     return (
         <>
             <div className="request-form__label">Token address</div>
-            <Autocomplete
-                id="token-address"
-                className="request-form__default-input"
-                placeholder="Select token"
-                options={availableTokens}
-                sx={{ width: 300 }}
-                onChange={handleTokenChange}
-                renderOption={(props, option: any) => {
-                    return (
-                        <li {...props}>
-                            <img
-                                src={option.logo}
-                                width={20}
-                                height={20}
-                                onError={({ currentTarget }) => {
-                                    // eslint-disable-next-line no-param-reassign
-                                    currentTarget.onerror = null; // prevents looping
-                                    // eslint-disable-next-line no-param-reassign
-                                    currentTarget.src = "/default.svg";
-                                }}
-                            />
-                            <div>{option.label}</div>
-                        </li>
-                    );
-                }}
-                renderInput={(params) => {
-                    return (
-                        <div className="token-address__input">
-                            {token && (
+            <div className="token-address__content">
+                <Autocomplete
+                    id="token-address"
+                    className="request-form__default-input"
+                    placeholder="Select token"
+                    options={availableTokens}
+                    sx={{ width: 300 }}
+                    onChange={handleTokenChange}
+                    renderOption={(props, option: any) => {
+                        return (
+                            <li {...props}>
                                 <img
-                                    src={token.logo}
+                                    src={option.logo}
                                     width={20}
                                     height={20}
                                     onError={({ currentTarget }) => {
@@ -81,12 +64,34 @@ const TokenAddress = ({ token, onTokenChange }: TokenAddressProps) => {
                                         currentTarget.src = "/default.svg";
                                     }}
                                 />
-                            )}
-                            <TextField {...params} />
-                        </div>
-                    );
-                }}
-            />
+                                <div>{option.label}</div>
+                            </li>
+                        );
+                    }}
+                    renderInput={(params) => {
+                        return (
+                            <div className="token-address__input">
+                                {token && (
+                                    <img
+                                        src={token.logo}
+                                        width={20}
+                                        height={20}
+                                        onError={({ currentTarget }) => {
+                                            // eslint-disable-next-line no-param-reassign
+                                            currentTarget.onerror = null; // prevents looping
+                                            // eslint-disable-next-line no-param-reassign
+                                            currentTarget.src = "/default.svg";
+                                        }}
+                                    />
+                                )}
+                                <TextField {...params} />
+                            </div>
+                        );
+                    }}
+                />
+                <CustomTokenButton />
+            </div>
+
             {token && networkName && (
                 <GradientHref
                     isExternal

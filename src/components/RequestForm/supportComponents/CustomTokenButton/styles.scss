@@ -1,0 +1,21 @@
+@import "../../../../ui-kit/styles/vars";
+
+.custom-token-button {
+  background: $gradient;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  margin: 8px 0 18px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: black;
+
+  transition: all 250ms;
+
+  &:hover {
+    opacity: 0.9;
+    color: rgba(0,0,0,0.7);
+  }
+}

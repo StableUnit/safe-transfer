@@ -1,6 +1,12 @@
 @import "../../../../ui-kit/styles/vars";
 
 .token-address {
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   &__input {
     display: flex;
     align-items: center;

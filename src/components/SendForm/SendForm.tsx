@@ -5,7 +5,7 @@ import BN from "bn.js";
 import axios from "axios";
 import * as Sentry from "@sentry/browser";
 import { fetchBalance } from "@wagmi/core";
-import { useAccount, useContract, useContractWrite, useFeeData, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
+import { useAccount, useContract, useContractWrite, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
 
 import {
     changeNetworkAtMetamask,
@@ -52,7 +52,6 @@ import "./SendForm.scss";
 import { Actions } from "../../reducer";
 import { rpcList } from "../../utils/rpc";
 import { useGasPrice } from "../../hooks/useGasPrice";
-import { useNetworkChange } from "../../hooks/useNetworkChange";
 
 export type BalanceType = {
     // eslint-disable-next-line camelcase
@@ -553,7 +552,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                                             </div>
                                         </MenuItem>
                                     ))}
-                                    {networkName && <CustomTokenMenuItem networkName={networkName} />}
+                                    {networkName && <CustomTokenMenuItem />}
                                 </Select>
                             </FormControl>
 
