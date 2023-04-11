@@ -7,6 +7,16 @@ export const getTokens: () => (TokenMetadataType & { chainId: number })[] = () =
     return tokensStr ? JSON.parse(tokensStr) : [];
 };
 
+export const getChainCustomTokens = (chainId: number) =>
+    getTokens()
+        .filter((v) => v.chainId === chainId)
+        .map((token) => ({
+            address: token.address,
+            id: token.name,
+            symbol: token.symbol,
+            decimals: token.decimals,
+        }));
+
 export const addToken = (token: TokenMetadataType, chainId: number) => {
     const tokens = getTokens();
     const newTokens = [...tokens, { ...token, chainId }];

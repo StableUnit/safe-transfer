@@ -66,10 +66,7 @@
     padding-left: 16px;
   }
 
-  & &__network-form,
-  & &__address,
-  & &__token-address,
-  & &__value {
+  & &__default-input {
     width: 352px;
     margin: 8px 0 18px;
     border: 1px solid #313131;
@@ -105,57 +102,9 @@
     }
   }
 
-  & &__token-input {
-    display: flex;
-    align-items: center;
-
-    img {
-      margin-left: 20px;
-      margin-right: -5px;
-    }
-  }
-
-  & &__token-name {
-    position: relative;
-    left: 17px;
-    font-size: 12px;
-    top: -14px;
-  }
-
-  &__paper {
-    background-color: #313131 !important;
-    border-radius: 8px !important;
-    color: #FFFFFF !important;
-    font-weight: 500 !important;
-    font-size: 14px !important;
-    line-height: 18px !important;
-  }
-
-  &__list {
-    li {
-      padding-bottom: 12px;
-    }
-    img {
-      padding-right: 8px;
-    }
-  }
-
   &__button  {
     width: 100%;
     height: 58px;
     margin: 20px auto 0 auto;
-  }
-}
-
-.MuiAutocomplete-paper {
-  color: white !important;
-  background: $dark-gray !important;
-
-  .MuiAutocomplete-noOptions {
-    color: $gray1 !important;
-  }
-
-  img {
-    margin-right: 8px;
   }
 }

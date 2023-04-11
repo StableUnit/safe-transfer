@@ -30,7 +30,7 @@ export const Routes = ({ onConnect }: Props) => (
 
         {/* @ts-ignore */}
         <Route exact path="/request">
-            <RequestForm />
+            <RequestForm onConnect={onConnect} />
         </Route>
 
         {/* @ts-ignore */}

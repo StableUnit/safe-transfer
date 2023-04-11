@@ -45,7 +45,7 @@ export const useEns = (address?: string) => {
         isEnsAddress: !!(address && Web3.utils.isAddress(address)),
         isEnsName: !!address?.includes(".eth"),
         isAvvyName: !!address?.includes(".avax"),
-        ensAddress,
+        ensAddress: ensAddress ?? undefined,
         ensName,
         avvyName,
         isEnsNameLoading,
