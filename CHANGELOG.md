@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.12](https://github.com/StableUnit/safe-transfer/compare/v0.5.11...v0.5.12) (2023-04-11)
+
+
+### Features
+
+* add custom token in request page ([a30e03a](https://github.com/StableUnit/safe-transfer/commit/a30e03a5af48c9e37c276ef101ed858774f9fe95))
+* refactoring + auto-fill address and chain ([378618f](https://github.com/StableUnit/safe-transfer/commit/378618f021fefbc8f743969801a0b791c6177a42))
+* show custom token in list ([7883129](https://github.com/StableUnit/safe-transfer/commit/788312912b6f798ac996d30e7279546e3e2e9f8e))
+* Transfer token on case of request ([6eb62f5](https://github.com/StableUnit/safe-transfer/commit/6eb62f5159ef3c14dc225d8b7c73bf62c5676c42))
+
+
+### Bug Fixes
+
+* twitter screenshots in mobile ([c788a10](https://github.com/StableUnit/safe-transfer/commit/c788a10086d5b16e1b32b86ea705d69361b4b55f))
+
 ### [0.5.11](https://github.com/StableUnit/safe-transfer/compare/v0.5.10...v0.5.11) (2023-04-07)
 
 
