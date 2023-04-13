@@ -8,16 +8,8 @@ import "./styles.scss";
 
 const CustomTokenButton = () => {
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => {
-        console.log("handleOpen");
-        setOpen(true);
-    };
-    const handleClose = () => {
-        console.log("handleClose");
-        setOpen(false);
-    };
-
-    console.log(open);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     return (
         <>
