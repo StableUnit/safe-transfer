@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.15](https://github.com/StableUnit/safe-transfer/compare/v0.5.14...v0.5.15) (2023-04-13)
+
+
+### Features
+
+* add headers + update logo ([5790a04](https://github.com/StableUnit/safe-transfer/commit/5790a049ef3c5e98adbab7f522d9a95c52531412))
+
+
+### Bug Fixes
+
+* update domains ([9bbd7a8](https://github.com/StableUnit/safe-transfer/commit/9bbd7a8c6bb03334d3a46545cc319116711d3b28))
+
 ### [0.5.14](https://github.com/StableUnit/safe-transfer/compare/v0.5.13...v0.5.14) (2023-04-13)
 
 
