@@ -374,6 +374,8 @@ export const getTrxHashLink = (hash: string, chain: NetworkType) =>
     `${networkInfo[chain].blockExplorerUrls}/tx/${hash}`;
 
 export const getAddressLink = (address: string, chain: NetworkType) =>
-    `${networkInfo[chain].blockExplorerUrls}/token/${address}`;
+    chain === NETWORK.zkSync
+        ? `${networkInfo[chain].blockExplorerUrls}/address/${address}`
+        : `${networkInfo[chain].blockExplorerUrls}/token/${address}`;
 
 export const PROVIDER_URL_AVVY = "https://api.avax.network/ext/bc/C/rpc";

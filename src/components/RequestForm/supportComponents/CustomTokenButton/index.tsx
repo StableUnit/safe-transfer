@@ -1,20 +1,21 @@
 import React from "react";
-import { Backdrop, Fade, MenuItem, Modal } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { Backdrop, DialogContent, Fade, Modal } from "@mui/material";
 
 import CustomTokenModalContent from "../../../CustomTokenModalContent/CustomTokenModalContent";
 
-import "./CustomTokenMenuItem.scss";
+import "./styles.scss";
 
-const CustomTokenMenuItem = () => {
+const CustomTokenButton = () => {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     return (
-        <div className="custom-token-menu-item">
-            <MenuItem value="custom-value" onClick={handleOpen}>
-                Add custom token
-            </MenuItem>
+        <>
+            <div className="custom-token-button" onClick={handleOpen}>
+                <AddIcon />
+            </div>
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
@@ -27,11 +28,13 @@ const CustomTokenMenuItem = () => {
                 }}
             >
                 <Fade in={open}>
-                    <CustomTokenModalContent onClose={handleClose} />
+                    <DialogContent>
+                        <CustomTokenModalContent onClose={handleClose} />
+                    </DialogContent>
                 </Fade>
             </Modal>
-        </div>
+        </>
     );
 };
 
-export default CustomTokenMenuItem;
+export default CustomTokenButton;

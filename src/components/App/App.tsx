@@ -50,11 +50,21 @@ const App = () => {
             case "metamask":
                 return <MetamaskIcon />;
             case "walletconnect":
+            case "walletconnectlegacy":
                 return <WalletConnectIcon />;
             case "safe":
                 return <GnosisSafeIcon />;
             default:
                 return null;
+        }
+    };
+
+    const getConnectorName = (name: string) => {
+        switch (name.toLowerCase()) {
+            case "walletconnectlegacy":
+                return "WalletConnect";
+            default:
+                return name;
         }
     };
 
@@ -81,7 +91,7 @@ const App = () => {
                                         {renderIcon(selectedConnector.id)}
                                     </div>
                                     <div className="connect-modal__provider-name">
-                                        {selectedConnector.name}
+                                        {getConnectorName(selectedConnector.name)}
                                         {isLoading && selectedConnector.id === pendingConnector?.id && " (connecting)"}
                                     </div>
                                 </div>

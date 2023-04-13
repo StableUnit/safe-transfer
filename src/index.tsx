@@ -11,7 +11,7 @@ import { mainnet, polygon, goerli, optimism, bsc, fantom, avalanche } from "wagm
 import { infuraProvider } from "wagmi/providers/infura";
 import { publicProvider } from "wagmi/providers/public";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
-import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
+import { WalletConnectLegacyConnector } from "wagmi/connectors/walletConnectLegacy";
 import { SafeConnector } from "@gnosis.pm/safe-apps-wagmi";
 
 import App from "./components/App/App";
@@ -70,18 +70,16 @@ const AppContainer = () => {
         autoConnect: true,
         connectors: [
             new MetaMaskConnector({ chains, options: { shimDisconnect: true } }),
-            new WalletConnectConnector({
+            new WalletConnectLegacyConnector({
                 chains,
                 options: {
-                    projectId: "8bc6fb62be86919096fcd7486c9d70ad",
-                    showQrModal: true,
+                    qrcode: true,
                 },
             }),
             new SafeConnector({
                 chains,
                 options: {
-                    allowedDomains: [/gnosis-safe.io$/, /app.safe.global$/],
-                    debug: false,
+                    debug: true,
                 },
             }),
         ],

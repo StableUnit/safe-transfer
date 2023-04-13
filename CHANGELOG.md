@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.15](https://github.com/StableUnit/safe-transfer/compare/v0.5.14...v0.5.15) (2023-04-13)
+
+
+### Features
+
+* add headers + update logo ([5790a04](https://github.com/StableUnit/safe-transfer/commit/5790a049ef3c5e98adbab7f522d9a95c52531412))
+
+
+### Bug Fixes
+
+* update domains ([9bbd7a8](https://github.com/StableUnit/safe-transfer/commit/9bbd7a8c6bb03334d3a46545cc319116711d3b28))
+
+### [0.5.14](https://github.com/StableUnit/safe-transfer/compare/v0.5.13...v0.5.14) (2023-04-13)
+
+
+### Bug Fixes
+
+* fix walletconnect for gnosis ([0904d33](https://github.com/StableUnit/safe-transfer/commit/0904d3355a0b61b8d308ad10267cdf29ba8fbca7))
+* small fixes for request ([3eb1ddc](https://github.com/StableUnit/safe-transfer/commit/3eb1ddc12e81217809f03fc1ab3de95959de998d))
+
+### [0.5.13](https://github.com/StableUnit/safe-transfer/compare/v0.5.12...v0.5.13) (2023-04-13)
+
+
+### Features
+
+* use legacy walletconnect ([2513aec](https://github.com/StableUnit/safe-transfer/commit/2513aec4ef99e7a71a9d4b08602254aa03a3d2dc))
+
+### [0.5.12](https://github.com/StableUnit/safe-transfer/compare/v0.5.11...v0.5.12) (2023-04-11)
+
+
+### Features
+
+* add custom token in request page ([a30e03a](https://github.com/StableUnit/safe-transfer/commit/a30e03a5af48c9e37c276ef101ed858774f9fe95))
+* refactoring + auto-fill address and chain ([378618f](https://github.com/StableUnit/safe-transfer/commit/378618f021fefbc8f743969801a0b791c6177a42))
+* show custom token in list ([7883129](https://github.com/StableUnit/safe-transfer/commit/788312912b6f798ac996d30e7279546e3e2e9f8e))
+* Transfer token on case of request ([6eb62f5](https://github.com/StableUnit/safe-transfer/commit/6eb62f5159ef3c14dc225d8b7c73bf62c5676c42))
+
+
+### Bug Fixes
+
+* twitter screenshots in mobile ([c788a10](https://github.com/StableUnit/safe-transfer/commit/c788a10086d5b16e1b32b86ea705d69361b4b55f))
+
 ### [0.5.11](https://github.com/StableUnit/safe-transfer/compare/v0.5.10...v0.5.11) (2023-04-07)
 
 

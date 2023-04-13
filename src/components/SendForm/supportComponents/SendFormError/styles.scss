@@ -1,0 +1,21 @@
+.send-form-error {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  color: #FC7557;
+  text-align: center;
+  padding-bottom: 8px;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.send-form-warning {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  color: #FEFBDA;
+  text-align: center;
+  padding-bottom: 8px;
+}

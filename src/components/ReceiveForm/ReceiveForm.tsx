@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import cn from "classnames";
 
-import { useAccount, useContract, useContractWrite, useFeeData, useNetwork, useSigner } from "wagmi";
+import { useAccount, useContract, useContractWrite, useNetwork, useSigner } from "wagmi";
 import {
     NetworkType,
     getAddressLink,

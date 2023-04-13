@@ -36,12 +36,7 @@ body > iframe {
     display: none;
 }
 
-.required {
-    &:after {
-        content: " required";
-        text-align: start;
-        color: red;
-        font-size: 9px;
-        vertical-align: super;
-    }
+input:disabled {
+    color: rgba(255,255,255, 0.3) !important;
+    -webkit-text-fill-color: rgba(255,255,255, 0.3) !important;
 }
