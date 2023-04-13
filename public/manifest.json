@@ -4,6 +4,11 @@
     "description": "Do safe transfers to never lose tokens",
     "icons": [
         {
+            "src": "logo.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        },
+        {
             "src": "favicon.ico",
             "sizes": "32x32 16x16",
             "type": "image/x-icon"
@@ -14,7 +19,8 @@
             "sizes": "150x150"
         }
     ],
-    "iconPath": "https://safe-transfer.stableunit.org/favicon150.png",
+    "iconPath": "https://safetransfer.cash/logo.svg",
+    "providedBy": {"name": "StableUnit", "url": "https://stableunit.org/"},
     "start_url": ".",
     "display": "standalone",
     "theme_color": "#000000",

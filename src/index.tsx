@@ -79,8 +79,7 @@ const AppContainer = () => {
             new SafeConnector({
                 chains,
                 options: {
-                    allowedDomains: [/gnosis-safe.io$/, /app.safe.global$/],
-                    debug: false,
+                    debug: true,
                 },
             }),
         ],
