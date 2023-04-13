@@ -306,7 +306,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
             const valueBN = fromHRToBN(value, +currentToken.decimals).toString();
             // In case of work with gnosis-safe via WalletConnect
             const timer = setTimeout(() => {
-                if (connector?.name.toLowerCase() === "walletconnect") {
+                if (["walletconnect", "walletconnectlegacy"].includes(connector?.name.toLowerCase() ?? "")) {
                     updateGenUrl();
                     setIsApproveLoading(false);
                 }
