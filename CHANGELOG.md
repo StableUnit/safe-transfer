@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.14](https://github.com/StableUnit/safe-transfer/compare/v0.5.13...v0.5.14) (2023-04-13)
+
+
+### Bug Fixes
+
+* fix walletconnect for gnosis ([0904d33](https://github.com/StableUnit/safe-transfer/commit/0904d3355a0b61b8d308ad10267cdf29ba8fbca7))
+* small fixes for request ([3eb1ddc](https://github.com/StableUnit/safe-transfer/commit/3eb1ddc12e81217809f03fc1ab3de95959de998d))
+
 ### [0.5.13](https://github.com/StableUnit/safe-transfer/compare/v0.5.12...v0.5.13) (2023-04-13)
 
 
