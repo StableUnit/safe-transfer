@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.16](https://github.com/StableUnit/safe-transfer/compare/v0.5.15...v0.5.16) (2023-04-20)
+
+
+### Bug Fixes
+
+* get tokenLogo in case of request ([ca88325](https://github.com/StableUnit/safe-transfer/commit/ca88325e600c20607598a0d7e8aab5e7d2897473))
+
 ### [0.5.15](https://github.com/StableUnit/safe-transfer/compare/v0.5.14...v0.5.15) (2023-04-13)
 
 
