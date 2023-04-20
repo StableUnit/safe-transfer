@@ -266,9 +266,7 @@ export const getCustomTokenMetadata = async (chain: NetworkType, address: string
         name: await tokenContract.methods.name().call(),
         symbol: await tokenContract.methods.symbol().call(),
         decimals: await tokenContract.methods.decimals().call(),
-        // @ts-ignore
-        logo: TOKEN_LIST[networkToId[chain]]?.find((v: any) => v.address?.toLowerCase() === address?.toLowerCase())
-            ?.logoURI,
+        logo: getTokenLogo(chain, address),
     };
 };
 
@@ -289,3 +287,9 @@ export const nativeTokensAddresses = [
     "0x000000000000000000000000000000000000dead",
     "0x0000000000000000000000000000000000000000",
 ];
+
+export const getTokenLogo = (networkName: NetworkType, address: string) => {
+    // @ts-ignore
+    return TOKEN_LIST[networkToId[networkName]]?.find((v: any) => v.address?.toLowerCase() === address.toLowerCase())
+        ?.logoURI;
+};

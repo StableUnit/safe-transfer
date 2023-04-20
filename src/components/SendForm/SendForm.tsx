@@ -23,6 +23,7 @@ import {
     CUSTOM_TOKENS,
     fromHRToBN,
     getCovalentUrl,
+    getTokenLogo,
     nativeTokensAddresses,
     toHRNumberFloat,
 } from "../../utils/tokens";
@@ -106,8 +107,10 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     }, [address]);
 
     useEffect(() => {
-        if (hasRequestToken && currentToken) {
-            setBalances([currentToken]);
+        if (requestTokenData && currentToken) {
+            setBalances([
+                { ...currentToken, logo: getTokenLogo(requestTokenData.networkName, requestTokenData.token) },
+            ]);
         }
     }, [hasRequestToken, currentToken]);
 
