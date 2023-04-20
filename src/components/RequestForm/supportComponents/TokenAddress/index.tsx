@@ -8,7 +8,7 @@ import { TokenType } from "../../index";
 
 import "./styles.scss";
 import CustomTokenButton from "../CustomTokenButton";
-import { CUSTOM_TOKENS } from "../../../../utils/tokens";
+import { CUSTOM_TOKENS, isTokenSymbolDuplicated } from "../../../../utils/tokens";
 import { getChainCustomTokens } from "../../../../utils/storage";
 
 type TokenAddressProps = {
@@ -26,7 +26,11 @@ const TokenAddress = ({ token, onTokenChange }: TokenAddressProps) => {
 
             const tokensFromList =
                 // @ts-ignore
-                TOKEN_LIST[networkToId[networkName]]?.sort((a: any, b: any) => a.symbol.localeCompare(b.symbol)) ?? [];
+                TOKEN_LIST[networkToId[networkName]]
+                    ?.sort((a: any, b: any) => a.symbol.localeCompare(b.symbol))
+                    .map((v: any) =>
+                        isTokenSymbolDuplicated(networkName, v.symbol) ? { ...v, symbol: `${v.symbol} (${v.name})` } : v
+                    ) ?? [];
 
             return [...customTokens, ...tokensFromList].map((v) => ({
                 label: v.symbol,

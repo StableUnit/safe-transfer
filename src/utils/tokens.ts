@@ -293,3 +293,8 @@ export const getTokenLogo = (networkName: NetworkType, address: string) => {
     return TOKEN_LIST[networkToId[networkName]]?.find((v: any) => v.address?.toLowerCase() === address.toLowerCase())
         ?.logoURI;
 };
+
+export const isTokenSymbolDuplicated = (networkName: NetworkType, symbol: string) => {
+    // @ts-ignore
+    return TOKEN_LIST[networkToId[networkName]].filter((v) => v.symbol === symbol).length >= 2;
+};
