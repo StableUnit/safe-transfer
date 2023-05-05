@@ -30,4 +30,5 @@ export const rpcList = createRPC([
     "okxchain",
     "gnosis",
     "zkSync",
+    "kcc",
 ]);

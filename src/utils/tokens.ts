@@ -224,6 +224,48 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
             address: "0x42c1c56be243c250AB24D2ecdcC77F9cCAa59601",
         },
     ],
+    kcc: [
+        {
+            id: "usdt",
+            symbol: "USDT",
+            address: "0x0039f574ee5cc39bdd162e9a88e3eb1f111baf48",
+        },
+        {
+            id: "usdc",
+            symbol: "USDC",
+            address: "0x980a5afef3d17ad98635f6c5aebcbaeded3c3430",
+        },
+        {
+            id: "eth",
+            symbol: "ETH",
+            address: "0xf55af137a98607f7ed2efefa4cd2dfe70e4253b1",
+        },
+        {
+            id: "kudex",
+            symbol: "KUD",
+            address: "0xbd451b952de19f2c7ba2c8c516b0740484e953b2",
+        },
+        {
+            id: "mjt",
+            symbol: "MJT",
+            address: "0x2ca48b4eea5a731c2b54e7c3944dbdb87c0cfb6f",
+        },
+        {
+            id: "wkcs",
+            symbol: "WKCS",
+            address: "0x4446fc4eb47f2f6586f9faab68b3498f86c07521",
+        },
+        {
+            id: "KuSwap",
+            symbol: "KUS",
+            address: "0x4a81704d8c16d9fb0d7f61b747d0b5a272badf14",
+        },
+        {
+            id: "KsFswap",
+            symbol: "KSF",
+            address: "0x755d74d009f656ca1652cbdc135e3b6abfccc455",
+        },
+    ],
 };
 
 export const beautifyTokenBalance = (balance: string, decimals: number, fraction = 5) => {

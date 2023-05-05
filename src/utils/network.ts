@@ -16,6 +16,7 @@ export type NetworkType =
     | "okxchain"
     | "gnosis"
     | "zkSync"
+    | "kcc"
     // | "skale"
     | "cronos";
 
@@ -37,6 +38,7 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     okxchain: "okxchain",
     gnosis: "gnosis",
     zkSync: "zkSync",
+    kcc: "kcc",
 };
 
 export const networkNames = {
@@ -57,6 +59,7 @@ export const networkNames = {
     [NETWORK.okxchain]: "OKXChain",
     [NETWORK.gnosis]: "Gnosis",
     [NETWORK.zkSync]: "ZkSync Era Mainnet",
+    [NETWORK.kcc]: "KuCoin Community Chain",
 };
 
 const inverse = (obj: Record<any, any>) => Object.fromEntries(Object.entries(obj).map((a) => a.reverse()));
@@ -74,6 +77,7 @@ export const idToNetwork: Record<number, NetworkType> = {
     137: NETWORK.polygon,
     250: NETWORK.fantom,
     288: NETWORK.boba, // mainnet !!!
+    321: NETWORK.kcc,
     324: NETWORK.zkSync,
     // 338: NETWORK.cronos, // testnet
     // 42161: NETWORK.arbitrum,
@@ -321,6 +325,17 @@ export const networkInfo = {
             decimals: 18,
         },
     },
+    [NETWORK.kcc]: {
+        chainName: "KuCoin Community Chain Mainnet",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.kcc]),
+        rpcUrls: ["https://rpc-mainnet.kcc.network"],
+        blockExplorerUrls: ["https://explorer.kcc.io/en"],
+        nativeCurrency: {
+            name: "KCS",
+            symbol: "KCS",
+            decimals: 18,
+        },
+    },
 };
 
 const generateWagmiCustomNetwork = (network: NetworkType) => ({
@@ -346,6 +361,7 @@ export const wagmiCustomNetworks: Record<string, Chain> = {
     [NETWORK.okxchain]: generateWagmiCustomNetwork(NETWORK.okxchain),
     [NETWORK.gnosis]: generateWagmiCustomNetwork(NETWORK.gnosis),
     [NETWORK.zkSync]: generateWagmiCustomNetwork(NETWORK.zkSync),
+    [NETWORK.kcc]: generateWagmiCustomNetwork(NETWORK.kcc),
 };
 
 export const changeNetworkAtMetamask = async (networkName: NetworkType) => {
