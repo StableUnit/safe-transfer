@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { NetworkType } from "./network";
-import { addSuccessNotification } from "./notifications";
+import { addErrorNotification, addSuccessNotification } from "./notifications";
 
 const SECRET_KEY = "someSecretKey";
 
@@ -48,9 +48,41 @@ export const getShortUrl = (url?: string) => (url ? `${url.slice(0, 18)}...${url
 export const getLongUrl = (url?: string) => (url ? `${url.slice(0, 32)}...${url.slice(url.length - 8)}` : "");
 export const getShortHash = (hash: string) => `${hash.slice(0, 6)}...${hash.slice(hash.length - 3)}`;
 
+const copyTextToClipboard = (text: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.style.position = "fixed";
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.width = "2em";
+    textArea.style.height = "2em";
+    textArea.style.padding = "0";
+    textArea.style.border = "none";
+    textArea.style.outline = "none";
+    textArea.style.boxShadow = "none";
+    textArea.style.background = "transparent";
+    textArea.value = text;
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    let res = false;
+    try {
+        res = document.execCommand("copy");
+        if (res) {
+            addSuccessNotification("Copied", undefined, true);
+        }
+    } catch (err) {
+        addErrorNotification("Error", "Can't copy in this browser");
+    }
+
+    document.body.removeChild(textArea);
+    return res;
+};
+
 export const handleCopyUrl = (url: string) => () => {
     if (url) {
-        navigator.clipboard.writeText(url);
-        addSuccessNotification("Copied", undefined, true);
+        // navigator.clipboard.writeText(url);
+        copyTextToClipboard(url);
     }
 };
