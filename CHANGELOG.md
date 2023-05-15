@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.19](https://github.com/StableUnit/safe-transfer/compare/v0.5.18...v0.5.19) (2023-05-15)
+
+
+### Bug Fixes
+
+* copy in metamask browser ([022eb94](https://github.com/StableUnit/safe-transfer/commit/022eb94741e27d2d031834f9ec67898ec490b3e8))
+
 ### [0.5.18](https://github.com/StableUnit/safe-transfer/compare/v0.5.17...v0.5.18) (2023-05-05)
 
 
