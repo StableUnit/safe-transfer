@@ -59,6 +59,7 @@ const AppContainer = () => {
         wagmiCustomNetworks.okxchain,
         wagmiCustomNetworks.gnosis,
         wagmiCustomNetworks.zkSync,
+        wagmiCustomNetworks.kcc,
     ];
 
     const { provider, webSocketProvider } = configureChains(chains, [

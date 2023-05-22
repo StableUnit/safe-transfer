@@ -53466,6 +53466,26 @@
       ]
     }
   ],
+  "321": [
+    {
+      "symbol": "USDT",
+      "name": "Tether",
+      "address": "0x0039f574ee5cc39bdd162e9a88e3eb1f111baf48",
+      "logoURI": "https://tokens.1inch.io/0x94b008aa00579c1307b0ef2c499ad98a8ce58e58.png"
+    },
+    {
+      "symbol": "USDC",
+      "name": "USD Coin",
+      "address": "0x980a5afef3d17ad98635f6c5aebcbaeded3c3430",
+      "logoURI": "https://tokens.1inch.io/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png"
+    },
+    {
+      "symbol": "ETH",
+      "name": "KCC-Peg Ether",
+      "address": "0xf55af137a98607f7ed2efefa4cd2dfe70e4253b1",
+      "logoURI": "https://tokens.1inch.io/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png"
+    }
+  ],
   "324": [
     {
       "symbol": "USDC",

@@ -1,6 +1,6 @@
 {
     "name": "safetransfer",
-    "version": "0.5.17",
+    "version": "0.5.19",
     "private": true,
     "files": [
         "jest-preset.js",
