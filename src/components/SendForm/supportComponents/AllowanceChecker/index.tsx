@@ -7,10 +7,10 @@ import { addErrorNotification, addSuccessNotification } from "../../../../utils/
 import { trackEvent } from "../../../../utils/events";
 import { idToNetwork, networkToId } from "../../../../utils/network";
 import CONTRACT_ERC20 from "../../../../contracts/ERC20.json";
-import { BalanceType } from "../../SendForm";
 import { StateContext } from "../../../../reducer/constants";
 import { useGasPrice } from "../../../../hooks/useGasPrice";
 import { rpcList } from "../../../../utils/rpc";
+import { BalanceType } from "../../../../utils/types";
 
 import "./styles.scss";
 
