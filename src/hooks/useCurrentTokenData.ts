@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { RequestUrlType } from "../utils/urlGenerator";
-import { BalanceType } from "../components/SendForm/SendForm";
 import { rpcList } from "../utils/rpc";
 import CONTRACT_ERC20 from "../contracts/ERC20.json";
+import { BalanceType } from "../utils/types";
 
 export const useCurrentTokenData = (
     balances: BalanceType[],

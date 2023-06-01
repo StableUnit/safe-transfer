@@ -330,9 +330,9 @@ export const nativeTokensAddresses = [
     "0x0000000000000000000000000000000000000000",
 ];
 
-export const getTokenLogo = (networkName: NetworkType, address: string) => {
+export const getTokenLogo = (networkName: NetworkType, address?: string) => {
     // @ts-ignore
-    return TOKEN_LIST[networkToId[networkName]]?.find((v: any) => v.address?.toLowerCase() === address.toLowerCase())
+    return TOKEN_LIST[networkToId[networkName]]?.find((v: any) => v.address?.toLowerCase() === address?.toLowerCase())
         ?.logoURI;
 };
 
