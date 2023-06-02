@@ -82,7 +82,7 @@ const copyTextToClipboard = (text: string) => {
 
 export const handleCopyUrl = (url: string) => () => {
     if (url) {
-        // navigator.clipboard.writeText(url);
+        navigator.clipboard.writeText(url);
         copyTextToClipboard(url);
     }
 };
