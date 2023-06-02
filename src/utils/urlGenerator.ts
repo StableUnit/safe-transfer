@@ -47,6 +47,7 @@ export const decodeToken = <T>(token: string) => {
 export const getShortUrl = (url?: string) => (url ? `${url.slice(0, 18)}...${url.slice(url.length - 4)}` : "");
 export const getLongUrl = (url?: string) => (url ? `${url.slice(0, 32)}...${url.slice(url.length - 8)}` : "");
 export const getShortHash = (hash: string) => `${hash.slice(0, 6)}...${hash.slice(hash.length - 3)}`;
+export const getVeryShortHash = (hash: string) => `${hash.slice(0, 3)}...${hash.slice(hash.length - 3)}`;
 
 const copyTextToClipboard = (text: string) => {
     const textArea = document.createElement("textarea");
