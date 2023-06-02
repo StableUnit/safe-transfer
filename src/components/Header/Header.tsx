@@ -23,16 +23,12 @@ const LINKS = [
         text: "Intro",
     },
     {
-        href: "/send",
-        text: "Send",
-    },
-    {
-        href: "/receive",
-        text: "Receive",
-    },
-    {
         href: "/request",
         text: "Request",
+    },
+    {
+        href: "/send",
+        text: "Send",
     },
 ] as LinkType[];
 
