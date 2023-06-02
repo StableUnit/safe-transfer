@@ -1,21 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import { IconButton } from "@mui/material";
 import cn from "classnames";
 
 import { useAccount, useContract, useContractWrite, useNetwork, useSigner } from "wagmi";
-import {
-    NetworkType,
-    getAddressLink,
-    getTrxHashLink,
-    idToNetwork,
-    networkNames,
-    networkToId,
-} from "../../utils/network";
-import { getShortHash, handleCopyUrl, TokenInfoType } from "../../utils/urlGenerator";
+import { NetworkType, getAddressLink, idToNetwork, networkNames, networkToId } from "../../utils/network";
+import { getShortHash, handleCopyUrl } from "../../utils/urlGenerator";
 import {
     beautifyTokenBalance,
     getCustomTokenAllowance,
     getCustomTokenMetadata,
+    getValue,
     TokenMetadataType,
 } from "../../utils/tokens";
 import { addErrorNotification, addSuccessNotification } from "../../utils/notifications";
@@ -37,15 +30,12 @@ import CONTRACT_ERC20 from "../../contracts/ERC20.json";
 import { Actions } from "../../reducer";
 import { DispatchContext } from "../../reducer/constants";
 import { useGasPrice } from "../../hooks/useGasPrice";
+import ReceiveErrors from "./supportComponents/ReceiveErrors";
+import ReceiveHash from "./supportComponents/ReceiveHash";
 
 interface TransferFormProps {
     onConnect: () => void;
 }
-
-const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: TokenInfoType) =>
-    tokenMetadata
-        ? `${beautifyTokenBalance(tokenData.value, +tokenMetadata.decimals)} ${tokenMetadata.symbol}`
-        : tokenData.value;
 
 const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     const dispatch = useContext(DispatchContext);
@@ -370,39 +360,12 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                                     )}
                                 </div>
                                 {renderButton()}
-                                {address && toAddress && toAddress.toLowerCase() !== address?.toLowerCase() && (
-                                    <div className="receive-form__error">
-                                        Only account{" "}
-                                        {tokenData.to.startsWith("0x")
-                                            ? getShortHash(tokenData.to)
-                                            : `${tokenData.to}(${getShortHash(toAddress)})`}{" "}
-                                        can receive the transfer.
-                                    </div>
-                                )}
-                                {address && tokenData.chain !== networkName && (
-                                    <div className="receive-form__error">
-                                        Please change network to {tokenData.chain}
-                                    </div>
-                                )}
+                                <ReceiveErrors toAddress={toAddress} />
                             </>
                         )}
                     </div>
                 )}
-                {trxHash && networkName && (
-                    <div className="receive-form__hash">
-                        <div className="receive-form__hash__text">
-                            <div>Hash:&nbsp;&nbsp;</div>
-                            <div id="generated-url">
-                                <a href={getTrxHashLink(trxHash, networkName)} target="_blank" rel="noreferrer">
-                                    {getShortHash(trxHash)}
-                                </a>
-                            </div>
-                        </div>
-                        <IconButton aria-label="copy" onClick={handleCopyUrl(trxHash)}>
-                            <ContentCopyIcon />
-                        </IconButton>
-                    </div>
-                )}
+                <ReceiveHash trxHash={trxHash} />
                 {!tokenData && <RestoreForm onConnect={onConnect} />}
             </div>
             <Twitter />
