@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import cn from "classnames";
+import Switch from "@mui/material/Switch";
 
 import { useAccount, useContract, useContractWrite, useNetwork, useSigner } from "wagmi";
 import { NetworkType, getAddressLink, idToNetwork, networkNames, networkToId } from "../../utils/network";
@@ -47,6 +48,7 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
     const [isCancelFetching, setIsCancelFetching] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [trxHash, setTrxHash] = useState("");
+    const [isShowDetailed, setIsShowDetailed] = useState(false);
     const [allowance, setAllowance] = useState<undefined | string>(undefined);
     const networkName = chain?.id ? idToNetwork[chain?.id] : undefined;
 
@@ -293,24 +295,43 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
 
     return (
         <>
-            <div className={cn("receive-form", { "receive-form--disabled": isDisabledContent })}>
+            <div
+                className={cn("receive-form", {
+                    "receive-form--disabled": isDisabledContent,
+                    "receive-form--detailed": isShowDetailed,
+                })}
+            >
                 {token && (
                     <div className="receive-form__content">
                         <div className="receive-form__title">Receive</div>
+                        <div className="receive-form__switch">
+                            <Switch
+                                size="small"
+                                checked={isShowDetailed}
+                                onChange={() => setIsShowDetailed((v) => !v)}
+                                inputProps={{ "aria-label": "controlled" }}
+                            />
+                            <div className="receive-form__switch__title">Details</div>
+                        </div>
                         {tokenData && (
                             <>
                                 <InfoCell title="Network:">
                                     <NetworkImage network={tokenData.chain} width={24} height={24} />
-                                    <div>&nbsp;&nbsp;{networkNames[tokenData.chain]}</div>
+                                    <div>
+                                        &nbsp;&nbsp;{networkNames[tokenData.chain]}{" "}
+                                        {isShowDetailed && `(id: ${networkToId[tokenData.chain]})`}
+                                    </div>
                                 </InfoCell>
-                                <div className="receive-form__line">
+                                <div className="receive-form__line" id="addresses">
                                     <InfoCell
                                         className="receive-form__copy-container"
                                         title="From:"
                                         bubble={isSender ? "You" : undefined}
                                     >
-                                        <div id="from">{getShortHash(tokenData.from)}</div>
-                                        <div onClick={handleCopyUrl(tokenData.from)}>
+                                        <a href={getAddressLink(tokenData.from, tokenData.chain)} id="from">
+                                            {isShowDetailed ? tokenData.from : getShortHash(tokenData.from)}
+                                        </a>
+                                        <div className="copy" onClick={handleCopyUrl(tokenData.from)}>
                                             <ContentCopyIcon />
                                         </div>
                                     </InfoCell>
@@ -319,10 +340,12 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                                         title="To:"
                                         bubble={isReceiver ? "You" : undefined}
                                     >
-                                        <div id="to">
-                                            {tokenData.to.startsWith("0x") ? getShortHash(tokenData.to) : tokenData.to}
-                                        </div>
-                                        <div onClick={handleCopyUrl(tokenData.to)}>
+                                        <a href={getAddressLink(tokenData.to, tokenData.chain)} id="to">
+                                            {tokenData.to.startsWith("0x") && !isShowDetailed
+                                                ? getShortHash(tokenData.to)
+                                                : tokenData.to}
+                                        </a>
+                                        <div className="copy" onClick={handleCopyUrl(tokenData.to)}>
                                             <ContentCopyIcon />
                                         </div>
                                     </InfoCell>
@@ -333,14 +356,16 @@ const ReceiveForm = React.memo(({ onConnect }: TransferFormProps) => {
                                         target="_blank"
                                         rel="noreferrer"
                                     >
-                                        <div id="tokenAddress">{getShortHash(tokenData.address)}</div>
+                                        <div id="tokenAddress">
+                                            {isShowDetailed ? tokenData.address : getShortHash(tokenData.address)}
+                                        </div>
                                     </a>
                                     <div className="receive-form__token-address__buttons">
                                         <div className="receive-form__metamask" onClick={handleAddToMetamask}>
-                                            <div>Add to&nbsp;</div>
+                                            {!isShowDetailed && <div>Add to&nbsp;</div>}
                                             <MetamaskIcon />
                                         </div>
-                                        <div onClick={handleCopyUrl(tokenData.address)}>
+                                        <div className="copy" onClick={handleCopyUrl(tokenData.address)}>
                                             <ContentCopyIcon />
                                         </div>
                                     </div>
