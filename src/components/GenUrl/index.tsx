@@ -9,11 +9,12 @@ import "./styles.scss";
 interface GenUrlProps {
     genUrl?: string;
     isLoading?: boolean;
+    showCopyIcon?: boolean;
     text: string;
     linkText?: string;
 }
 
-const GenUrl = React.memo(({ genUrl, linkText, isLoading = false, text }: GenUrlProps) => {
+const GenUrl = React.memo(({ genUrl, showCopyIcon = true, linkText, isLoading = false, text }: GenUrlProps) => {
     return genUrl ? (
         <div className="gen-url-container">
             <div className="gen-url">
@@ -23,9 +24,11 @@ const GenUrl = React.memo(({ genUrl, linkText, isLoading = false, text }: GenUrl
                         {linkText || getShortUrl(genUrl)}
                     </a>
                 </div>
-                <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
-                    <ContentCopyIcon />
-                </IconButton>
+                {showCopyIcon && (
+                    <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
+                        <ContentCopyIcon />
+                    </IconButton>
+                )}
             </div>
             {isLoading && (
                 <div className="gen-url__loading">

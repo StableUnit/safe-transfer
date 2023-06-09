@@ -42,7 +42,12 @@ const GenUrlPopup = ({ genUrl }: GenUrlPopupProps) => {
                     <div className="gen-url-popup__title">
                         Transaction is in progress, but you can already share generated link:
                     </div>
-                    <GenUrl genUrl={genUrl} text="" linkText={isMobile ? getShortUrl(genUrl) : getLongUrl(genUrl)} />
+                    <GenUrl
+                        showCopyIcon={!(isMobile && window.ethereum)}
+                        genUrl={genUrl}
+                        text=""
+                        linkText={isMobile ? getShortUrl(genUrl) : getLongUrl(genUrl)}
+                    />
                 </div>
             </Fade>
         </Modal>
