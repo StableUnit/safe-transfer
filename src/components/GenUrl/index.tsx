@@ -20,10 +20,10 @@ const GenUrl = React.memo(({ genUrl, linkText, isLoading = false, text }: GenUrl
                 <div className="gen-url__text">
                     <div className="gen-url__text--title">{text}&nbsp;&nbsp;</div>
                     <a href={genUrl} target="_blank" rel="noreferrer">
-                        {linkText ?? getShortUrl(genUrl ?? "")}
+                        {linkText || getShortUrl(genUrl)}
                     </a>
                 </div>
-                <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl ?? "")}>
+                <IconButton aria-label="copy" onClick={handleCopyUrl(genUrl)}>
                     <ContentCopyIcon />
                 </IconButton>
             </div>

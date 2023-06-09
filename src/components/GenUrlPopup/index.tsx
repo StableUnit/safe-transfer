@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Fade, Modal } from "@mui/material";
 
 import GenUrl from "../GenUrl";
-import { getLongUrl, getShortUrl } from "../../utils/urlGenerator";
+import { getLongUrl, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
 import { ReactComponent as CloseIcon } from "../../ui-kit/images/close.svg";
 import { useGenUrlPopup } from "../../hooks/useGenUrlPopup";
 import { useDevice } from "../../hooks/useDimensions";
@@ -16,6 +16,12 @@ type GenUrlPopupProps = {
 const GenUrlPopup = ({ genUrl }: GenUrlPopupProps) => {
     const { isGenUrlPopupVisible, closeGenUrlPopup, canCloseGenUrl } = useGenUrlPopup(genUrl);
     const { isMobile } = useDevice();
+
+    useEffect(() => {
+        if (isMobile && window.ethereum && isGenUrlPopupVisible && genUrl) {
+            handleCopyUrl(genUrl);
+        }
+    }, [genUrl, isGenUrlPopupVisible, isMobile]);
 
     return (
         <Modal
