@@ -8,6 +8,7 @@ export type NetworkType =
     | "bsc"
     | "fantom"
     | "avalanche"
+    | "arbitrum"
     | "aurora"
     | "harmony"
     | "optimism"
@@ -26,7 +27,7 @@ export const NETWORK: Record<NetworkType, NetworkType> = {
     polygon: "polygon",
     aurora: "aurora",
     harmony: "harmony",
-    // arbitrum: "arbitrum",
+    arbitrum: "arbitrum",
     optimism: "optimism",
     boba: "boba",
     // skale: "skale",
@@ -46,12 +47,12 @@ export const networkNames = {
     [NETWORK.avalanche]: "Avalanche",
     [NETWORK.bsc]: "Binance Smart Chain",
     [NETWORK.polygon]: "Polygon",
+    [NETWORK.arbitrum]: "Arbitrum",
     [NETWORK.goerli]: "Goerli",
     [NETWORK.fantom]: "Fantom",
     [NETWORK.optimism]: "Optimism",
     [NETWORK.aurora]: "Aurora",
     [NETWORK.harmony]: "Harmony",
-    // [NETWORK.arbitrum]: "Arbitrum",
     [NETWORK.boba]: "Boba",
     // [NETWORK.skale]: "Skale",
     [NETWORK.cronos]: "Cronos",
@@ -80,7 +81,7 @@ export const idToNetwork: Record<number, NetworkType> = {
     321: NETWORK.kcc,
     324: NETWORK.zkSync,
     // 338: NETWORK.cronos, // testnet
-    // 42161: NETWORK.arbitrum,
+    42161: NETWORK.arbitrum,
     42220: NETWORK.celo,
     43114: NETWORK.avalanche,
     // 1085866509: NETWORK.skale, // hackathon chainID
@@ -234,17 +235,17 @@ export const networkInfo = {
             decimals: 18,
         },
     },
-    // [NETWORK.arbitrum]: {
-    //     chainName: "Arbitrum One",
-    //     chainId: Web3.utils.toHex(networkToId[NETWORK.arbitrum]),
-    //     rpcUrls: ["https://arb1.arbitrum.io/rpc"],
-    //     blockExplorerUrls: ["https://arbiscan.io"],
-    //     nativeCurrency: {
-    //         name: "ETH",
-    //         symbol: "ETH",
-    //         decimals: 18,
-    //     },
-    // },
+    [NETWORK.arbitrum]: {
+        chainName: "Arbitrum One",
+        chainId: Web3.utils.toHex(networkToId[NETWORK.arbitrum]),
+        rpcUrls: ["https://arb1.arbitrum.io/rpc"],
+        blockExplorerUrls: ["https://arbiscan.io"],
+        nativeCurrency: {
+            name: "ETH",
+            symbol: "ETH",
+            decimals: 18,
+        },
+    },
     [NETWORK.avalanche]: {
         chainName: "Avalanche C-Chain",
         chainId: Web3.utils.toHex(networkToId[NETWORK.avalanche]),

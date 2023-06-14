@@ -21,6 +21,7 @@ export const rpcList = createRPC([
     "bsc",
     "fantom",
     "avalanche",
+    "arbitrum",
     "aurora",
     "optimism",
     "harmony",

@@ -34,6 +34,7 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
     bsc: [],
     fantom: [],
     avalanche: [],
+    arbitrum: [],
     celo: [
         {
             id: "tether",
