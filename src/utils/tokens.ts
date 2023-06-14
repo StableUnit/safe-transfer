@@ -4,6 +4,7 @@ import { networkToId, NetworkType } from "./network";
 import CONTRACT_ERC20 from "../contracts/ERC20.json";
 import TOKEN_LIST from "../contracts/tokenlist.json";
 import { rpcList } from "./rpc";
+import { TokenInfoType } from "./urlGenerator";
 
 export type TokenMetadataType = {
     address: string;
@@ -330,9 +331,9 @@ export const nativeTokensAddresses = [
     "0x0000000000000000000000000000000000000000",
 ];
 
-export const getTokenLogo = (networkName: NetworkType, address: string) => {
+export const getTokenLogo = (networkName: NetworkType, address?: string) => {
     // @ts-ignore
-    return TOKEN_LIST[networkToId[networkName]]?.find((v: any) => v.address?.toLowerCase() === address.toLowerCase())
+    return TOKEN_LIST[networkToId[networkName]]?.find((v: any) => v.address?.toLowerCase() === address?.toLowerCase())
         ?.logoURI;
 };
 
@@ -340,3 +341,8 @@ export const isTokenSymbolDuplicated = (networkName: NetworkType, symbol: string
     // @ts-ignore
     return TOKEN_LIST[networkToId[networkName]].filter((v) => v.symbol === symbol).length >= 2;
 };
+
+export const getValue = (tokenMetadata: TokenMetadataType | undefined, tokenData: TokenInfoType) =>
+    tokenMetadata
+        ? `${beautifyTokenBalance(tokenData.value, +tokenMetadata.decimals)} ${tokenMetadata.symbol}`
+        : tokenData.value;

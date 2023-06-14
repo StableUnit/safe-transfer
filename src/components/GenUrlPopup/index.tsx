@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Fade, Modal } from "@mui/material";
 
 import GenUrl from "../GenUrl";
-import { getLongUrl, getShortUrl } from "../../utils/urlGenerator";
+import { getLongUrl, getShortUrl, handleCopyUrl } from "../../utils/urlGenerator";
 import { ReactComponent as CloseIcon } from "../../ui-kit/images/close.svg";
 import { useGenUrlPopup } from "../../hooks/useGenUrlPopup";
 import { useDevice } from "../../hooks/useDimensions";
@@ -16,6 +16,12 @@ type GenUrlPopupProps = {
 const GenUrlPopup = ({ genUrl }: GenUrlPopupProps) => {
     const { isGenUrlPopupVisible, closeGenUrlPopup, canCloseGenUrl } = useGenUrlPopup(genUrl);
     const { isMobile } = useDevice();
+
+    useEffect(() => {
+        if (isMobile && window.ethereum && isGenUrlPopupVisible && genUrl) {
+            handleCopyUrl(genUrl);
+        }
+    }, [genUrl, isGenUrlPopupVisible, isMobile]);
 
     return (
         <Modal
@@ -36,7 +42,12 @@ const GenUrlPopup = ({ genUrl }: GenUrlPopupProps) => {
                     <div className="gen-url-popup__title">
                         Transaction is in progress, but you can already share generated link:
                     </div>
-                    <GenUrl genUrl={genUrl} text="" linkText={isMobile ? getShortUrl(genUrl) : getLongUrl(genUrl)} />
+                    <GenUrl
+                        showCopyIcon={!(isMobile && window.ethereum)}
+                        genUrl={genUrl}
+                        text=""
+                        linkText={isMobile ? getShortUrl(genUrl) : getLongUrl(genUrl)}
+                    />
                 </div>
             </Fade>
         </Modal>

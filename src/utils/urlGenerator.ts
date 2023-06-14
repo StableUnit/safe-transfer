@@ -47,6 +47,7 @@ export const decodeToken = <T>(token: string) => {
 export const getShortUrl = (url?: string) => (url ? `${url.slice(0, 18)}...${url.slice(url.length - 4)}` : "");
 export const getLongUrl = (url?: string) => (url ? `${url.slice(0, 32)}...${url.slice(url.length - 8)}` : "");
 export const getShortHash = (hash: string) => `${hash.slice(0, 6)}...${hash.slice(hash.length - 3)}`;
+export const getVeryShortHash = (hash: string) => `${hash.slice(0, 3)}...${hash.slice(hash.length - 3)}`;
 
 const copyTextToClipboard = (text: string) => {
     const textArea = document.createElement("textarea");
@@ -60,6 +61,7 @@ const copyTextToClipboard = (text: string) => {
     textArea.style.outline = "none";
     textArea.style.boxShadow = "none";
     textArea.style.background = "transparent";
+    textArea.style.zIndex = "10000";
     textArea.value = text;
 
     document.body.appendChild(textArea);
@@ -69,9 +71,6 @@ const copyTextToClipboard = (text: string) => {
     let res = false;
     try {
         res = document.execCommand("copy");
-        if (res) {
-            addSuccessNotification("Copied", undefined, true);
-        }
     } catch (err) {
         addErrorNotification("Error", "Can't copy in this browser");
     }
@@ -82,7 +81,8 @@ const copyTextToClipboard = (text: string) => {
 
 export const handleCopyUrl = (url: string) => () => {
     if (url) {
-        // navigator.clipboard.writeText(url);
         copyTextToClipboard(url);
+        navigator.clipboard.writeText(url);
+        addSuccessNotification("Copied", undefined, true);
     }
 };

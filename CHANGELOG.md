@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.20](https://github.com/StableUnit/safe-transfer/compare/v0.5.19...v0.5.20) (2023-06-05)
+
+
+### Features
+
+* add .bit ([656b276](https://github.com/StableUnit/safe-transfer/commit/656b276888203749025fa10dd57e315ee3fd6cf9))
+* add "Details" toggle ([95f4bac](https://github.com/StableUnit/safe-transfer/commit/95f4bacd68d8c3c8b667cb79b54559af11140fa7))
+* add hash ([a4197e7](https://github.com/StableUnit/safe-transfer/commit/a4197e770fd9c274e95f42efe345a08839b4ba8c))
+* remove useless header links ([a8894b1](https://github.com/StableUnit/safe-transfer/commit/a8894b196e84d5a76471c1e7db0a18cdc9680e29))
+
+
+### Bug Fixes
+
+* copy ([1d70d2d](https://github.com/StableUnit/safe-transfer/commit/1d70d2d0e0a8108489903dd6e0321ccc3929f9d7))
+
 ### [0.5.19](https://github.com/StableUnit/safe-transfer/compare/v0.5.18...v0.5.19) (2023-05-15)
 
 

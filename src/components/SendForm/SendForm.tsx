@@ -17,7 +17,6 @@ import {
     networkToId,
     NetworkType,
 } from "../../utils/network";
-import { getShortAddress } from "../../utils/wallet";
 import {
     beautifyTokenBalance,
     CUSTOM_TOKENS,
@@ -48,23 +47,14 @@ import GenUrlPopup from "../GenUrlPopup";
 import { useEns } from "../../hooks/useEns";
 import { Actions } from "../../reducer";
 import { useGasPrice } from "../../hooks/useGasPrice";
+import SendFormRecipient from "./supportComponents/SendFormRecipient";
 import AllowanceChecker from "./supportComponents/AllowanceChecker";
 import SendFormButton from "./supportComponents/SendFormButton";
 import SendFormError from "./supportComponents/SendFormError";
 import { useErc20Write } from "../../hooks/useErc20Write";
+import { BalanceType } from "../../utils/types";
 
 import "./SendForm.scss";
-
-export type BalanceType = {
-    // eslint-disable-next-line camelcase
-    token_address: string;
-    name: string;
-    symbol: string;
-    logo?: string | undefined;
-    thumbnail?: string | undefined;
-    decimals: string;
-    balance: string;
-};
 
 interface ApproveFormProps {
     onConnect: () => void;
@@ -91,7 +81,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
     const [hasAllowance, setHasAllowance] = useState(false);
     const [balances, setBalances] = useState<BalanceType[]>([]);
     const [genUrl, setGenUrl] = useState<string>();
-    const { isEnsAddress, isEnsName, ensName, ensAddress, isAvvyName, avvyName } = useEns(toAddress);
+    const { ensAddress } = useEns(toAddress);
 
     const { requestTokenData, requestToken } = useRequestToken();
     const isDisabledByToken = requestTokenData && networkName !== requestTokenData.networkName;
@@ -455,16 +445,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                             </Select>
                         </FormControl>
 
-                        <div className="send-form__label">
-                            Recipient address
-                            <span className="send-form__label-additional">
-                                {(isEnsName || isAvvyName) && ensAddress && ` (${getShortAddress(ensAddress)})`}
-                            </span>
-                            <span className="send-form__label-additional">
-                                {isEnsAddress && ensName && ` (${ensName})`}
-                                {isEnsAddress && avvyName && ` (${avvyName})`}
-                            </span>
-                        </div>
+                        <SendFormRecipient toAddress={toAddress} />
                         <TextField
                             value={toAddress}
                             disabled={hasRequestToken}
