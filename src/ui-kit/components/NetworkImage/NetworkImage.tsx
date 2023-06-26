@@ -5,6 +5,7 @@ import PolygonImage from "../../images/polygon.png";
 import FantomImage from "../../images/fantom.png";
 import BscImage from "../../images/bsc.png";
 import AvalancheImage from "../../images/avalanche.png";
+import ArbitrumImage from "../../images/arbitrum.jpg";
 import AuroraImage from "../../images/aurora.png";
 import HarmonyImage from "../../images/harmony.png";
 import OptimismImage from "../../images/optimism.png";
@@ -24,6 +25,7 @@ export type NetworkType =
     | "bsc"
     | "fantom"
     | "avalanche"
+    | "arbitrum"
     | "optimism"
     | "boba"
     | "skale"
@@ -55,6 +57,8 @@ const getNetworkImage = (network?: NetworkType) => {
             return BscImage;
         case "avalanche":
             return AvalancheImage;
+        case "arbitrum":
+            return ArbitrumImage;
         case "aurora":
             return AuroraImage;
         case "harmony":

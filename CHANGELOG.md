@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.21](https://github.com/StableUnit/safe-transfer/compare/v0.5.20...v0.5.21) (2023-06-14)
+
+
+### Features
+
+* add arbitrum ([9ca121c](https://github.com/StableUnit/safe-transfer/commit/9ca121cd0c26da61d901700ef71cb0b8eef4e8bb))
+* remove copy in modal in metamask browser ([b05ff97](https://github.com/StableUnit/safe-transfer/commit/b05ff97239ccc64fd20f19374e66a201a05f4348))
+
+
+### Bug Fixes
+
+* copy in modal ([58bbac3](https://github.com/StableUnit/safe-transfer/commit/58bbac38bc52022fe4d0b3febd4e20c03e930b2e))
+
 ### [0.5.20](https://github.com/StableUnit/safe-transfer/compare/v0.5.19...v0.5.20) (2023-06-05)
 
 

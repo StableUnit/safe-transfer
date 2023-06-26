@@ -7,7 +7,7 @@ import amplitude from "amplitude-js";
 import { BrowserRouter } from "react-router-dom";
 
 import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { mainnet, polygon, goerli, optimism, bsc, fantom, avalanche } from "wagmi/chains";
+import { mainnet, polygon, goerli, optimism, bsc, fantom, avalanche, arbitrum } from "wagmi/chains";
 import { infuraProvider } from "wagmi/providers/infura";
 import { publicProvider } from "wagmi/providers/public";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
@@ -51,6 +51,7 @@ const AppContainer = () => {
         polygon,
         fantom,
         avalanche,
+        arbitrum,
         wagmiCustomNetworks.cronos,
         wagmiCustomNetworks.boba,
         wagmiCustomNetworks.aurora,

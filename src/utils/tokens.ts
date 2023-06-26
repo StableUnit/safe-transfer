@@ -34,6 +34,68 @@ export const CUSTOM_TOKENS: Record<NetworkType, TokenInfo[]> = {
     bsc: [],
     fantom: [],
     avalanche: [],
+    arbitrum: [
+        {
+            id: "tether",
+            symbol: "USDT",
+            address: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+        },
+        {
+            id: "Bridged USDC",
+            symbol: "USDC.e",
+            address: "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
+        },
+        {
+            id: "usdc",
+            symbol: "USDC",
+            address: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+        },
+        {
+            id: "wbtc",
+            symbol: "WBTC",
+            address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
+        },
+        {
+            id: "dai",
+            symbol: "DAI",
+            address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1",
+        },
+        {
+            id: "uni",
+            symbol: "UNI",
+            address: "0xfa7f8980b0f1e64a2062791cc3b0871572f1f7f0",
+        },
+        {
+            id: "tusd",
+            symbol: "TUSD",
+            address: "0x4d15a3a2286d883af0aa1b3f21367843fac63e07",
+        },
+        {
+            id: "LINK",
+            symbol: "LINK",
+            address: "0xf97f4df75117a78c1a5a0dbb814af92458539fb4",
+        },
+        {
+            id: "LDO",
+            symbol: "LDO",
+            address: "0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60",
+        },
+        {
+            id: "arb",
+            symbol: "ARB",
+            address: "0x912ce59144191c1204e64559fe8253a0e49e6548",
+        },
+        {
+            id: "frax",
+            symbol: "FRAX",
+            address: "0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
+        },
+        {
+            id: "CRV",
+            symbol: "CRV",
+            address: "0x11cdb42b0eb46d95f990bedd4695a6e3fa034978",
+        },
+    ],
     celo: [
         {
             id: "tether",
