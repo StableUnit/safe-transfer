@@ -35,5 +35,5 @@ export const bitToAddress = async (network: NetworkType, account: string) => {
         return undefined;
     }
     const res = await axios.post(`${HOST}${GET_ADDRESS_URL}`, { account });
-    return res.data?.data?.account_info?.account_id_hex;
+    return res.data?.data?.account_info?.owner_key;
 };
