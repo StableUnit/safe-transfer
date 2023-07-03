@@ -26,7 +26,9 @@ const App = () => {
     useAutoConnect();
 
     useEffect(() => {
-        const walletConnect = connectors.find((v) => v.id.toLowerCase() === "walletconnectlegacy");
+        const walletConnect = connectors.find((v) =>
+            ["walletconnect", "walletconnectlegacy"].includes(v.id.toLowerCase())
+        );
         if (walletConnect) {
             setExtendedConnectors([...connectors, walletConnect]);
         } else {
@@ -74,6 +76,7 @@ const App = () => {
 
     const getConnectorName = (name: string) => {
         switch (name.toLowerCase()) {
+            case "walletconnect":
             case "walletconnectlegacy":
                 return "WalletConnect";
             default:
