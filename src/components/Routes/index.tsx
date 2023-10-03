@@ -14,35 +14,8 @@ interface Props {
 
 export const Routes = ({ onConnect }: Props) => (
     <Switch>
-        {/* @ts-ignore */}
-        <Route exact path="/send">
-            <PageInMaintenance />
-            {/* <SendForm onConnect={onConnect} /> */}
-        </Route>
-
-        {/* @ts-ignore */}
-        <Route exact path="/intro">
-            <IntroPage />
-        </Route>
-
-        {/* @ts-ignore */}
-        <Route exact path="/receive">
-            <ReceiveForm onConnect={onConnect} />
-        </Route>
-
-        {/* @ts-ignore */}
-        <Route exact path="/request">
-            <PageInMaintenance />
-            {/* <RequestForm onConnect={onConnect} /> */}
-        </Route>
-
-        {/* @ts-ignore */}
-        <Route exact path="/">
-            <Redirect to="/intro" />
-        </Route>
-
         <Route path="*">
-            <PageNotFound />
+            <PageInMaintenance />
         </Route>
     </Switch>
 );

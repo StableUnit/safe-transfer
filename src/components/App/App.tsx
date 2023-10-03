@@ -86,39 +86,9 @@ const App = () => {
 
     return (
         <div className="App" id="app">
-            <Header onConnect={openModal} onDisconnect={disconnect} />
             <div className="App__container">
                 <Routes onConnect={openModal} />
             </div>
-            <Footer />
-            {isModalVisible && (
-                <div className="connect-modal">
-                    <div className="connect-modal__card">
-                        {extendedConnectors.map((selectedConnector, i) => {
-                            const id = i === extendedConnectors.length - 1 ? "Argent" : selectedConnector.id;
-                            const name = i === extendedConnectors.length - 1 ? "Argent" : selectedConnector.name;
-                            return (
-                                <div className="connect-modal__provider-wrapper" key={id}>
-                                    <div
-                                        className={cn("connect-modal__provider-container", {
-                                            "connect-modal__provider-container--disabled": !selectedConnector.ready,
-                                        })}
-                                        key={id}
-                                        onClick={handleConnect(selectedConnector)}
-                                    >
-                                        <div className="connect-modal__provider-icon">{renderIcon(id)}</div>
-                                        <div className="connect-modal__provider-name">
-                                            {getConnectorName(name)}
-                                            {isLoading && id === pendingConnector?.id && " (connecting)"}
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                    <div className="connect-modal__fade" onClick={closeModal} />
-                </div>
-            )}
         </div>
     );
 };
