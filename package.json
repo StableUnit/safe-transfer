@@ -54,7 +54,7 @@
         "web3-eth-ens": "^1.8.2"
     },
     "scripts": {
-        "start": "TSC_COMPILE_ON_ERROR=true REACT_APP_VERSION=$npm_package_version react-app-rewired start",
+        "start": "TSC_COMPILE_ON_ERROR=true NODE_OPTIONS=--openssl-legacy-provider REACT_APP_VERSION=$npm_package_version react-app-rewired start",
         "build": "HTTPS=true TSC_COMPILE_ON_ERROR=true REACT_APP_VERSION=$npm_package_version react-app-rewired build",
         "test": "mocha --require ts-node/register test/*.spec.ts --color --recursive --timeout 60000 --exit",
         "eject": "react-app-rewired eject",

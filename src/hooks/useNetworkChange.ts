@@ -1,7 +1,7 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext } from "react";
 import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import { SelectChangeEvent } from "@mui/material";
-import { getVolume, trackEvent } from "../utils/events";
+import { trackEvent } from "../utils/events";
 import { idToNetwork, networkInfo, networkToId, NetworkType } from "../utils/network";
 import { Actions } from "../reducer";
 import { DispatchContext } from "../reducer/constants";
