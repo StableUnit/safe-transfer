@@ -32,8 +32,6 @@ export const Footer = () => {
                 <SocialNetwork name="github" />
             </div>
             <div className="footer__made-by">
-                The “safeTransfer” functionality is under maintenance. Sorry for the inconvenience..
-                <br />
                 Open-source project from{" "}
                 <a href="https://stableunit.org/" target="_blank" rel="noreferrer">
                     stableunit.org

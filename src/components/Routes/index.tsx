@@ -6,6 +6,7 @@ import ReceiveForm from "../ReceiveForm/ReceiveForm";
 import { PageNotFound } from "../PageNotFound";
 import RequestForm from "../RequestForm";
 import IntroPage from "../IntroPage";
+import { PageInMaintenance } from "../PageInMaintenance";
 
 interface Props {
     onConnect: () => void;
@@ -15,7 +16,8 @@ export const Routes = ({ onConnect }: Props) => (
     <Switch>
         {/* @ts-ignore */}
         <Route exact path="/send">
-            <SendForm onConnect={onConnect} />
+            <PageInMaintenance />
+            {/* <SendForm onConnect={onConnect} /> */}
         </Route>
 
         {/* @ts-ignore */}
@@ -30,7 +32,8 @@ export const Routes = ({ onConnect }: Props) => (
 
         {/* @ts-ignore */}
         <Route exact path="/request">
-            <RequestForm onConnect={onConnect} />
+            <PageInMaintenance />
+            {/* <RequestForm onConnect={onConnect} /> */}
         </Route>
 
         {/* @ts-ignore */}
