@@ -1,0 +1,20 @@
+.navbar-link {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 20px;
+
+  &--selected {
+    background: linear-gradient(74.43deg, #D8ADFB -12.43%, #B8D3F6 24.51%, #A7F5D5 63.46%, #F3EFC0 82.01%, #F3B6F4 110.47%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+
+  @media screen and (max-width: 600px) {
+    display: none;
+  }
+}

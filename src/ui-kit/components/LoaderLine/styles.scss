@@ -1,0 +1,9 @@
+@import "../../styles/vars";
+
+.loader-line {
+  animation: placeholder-active 1s ease infinite;
+  background: linear-gradient(-45deg, #3c3f43 25%, #484c50 37%, #3c3f43 63%);
+  background-color: #3c3f43;
+  background-size: 400% 100%!important;
+  border-radius: 4px;
+}

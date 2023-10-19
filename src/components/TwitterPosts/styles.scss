@@ -1,0 +1,85 @@
+@import "src/ui-kit/styles/vars";
+
+.swiper {
+  width: calc(100% - 100px);
+  height: 260px;
+  padding: 0 50px;
+  user-select: none;
+
+  @media screen and (max-width: 800px) {
+    height: 225px;
+  }
+
+  @media screen and (max-width: 640px) {
+    height: 205px;
+  }
+
+  .swiper-pagination {
+    bottom: 0 !important;
+  }
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: transparent;
+
+  /* Center slide text vertically */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  align-items: flex-start;
+
+  & > div {
+    width: 100%;
+    border-radius: 12px;
+  }
+}
+
+.swiper-pagination {
+  .swiper-pagination-bullet {
+    background: #ECECEC;
+
+    &-active {
+      background: #0070f3;
+    }
+  }
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  padding: 20px 10px;
+  border-radius: 10px;
+  background: $black;
+  box-shadow: 0 0 10px 5px rgba(32,32,29,0.8);
+  color: $gradient-fallback;
+  top: calc(50% - 20px) !important;
+}
+
+.twitter-post {
+  &__container {
+    margin-top: 0 !important;
+    max-height: 234px;
+    overflow: scroll;
+    border-radius: 12px;
+    cursor: pointer;
+
+    & > img {
+      width: 100%;
+      margin-bottom: -6px;
+    }
+
+    @media screen and (max-width: 800px) {
+      max-height: 200px;
+    }
+
+    @media screen and (max-width: 640px) {
+      max-height: 180px;
+    }
+  }
+}

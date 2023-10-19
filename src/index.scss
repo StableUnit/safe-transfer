@@ -1,0 +1,42 @@
+@import "ui-kit/styles/vars";
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: $black;
+    color: white;
+    padding: 0;
+    margin: 0;
+}
+
+* {
+    outline: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+a {
+    color: #0070f3;
+    text-decoration: none;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+body > iframe {
+    display: none;
+}
+
+input:disabled {
+    color: rgba(255,255,255, 0.3) !important;
+    -webkit-text-fill-color: rgba(255,255,255, 0.3) !important;
+}

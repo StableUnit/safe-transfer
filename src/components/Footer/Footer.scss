@@ -1,0 +1,36 @@
+@import "src/ui-kit/styles/vars";
+
+.footer {
+  width: 100%;
+
+  height: 85px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: $gray2;
+
+  &__made-by {
+    text-align: center;
+  }
+
+  &__version {
+    text-align: center;
+    color: $gray1;
+    font-size: 12px;
+  }
+
+  &__social {
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    a {
+      padding: 0 6px;
+    }
+  }
+
+  a {
+    color: white;
+    text-decoration: none !important;
+  }
+}

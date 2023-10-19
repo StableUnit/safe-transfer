@@ -1,0 +1,11 @@
+.video-responsive {
+  margin: 0 auto 24px auto;
+  text-align: center;
+
+  @media screen and (max-width: 600px) {
+    iframe {
+      width: 340px;
+      height: 200px;
+    }
+  }
+}

@@ -1,0 +1,55 @@
+@import "../../ui-kit/styles/vars";
+
+.gen-url {
+    background: $dark-gray;
+    border-radius: 8px;
+    padding: 8px 8px 8px 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+    margin: 0 25px;
+
+    a {
+        text-decoration-line: underline;
+        cursor: pointer;
+
+        background: linear-gradient(74.43deg, #DBB0FF -12.43%, #C2DCFF 24.51%, #B4FFE0 63.46%, #FEFBDA 82.01%, #FECBFF 110.47%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+    }
+
+    &__text {
+        display: flex;
+
+        &--title {
+            margin-right: 2px;
+
+            @media screen and (max-width: 600px) {
+                width: 110px;
+            }
+
+            @media screen and (max-width: 500px) {
+                display: none;
+            }
+        }
+    }
+
+    &-container {
+        max-width: 400px;
+    }
+
+    &__loading {
+        margin: 0 25px;
+        font-size: 11px;
+        text-align: center;
+        padding-top: 4px;
+        color: $gray1;
+    }
+}
