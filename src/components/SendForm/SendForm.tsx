@@ -546,7 +546,7 @@ const SendForm = ({ onConnect }: ApproveFormProps) => {
                             isApproveLoading ||
                             isTransferLoading ||
                             hasAllowance ||
-                            !currentTokenBalance ||
+                            new BN(currentToken?.balance ?? 0).eqn(0) ||
                             isTransferDone ||
                             isDisabledByToken
                         }
